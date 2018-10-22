@@ -17,7 +17,7 @@ class CommentTableViewCell : UITableViewCell {
         didSet { updateIndentPadding() }
     }
 
-    var post: HNPost?
+    var post: PostModel?
 
     var comment: CommentModel? {
         didSet {

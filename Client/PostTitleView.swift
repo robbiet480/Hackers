@@ -10,7 +10,7 @@ import UIKit
 import libHN
 
 protocol PostTitleViewDelegate {
-    func didPressLinkButton(_ post: HNPost)
+    func didPressLinkButton(_ post: PostModel)
 }
 
 class PostTitleView: UIView, UIGestureRecognizerDelegate {
@@ -21,10 +21,10 @@ class PostTitleView: UIView, UIGestureRecognizerDelegate {
     
     var delegate: PostTitleViewDelegate?
     
-    var post: HNPost? {
+    var post: PostModel? {
         didSet {
             guard let post = post else { return }
-            titleLabel.text = post.title
+            titleLabel.text = post.Title
             metadataLabel.attributedText = metadataText(for: post)
         }
     }
@@ -43,8 +43,8 @@ class PostTitleView: UIView, UIGestureRecognizerDelegate {
         }
     }
     
-    private func domainLabelText(for post: HNPost) -> String? {
-        guard let urlComponents = URLComponents(string: post.urlString), var host = urlComponents.host else {
+    private func domainLabelText(for post: PostModel) -> String? {
+        guard let urlComponents = URLComponents(string: post.URLString), var host = urlComponents.host else {
             return nil
         }
         
@@ -55,7 +55,7 @@ class PostTitleView: UIView, UIGestureRecognizerDelegate {
         return host
     }
     
-    private func metadataText(for post: HNPost) -> NSAttributedString {
+    private func metadataText(for post: PostModel) -> NSAttributedString {
         let string = NSMutableAttributedString()
         
         let pointsIconAttachment = textAttachment(for: "PointsIcon")
@@ -64,9 +64,9 @@ class PostTitleView: UIView, UIGestureRecognizerDelegate {
         let commentsIconAttachment = textAttachment(for: "CommentsIcon")
         let commentsIconAttributedString = NSAttributedString(attachment: commentsIconAttachment)
         
-        string.append(NSAttributedString(string: "\(post.points)"))
+        string.append(NSAttributedString(string: post.Points.description))
         string.append(pointsIconAttributedString)
-        string.append(NSAttributedString(string: "• \(post.commentCount)"))
+        string.append(NSAttributedString(string: "• \(post.CommentCount)"))
         string.append(commentsIconAttributedString)
         if let domainText = domainLabelText(for: post), domainText != "news.ycombinator.com" {
             string.append(NSAttributedString(string: " • \(domainText)"))

@@ -1,8 +1,12 @@
 PODS:
   - DZNEmptyDataSet (1.8.1)
   - Eureka (4.3.0)
+  - FMDB (2.7.5):
+    - FMDB/standard (= 2.7.5)
+  - FMDB/standard (2.7.5)
   - Kingfisher (4.8.1)
   - libHN (4.1.0)
+  - OpenGraph (1.0.5)
   - PromiseKit (4.5.2):
     - PromiseKit/Foundation (= 4.5.2)
     - PromiseKit/QuartzCore (= 4.5.2)
@@ -14,22 +18,34 @@ PODS:
     - PromiseKit/CorePromise
   - PromiseKit/UIKit (4.5.2):
     - PromiseKit/CorePromise
+  - Realm (3.11.1):
+    - Realm/Headers (= 3.11.1)
+  - Realm/Headers (3.11.1)
+  - RealmSwift (3.11.1):
+    - Realm (= 3.11.1)
   - SkeletonView (1.1.1)
 
 DEPENDENCIES:
   - DZNEmptyDataSet
   - Eureka
+  - FMDB
   - Kingfisher
   - libHN (from `https://github.com/weiran/libHN`)
+  - OpenGraph
   - PromiseKit (~> 4.x)
+  - RealmSwift
   - SkeletonView
 
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
     - DZNEmptyDataSet
     - Eureka
+    - FMDB
     - Kingfisher
+    - OpenGraph
     - PromiseKit
+    - Realm
+    - RealmSwift
     - SkeletonView
 
 EXTERNAL SOURCES:
@@ -38,17 +54,21 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   libHN:
-    :commit: 6759f4ac591f5f36b01158260627ba0bf36eddc1
+    :commit: ca79b491f594a851825db9bf0e99235b2863b71c
     :git: https://github.com/weiran/libHN
 
 SPEC CHECKSUMS:
   DZNEmptyDataSet: 9525833b9e68ac21c30253e1d3d7076cc828eaa7
   Eureka: 6d711cb30ca333b4bc893110285a722ae3840114
+  FMDB: 2ce00b547f966261cd18927a3ddb07cb6f3db82a
   Kingfisher: 868c1149679a7ab6869be118faa9b5aed154aaf0
   libHN: fe671e9d39466235239b793f1f0181baadb327b2
+  OpenGraph: f3529e35045abd3b163f455278d4d866c0eb061b
   PromiseKit: 743e497a5f505a470d3bbbf4ce0663c1268af0a4
+  Realm: 037c5919b9ceb59d6beed5d3b031096856b119b3
+  RealmSwift: c9580133e73ef40ed340401af2dbc9a5790dfea7
   SkeletonView: 041053e904504e7d8db83df166e599be75659fe1
 
-PODFILE CHECKSUM: ca545d529a0cff442c810fb61f30331bb9b863a1
+PODFILE CHECKSUM: b9e1320dfbea48889bbdb23cd7e89aec9320609a
 
 COCOAPODS: 1.6.0.beta.1

@@ -12,10 +12,15 @@ import SafariServices
 import libHN
 import DZNEmptyDataSet
 import SkeletonView
+import RealmSwift
 
 class CommentsViewController : UIViewController {
-    var post: HNPost? {
-        didSet { HNManager.shared()?.setMarkAsReadFor(post!) }
+    var post: PostModel? {
+        didSet {
+            try! Realm.live().write {
+                post?.ReadAt = Date.init()
+            }
+        }
     }
     
     var comments: [CommentModel]? {
@@ -83,7 +88,8 @@ class CommentsViewController : UIViewController {
     }
     
     func loadComments() {
-        HNManager.shared().loadComments(from: post) { comments in
+        // FIXME: THis is a dummy HNPost atm, needs to be a real one
+        HNManager.shared().loadComments(from: HNPost()) { comments in
             if let downcastedArray = comments as? [HNComment] {
                 let mappedComments = downcastedArray.map { CommentModel(source: $0) }
                 self.comments = mappedComments
@@ -103,7 +109,7 @@ class CommentsViewController : UIViewController {
         postTitleView.post = post
         postTitleView.delegate = self
         postTitleView.isTitleTapEnabled = true
-        thumbnailImageView.setImageWithPlaceholder(urlString: post.urlString)
+        thumbnailImageView.setImage(post)
     }
     
     @IBAction func didTapThumbnail(_ sender: Any) {
@@ -131,8 +137,8 @@ class CommentsViewController : UIViewController {
 }
 
 extension CommentsViewController: PostTitleViewDelegate {
-    func didPressLinkButton(_ post: HNPost) {
-        if verifyLink(post.urlString), let url = URL(string: post.urlString) {
+    func didPressLinkButton(_ post: PostModel) {
+        if verifyLink(post.URLString) {
             // animate background colour for tap
             self.tableView.tableHeaderView?.backgroundColor = AppThemeProvider.shared.currentTheme.cellHighlightColor
             UIView.animate(withDuration: 0.3, animations: {
@@ -142,11 +148,11 @@ extension CommentsViewController: PostTitleViewDelegate {
             // show link
             let activity = NSUserActivity(activityType: "com.weiranzhang.Hackers.link")
             activity.isEligibleForHandoff = true
-            activity.webpageURL = url
-            activity.title = post.title
+            activity.webpageURL = post.LinkURL
+            activity.title = post.Title
             self.userActivity = activity
 
-            if let safariViewController = UserDefaults.standard.openInBrowser(url) {
+            if let safariViewController = UserDefaults.standard.openInBrowser(post.LinkURL) {
                 safariViewController.onDoneBlock = { _ in
                     self.userActivity = nil
                 }
@@ -171,7 +177,7 @@ extension CommentsViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let comment = commentsController.visibleComments[indexPath.row]
-        assert(comment.visibility != .hidden, "Cell cannot be hidden and in the array of visible cells")
+        assert(comment.visibility != CommentVisibilityType.hidden, "Cell cannot be hidden and in the array of visible cells")
         let cellIdentifier = comment.visibility == CommentVisibilityType.visible ? "OpenCommentCell" : "ClosedCommentCell"
         
         let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath) as! CommentTableViewCell
@@ -211,7 +217,7 @@ extension CommentsViewController: CommentDelegate {
         let activity = NSUserActivity(activityType: "com.weiranzhang.Hackers.link")
         activity.isEligibleForHandoff = true
         activity.webpageURL = URL
-        activity.title = post!.title
+        activity.title = post!.Title
         self.userActivity = activity
 
         if let safariViewController = UserDefaults.standard.openInBrowser(URL) {

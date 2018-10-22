@@ -3,12 +3,15 @@ use_frameworks!
 inhibit_all_warnings!
 
 target 'Hackers' do
-  pod 'libHN', :git => 'https://github.com/weiran/libHN'
   pod 'DZNEmptyDataSet'
-  pod 'PromiseKit', '~> 4.x'
-  pod 'SkeletonView'
-  pod 'Kingfisher'
   pod 'Eureka'
+  pod 'FMDB'
+  pod 'Kingfisher'
+  pod 'libHN', :git => 'https://github.com/weiran/libHN'
+  pod 'OpenGraph'
+  pod 'PromiseKit', '~> 4.x'
+  pod 'RealmSwift'
+  pod 'SkeletonView'
 end
 
 post_install do |installer|

@@ -49,6 +49,10 @@
 		B63E78C4217C1C6300750131 /* UIFont+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B63E78C3217C1C6300750131 /* UIFont+Extensions.swift */; };
 		B6ECEB57217C5A4E00755239 /* HNPost+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6ECEB56217C5A4E00755239 /* HNPost+Extensions.swift */; };
 		B6ECEB59217CC4EA00755239 /* OpenInChromeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6ECEB58217CC4EA00755239 /* OpenInChromeController.swift */; };
+		B6ECEB5B217D133100755239 /* LocalNotificationsCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6ECEB5A217D133100755239 /* LocalNotificationsCache.swift */; };
+		B6ECEB5D217D16CF00755239 /* Notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6ECEB5C217D16CF00755239 /* Notifications.swift */; };
+		B6ECEB61217D54DD00755239 /* Post.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6ECEB60217D54DD00755239 /* Post.swift */; };
+		B6ECEB63217D64AE00755239 /* Realm+Initialization.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6ECEB62217D64AE00755239 /* Realm+Initialization.swift */; };
 		DF68752992A90A126C292CD9 /* Pods_Hackers.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0376FCAAF4C3EBA38572A82 /* Pods_Hackers.framework */; };
 /* End PBXBuildFile section */
 
@@ -101,6 +105,11 @@
 		B63E78C3217C1C6300750131 /* UIFont+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIFont+Extensions.swift"; sourceTree = "<group>"; };
 		B6ECEB56217C5A4E00755239 /* HNPost+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "HNPost+Extensions.swift"; sourceTree = "<group>"; };
 		B6ECEB58217CC4EA00755239 /* OpenInChromeController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenInChromeController.swift; sourceTree = "<group>"; };
+		B6ECEB5A217D133100755239 /* LocalNotificationsCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalNotificationsCache.swift; sourceTree = "<group>"; };
+		B6ECEB5C217D16CF00755239 /* Notifications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Notifications.swift; sourceTree = "<group>"; };
+		B6ECEB60217D54DD00755239 /* Post.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Post.swift; sourceTree = "<group>"; };
+		B6ECEB62217D64AE00755239 /* Realm+Initialization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Realm+Initialization.swift"; sourceTree = "<group>"; };
+		B6ECEB64217D65BE00755239 /* Hackers.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Hackers.entitlements; sourceTree = "<group>"; };
 		F0376FCAAF4C3EBA38572A82 /* Pods_Hackers.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Hackers.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -146,6 +155,9 @@
 				B63E78C3217C1C6300750131 /* UIFont+Extensions.swift */,
 				B6ECEB56217C5A4E00755239 /* HNPost+Extensions.swift */,
 				B6ECEB58217CC4EA00755239 /* OpenInChromeController.swift */,
+				B6ECEB5A217D133100755239 /* LocalNotificationsCache.swift */,
+				B6ECEB5C217D16CF00755239 /* Notifications.swift */,
+				B6ECEB62217D64AE00755239 /* Realm+Initialization.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -203,6 +215,7 @@
 			children = (
 				241E8DA91944AF870004F457 /* CommentModel.swift */,
 				24191F8C1944C991003C0D98 /* CommentsController.swift */,
+				B6ECEB60217D54DD00755239 /* Post.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -262,6 +275,7 @@
 		24F39F8F18AFB1150055F8DC /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				B6ECEB64217D65BE00755239 /* Hackers.entitlements */,
 				24CC0DB6193D1935005AD417 /* Hackers2-Bridging-Header.h */,
 				24CE5FEC19434BDC009D2677 /* AppDelegate.swift */,
 				24F39F9018AFB1150055F8DC /* Hackers-Info.plist */,
@@ -313,8 +327,16 @@
 				ORGANIZATIONNAME = "Glass Umbrella";
 				TargetAttributes = {
 					24F39F8418AFB1150055F8DC = {
-						DevelopmentTeam = 2KB59GPA9B;
+						DevelopmentTeam = UTQFCBPQRF;
 						LastSwiftMigration = 1000;
+						SystemCapabilities = {
+							com.apple.ApplicationGroups.iOS = {
+								enabled = 1;
+							};
+							com.apple.BackgroundModes = {
+								enabled = 1;
+							};
+						};
 					};
 				};
 			};
@@ -392,8 +414,12 @@
 				"${PODS_ROOT}/Target Support Files/Pods-Hackers/Pods-Hackers-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/DZNEmptyDataSet/DZNEmptyDataSet.framework",
 				"${BUILT_PRODUCTS_DIR}/Eureka/Eureka.framework",
+				"${BUILT_PRODUCTS_DIR}/FMDB/FMDB.framework",
 				"${BUILT_PRODUCTS_DIR}/Kingfisher/Kingfisher.framework",
+				"${BUILT_PRODUCTS_DIR}/OpenGraph/OpenGraph.framework",
 				"${BUILT_PRODUCTS_DIR}/PromiseKit/PromiseKit.framework",
+				"${BUILT_PRODUCTS_DIR}/Realm/Realm.framework",
+				"${BUILT_PRODUCTS_DIR}/RealmSwift/RealmSwift.framework",
 				"${BUILT_PRODUCTS_DIR}/SkeletonView/SkeletonView.framework",
 				"${BUILT_PRODUCTS_DIR}/libHN/libHN.framework",
 			);
@@ -401,8 +427,12 @@
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/DZNEmptyDataSet.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Eureka.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FMDB.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Kingfisher.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/OpenGraph.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/PromiseKit.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Realm.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RealmSwift.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SkeletonView.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/libHN.framework",
 			);
@@ -430,12 +460,14 @@
 				24D811A51FF90A58000951C3 /* TouchableTextView.swift in Sources */,
 				2464D20F209DD8F400C7F8FC /* Weak.swift in Sources */,
 				24CEAA9B1F8916970050DEDF /* UIView+Extensions.swift in Sources */,
+				B6ECEB5D217D16CF00755239 /* Notifications.swift in Sources */,
 				24D6B8CA1C1EDBFC00618422 /* AppTheme.swift in Sources */,
 				B6ECEB57217C5A4E00755239 /* HNPost+Extensions.swift in Sources */,
 				245DCAB01CD4DA2A00152AA3 /* SFSafariViewController+PreviewActionItems.swift in Sources */,
 				2464D221209E2CDF00C7F8FC /* ThemedSafariViewController.swift in Sources */,
 				242A00D31D086927003D915B /* UIViewControllerSmoothlyDeselectCellExtension.swift in Sources */,
 				24B5BFEF1B52CE8900328C62 /* PostTitleView.swift in Sources */,
+				B6ECEB5B217D133100755239 /* LocalNotificationsCache.swift in Sources */,
 				241E8DAA1944AF870004F457 /* CommentModel.swift in Sources */,
 				2464D208209DD7B100C7F8FC /* AppThemeProvider.swift in Sources */,
 				24191F8D1944C991003C0D98 /* CommentsController.swift in Sources */,
@@ -449,9 +481,11 @@
 				2464D21B209E1FA100C7F8FC /* SettingsViewController.swift in Sources */,
 				24DFD28C19436E51007F61E7 /* CommentsViewController.swift in Sources */,
 				24448F891FE7DFB800F85A28 /* ThumbnailFetcher.swift in Sources */,
+				B6ECEB63217D64AE00755239 /* Realm+Initialization.swift in Sources */,
 				2464D206209DD27A00C7F8FC /* Theming.swift in Sources */,
 				2454B9021F654DB2005A98C7 /* MainTabBarController.swift in Sources */,
 				243271951F95EDA9008196DB /* StringExtensions.swift in Sources */,
+				B6ECEB61217D54DD00755239 /* Post.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -487,7 +521,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
-				DEVELOPMENT_TEAM = 2KB59GPA9B;
+				DEVELOPMENT_TEAM = UTQFCBPQRF;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -507,7 +541,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				ONLY_ACTIVE_ARCH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.weiranzhang.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_BUNDLE_IDENTIFIER = "io.robbie.$(PRODUCT_NAME:rfc1034identifier)";
 				SDKROOT = iphoneos;
 			};
 			name = Debug;
@@ -541,7 +575,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = YES;
-				DEVELOPMENT_TEAM = 2KB59GPA9B;
+				DEVELOPMENT_TEAM = UTQFCBPQRF;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -553,7 +587,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.weiranzhang.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_BUNDLE_IDENTIFIER = "io.robbie.$(PRODUCT_NAME:rfc1034identifier)";
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 				VALIDATE_PRODUCT = YES;
@@ -566,6 +600,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = "Client/Supporting Files/Hackers.entitlements";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -588,6 +623,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = "Client/Supporting Files/Hackers.entitlements";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;

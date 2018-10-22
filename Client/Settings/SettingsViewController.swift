@@ -45,7 +45,26 @@ class SettingsViewController: FormViewController {
                 if let rowVal = $0.value {
                     UserDefaults.standard.setOpenLinksIn(rowVal)
                 }
-        }
+            }
+
+            +++ Section(header: "Notifications", footer: "")
+            <<< SwitchRow { row in
+                row.tag = "enableNotifications"
+                row.title = "Enable Notifications"
+                row.value = Notifications.isLocalNotificationEnabled
+            }.onChange { row in
+                if let value = row.value {
+                    Notifications.isLocalNotificationEnabled = value
+                    if value == true {
+                        Notifications.configure()
+                    }
+                }
+            }
+
+            <<< IntRow { row in
+                row.tag = "pointsThreshold"
+                row.title = "Minimum points for notification"
+            }
     }
     
     @IBAction func didPressDone(_ sender: Any) {
