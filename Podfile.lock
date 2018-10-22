@@ -1,22 +1,17 @@
 PODS:
   - DZNEmptyDataSet (1.8.1)
   - Eureka (4.3.0)
-  - FMDB (2.7.5):
-    - FMDB/standard (= 2.7.5)
-  - FMDB/standard (2.7.5)
   - Kingfisher (4.8.1)
   - libHN (4.1.0)
   - OpenGraph (1.0.5)
-  - PromiseKit (4.5.2):
-    - PromiseKit/Foundation (= 4.5.2)
-    - PromiseKit/QuartzCore (= 4.5.2)
-    - PromiseKit/UIKit (= 4.5.2)
-  - PromiseKit/CorePromise (4.5.2)
-  - PromiseKit/Foundation (4.5.2):
+  - PromiseKit (6.5.2):
+    - PromiseKit/CorePromise (= 6.5.2)
+    - PromiseKit/Foundation (= 6.5.2)
+    - PromiseKit/UIKit (= 6.5.2)
+  - PromiseKit/CorePromise (6.5.2)
+  - PromiseKit/Foundation (6.5.2):
     - PromiseKit/CorePromise
-  - PromiseKit/QuartzCore (4.5.2):
-    - PromiseKit/CorePromise
-  - PromiseKit/UIKit (4.5.2):
+  - PromiseKit/UIKit (6.5.2):
     - PromiseKit/CorePromise
   - Realm (3.11.1):
     - Realm/Headers (= 3.11.1)
@@ -28,11 +23,10 @@ PODS:
 DEPENDENCIES:
   - DZNEmptyDataSet
   - Eureka
-  - FMDB
   - Kingfisher
-  - libHN (from `https://github.com/weiran/libHN`)
+  - libHN (from `https://github.com/weiran/libHN`, commit `6759f4ac591f5f36b01158260627ba0bf36eddc1`)
   - OpenGraph
-  - PromiseKit (~> 4.x)
+  - PromiseKit
   - RealmSwift
   - SkeletonView
 
@@ -40,7 +34,6 @@ SPEC REPOS:
   https://github.com/cocoapods/specs.git:
     - DZNEmptyDataSet
     - Eureka
-    - FMDB
     - Kingfisher
     - OpenGraph
     - PromiseKit
@@ -50,25 +43,25 @@ SPEC REPOS:
 
 EXTERNAL SOURCES:
   libHN:
+    :commit: 6759f4ac591f5f36b01158260627ba0bf36eddc1
     :git: https://github.com/weiran/libHN
 
 CHECKOUT OPTIONS:
   libHN:
-    :commit: ca79b491f594a851825db9bf0e99235b2863b71c
+    :commit: 6759f4ac591f5f36b01158260627ba0bf36eddc1
     :git: https://github.com/weiran/libHN
 
 SPEC CHECKSUMS:
   DZNEmptyDataSet: 9525833b9e68ac21c30253e1d3d7076cc828eaa7
   Eureka: 6d711cb30ca333b4bc893110285a722ae3840114
-  FMDB: 2ce00b547f966261cd18927a3ddb07cb6f3db82a
   Kingfisher: 868c1149679a7ab6869be118faa9b5aed154aaf0
   libHN: fe671e9d39466235239b793f1f0181baadb327b2
   OpenGraph: f3529e35045abd3b163f455278d4d866c0eb061b
-  PromiseKit: 743e497a5f505a470d3bbbf4ce0663c1268af0a4
+  PromiseKit: 27c1601bfb73405871b805bcb8cf7e55c4dad3db
   Realm: 037c5919b9ceb59d6beed5d3b031096856b119b3
   RealmSwift: c9580133e73ef40ed340401af2dbc9a5790dfea7
   SkeletonView: 041053e904504e7d8db83df166e599be75659fe1
 
-PODFILE CHECKSUM: b9e1320dfbea48889bbdb23cd7e89aec9320609a
+PODFILE CHECKSUM: f05e7e4f46292d7ead0bb70d0385112972e7914b
 
 COCOAPODS: 1.6.0.beta.1

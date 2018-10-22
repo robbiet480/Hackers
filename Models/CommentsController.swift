@@ -8,13 +8,14 @@
 
 import Foundation
 import UIKit
+import RealmSwift
 
 class CommentsController {
     var comments: [CommentModel]
     
     var visibleComments: [CommentModel] {
         get {
-            return comments.filter { $0.visibility != CommentVisibilityType.hidden }
+            return comments.filter { $0.Visibility != CommentModel.VisibilityType.Hidden }
         }
     }
     
@@ -26,14 +27,18 @@ class CommentsController {
         comments = source
     }
     
-    func toggleCommentChildrenVisibility(_ comment: CommentModel) -> ([IndexPath], CommentVisibilityType) {
-        let visible = comment.visibility == .visible
+    func toggleCommentChildrenVisibility(_ comment: CommentModel) -> ([IndexPath], CommentModel.VisibilityType) {
+        let visible = comment.Visibility == CommentModel.VisibilityType.Visible
         let visibleIndex = indexOfComment(comment, source: visibleComments)!
         let commentIndex = indexOfComment(comment, source: comments)!
         let childrenCount = countChildren(comment)
         var modifiedIndexPaths = [IndexPath]()
-        
-        comment.visibility = visible ? .compact : .visible
+
+        let realm = Realm.live()
+
+        try! realm.write {
+            comment.Visibility = visible ? .Compact : .Visible
+        }
         
         var currentIndex = visibleIndex + 1;
         
@@ -41,20 +46,23 @@ class CommentsController {
             for i in 1...childrenCount {
                 let currentComment = comments[commentIndex + i]
                 
-                if visible && currentComment.visibility == .hidden { continue }
-                
-                currentComment.visibility = visible ? .hidden : .visible
+                if visible && currentComment.Visibility == CommentModel.VisibilityType.Hidden { continue }
+
+                try! realm.write {
+                    currentComment.Visibility = visible ? CommentModel.VisibilityType.Hidden : CommentModel.VisibilityType.Visible
+                }
+
                 modifiedIndexPaths.append(IndexPath(row: currentIndex, section: 0))
                 currentIndex += 1
             }
         }
         
-        return (modifiedIndexPaths, visible ? .hidden : .visible)
+        return (modifiedIndexPaths, visible ? .Hidden : .Visible)
     }
     
     func indexOfComment(_ comment: CommentModel, source: [CommentModel]) -> Int? {
         for (index, value) in source.enumerated() {
-            if comment.commentID == value.commentID { return index }
+            if comment.ID == value.ID { return index }
         }
         return nil
     }
@@ -70,7 +78,7 @@ class CommentsController {
         
         for i in startIndex...comments.count - 1 {
             let currentComment = comments[i]
-            if currentComment.level > comment.level {
+            if currentComment.Level > comment.Level {
                 count += 1
             } else {
                 break

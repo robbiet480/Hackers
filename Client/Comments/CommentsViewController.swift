@@ -9,20 +9,13 @@
 import Foundation
 import UIKit
 import SafariServices
-import libHN
 import DZNEmptyDataSet
 import SkeletonView
 import RealmSwift
 
 class CommentsViewController : UIViewController {
-    var post: PostModel? {
-        didSet {
-            try! Realm.live().write {
-                post?.ReadAt = Date.init()
-            }
-        }
-    }
-    
+    var post: PostModel?
+
     var comments: [CommentModel]? {
         didSet { commentsController.comments = comments! }
     }
@@ -40,7 +33,15 @@ class CommentsViewController : UIViewController {
         setupTheming()
         setupPostTitleView()
         view.showAnimatedSkeleton(usingColor: AppThemeProvider.shared.currentTheme.skeletonColor)
-        loadComments()
+        // loadComments()
+
+        self.post?.MarkAsRead()
+
+        self.comments = self.post!.Comments.filter("TRUEPREDICATE").map { $0 }
+
+        self.view.hideSkeleton()
+        self.tableView.rowHeight = UITableView.automaticDimension
+        self.tableView.reloadData()
 
         let activity = NSUserActivity(activityType: "com.weiranzhang.Hackers.comments")
         activity.isEligibleForHandoff = true
@@ -88,10 +89,9 @@ class CommentsViewController : UIViewController {
     }
     
     func loadComments() {
-        // FIXME: THis is a dummy HNPost atm, needs to be a real one
-        HNManager.shared().loadComments(from: HNPost()) { comments in
+        HNManager.shared().loadComments(from: self.post?.OriginalPost) { comments in
             if let downcastedArray = comments as? [HNComment] {
-                let mappedComments = downcastedArray.map { CommentModel(source: $0) }
+                let mappedComments = downcastedArray.map { CommentModel($0) }
                 self.comments = mappedComments
             } else {
                 self.comments = [CommentModel]()
@@ -177,8 +177,8 @@ extension CommentsViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let comment = commentsController.visibleComments[indexPath.row]
-        assert(comment.visibility != CommentVisibilityType.hidden, "Cell cannot be hidden and in the array of visible cells")
-        let cellIdentifier = comment.visibility == CommentVisibilityType.visible ? "OpenCommentCell" : "ClosedCommentCell"
+        assert(comment.Visibility != CommentModel.VisibilityType.Hidden, "Cell cannot be hidden and in the array of visible cells")
+        let cellIdentifier = comment.Visibility == CommentModel.VisibilityType.Visible ? "OpenCommentCell" : "ClosedCommentCell"
         
         let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath) as! CommentTableViewCell
 
@@ -236,7 +236,7 @@ extension CommentsViewController: CommentDelegate {
         
         tableView.beginUpdates()
         tableView.reloadRows(at: [indexPath], with: .fade)
-        if visibility == CommentVisibilityType.hidden {
+        if visibility == CommentModel.VisibilityType.Hidden {
             tableView.deleteRows(at: modifiedIndexPaths, with: .top)
         } else {
             tableView.insertRows(at: modifiedIndexPaths, with: .top)

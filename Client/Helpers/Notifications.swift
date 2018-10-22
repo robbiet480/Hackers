@@ -10,6 +10,7 @@ import UIKit
 import Kingfisher
 import UserNotifications
 import MobileCoreServices.UTType
+import RealmSwift
 
 final class Notifications {
 
@@ -85,42 +86,25 @@ final class Notifications {
             return
         }
 
-        HNManager.shared()?.loadPosts(with: .top, completion: { (posts, nextPageIdentifier) in
-            if let posts = posts as? [HNPost] {
-                self.updateLocalNotificationCache(
-                    notifications: posts,
-                    showAlert: isLocalNotificationEnabled,
-                    completion: { changed in
-                        handler(changed ? .newData : .noData)
-                })
-            }
-        })
-    }
+        _ = HNUpdateManager.shared.loadAllPosts().done { _ in
+            let allPosts = Realm.live().objects(PostModel.self).filter("NotifiedAt == nil AND Points >= %d", 10)
+            if isLocalNotificationEnabled {
+                self.sendLocalPush(for: allPosts)
 
-    private lazy var localNotificationsCache = LocalNotificationsCache()
-
-    func updateLocalNotificationCache(
-        notifications: [HNPost],
-        showAlert: Bool,
-        completion: ((Bool) -> Void)? = nil
-        ) {
-        localNotificationsCache.update(notifications: notifications) { [weak self] filtered in
-            if showAlert {
-                self?.sendLocalPush(for: filtered)
+                handler(allPosts.count > 0 ? .newData : .noData)
             }
-            completion?(filtered.count > 0)
         }
     }
 
-    private func sendLocalPush(for notifications: [HNPost]) {
+    private func sendLocalPush(for notifications: Results<PostModel>) {
         let center = UNUserNotificationCenter.current()
         notifications.forEach { post in
             let content = UNMutableNotificationContent()
-            content.title = post.title!
+            content.title = post.Title
             content.body = post.LinkURL.host!.replacingOccurrences(of: "www.", with: "")
-            content.subtitle = post.points.description + " points, posted by " + post.username! + " " + post.timeCreatedString!
+            content.subtitle = post.Points.description + " points, posted by " + post.Username + " " + post.TimeCreatedString
             content.categoryIdentifier = "POST"
-            content.userInfo = ["POST_ID": post.postId!]
+            content.userInfo = ["POST_ID": post.ID]
 
             getAttachmentForPost(post, handler: { (attachment) in
                 if let attachment = attachment {
@@ -128,7 +112,7 @@ final class Notifications {
                 }
 
                 let request = UNNotificationRequest(
-                    identifier: post.postId!,
+                    identifier: post.ID.description,
                     content: content,
                     trigger: UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
                 )
@@ -137,15 +121,15 @@ final class Notifications {
         }
     }
 
-    func getAttachmentForPost(_ post: HNPost, handler: @escaping (UNNotificationAttachment?) -> Void) {
+    func getAttachmentForPost(_ post: PostModel, handler: @escaping (UNNotificationAttachment?) -> Void) {
         post.Thumbnail(true) { (image) in
             if image != nil {
                 let options = [UNNotificationAttachmentOptionsTypeHintKey: kUTTypePNG]
                 do {
-                    let attachment = try UNNotificationAttachment.init(identifier: post.postId!, url: post.ThumbnailFileURL, options: options as [NSObject: AnyObject])
+                    let attachment = try UNNotificationAttachment.init(identifier: post.ID.description, url: post.ThumbnailFileURL, options: options as [NSObject: AnyObject])
                     handler(attachment)
                 } catch let attachmentError {
-                    print("Error when building attachment", post.urlString, post.postId, post.ThumbnailFileURL, attachmentError)
+                    print("Error when building attachment", post.URLString, post.ID, post.ThumbnailFileURL, attachmentError)
                     handler(nil)
                 }
             }

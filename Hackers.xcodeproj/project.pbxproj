@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		240C5BE018D267C70011177A /* Icons.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 240C5BDF18D267C70011177A /* Icons.xcassets */; };
 		24191F8D1944C991003C0D98 /* CommentsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24191F8C1944C991003C0D98 /* CommentsController.swift */; };
-		241E8DAA1944AF870004F457 /* CommentModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 241E8DA91944AF870004F457 /* CommentModel.swift */; };
 		242A00D31D086927003D915B /* UIViewControllerSmoothlyDeselectCellExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 242A00D21D086927003D915B /* UIViewControllerSmoothlyDeselectCellExtension.swift */; };
 		243271951F95EDA9008196DB /* StringExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 243271941F95EDA9008196DB /* StringExtensions.swift */; };
 		24448F891FE7DFB800F85A28 /* ThumbnailFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24448F881FE7DFB800F85A28 /* ThumbnailFetcher.swift */; };
@@ -47,9 +46,9 @@
 		24F39F8D18AFB1150055F8DC /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 24F39F8C18AFB1150055F8DC /* UIKit.framework */; };
 		24F39F9B18AFB1150055F8DC /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 24F39F9A18AFB1150055F8DC /* Images.xcassets */; };
 		B63E78C4217C1C6300750131 /* UIFont+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B63E78C3217C1C6300750131 /* UIFont+Extensions.swift */; };
-		B6ECEB57217C5A4E00755239 /* HNPost+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6ECEB56217C5A4E00755239 /* HNPost+Extensions.swift */; };
+		B663E309217E43810062F6D9 /* Comment.swift in Sources */ = {isa = PBXBuildFile; fileRef = B663E308217E43810062F6D9 /* Comment.swift */; };
+		B663E30B217E54890062F6D9 /* HNUpdateManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B663E30A217E54890062F6D9 /* HNUpdateManager.swift */; };
 		B6ECEB59217CC4EA00755239 /* OpenInChromeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6ECEB58217CC4EA00755239 /* OpenInChromeController.swift */; };
-		B6ECEB5B217D133100755239 /* LocalNotificationsCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6ECEB5A217D133100755239 /* LocalNotificationsCache.swift */; };
 		B6ECEB5D217D16CF00755239 /* Notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6ECEB5C217D16CF00755239 /* Notifications.swift */; };
 		B6ECEB61217D54DD00755239 /* Post.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6ECEB60217D54DD00755239 /* Post.swift */; };
 		B6ECEB63217D64AE00755239 /* Realm+Initialization.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6ECEB62217D64AE00755239 /* Realm+Initialization.swift */; };
@@ -60,7 +59,6 @@
 		240C5BDF18D267C70011177A /* Icons.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Icons.xcassets; sourceTree = "<group>"; };
 		241387A51945A6E100D71220 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		24191F8C1944C991003C0D98 /* CommentsController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentsController.swift; sourceTree = "<group>"; };
-		241E8DA91944AF870004F457 /* CommentModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentModel.swift; sourceTree = "<group>"; };
 		242A00D21D086927003D915B /* UIViewControllerSmoothlyDeselectCellExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIViewControllerSmoothlyDeselectCellExtension.swift; sourceTree = "<group>"; };
 		243271941F95EDA9008196DB /* StringExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringExtensions.swift; sourceTree = "<group>"; };
 		24448F881FE7DFB800F85A28 /* ThumbnailFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThumbnailFetcher.swift; sourceTree = "<group>"; };
@@ -103,9 +101,9 @@
 		5B9C6ECB6751D2AF6D93515D /* Pods-Hackers.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Hackers.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Hackers/Pods-Hackers.debug.xcconfig"; sourceTree = "<group>"; };
 		9D41F6A856DA1B6671301AAD /* Pods-Hackers.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Hackers.release.xcconfig"; path = "Pods/Target Support Files/Pods-Hackers/Pods-Hackers.release.xcconfig"; sourceTree = "<group>"; };
 		B63E78C3217C1C6300750131 /* UIFont+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIFont+Extensions.swift"; sourceTree = "<group>"; };
-		B6ECEB56217C5A4E00755239 /* HNPost+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "HNPost+Extensions.swift"; sourceTree = "<group>"; };
+		B663E308217E43810062F6D9 /* Comment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Comment.swift; sourceTree = "<group>"; };
+		B663E30A217E54890062F6D9 /* HNUpdateManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HNUpdateManager.swift; sourceTree = "<group>"; };
 		B6ECEB58217CC4EA00755239 /* OpenInChromeController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenInChromeController.swift; sourceTree = "<group>"; };
-		B6ECEB5A217D133100755239 /* LocalNotificationsCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalNotificationsCache.swift; sourceTree = "<group>"; };
 		B6ECEB5C217D16CF00755239 /* Notifications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Notifications.swift; sourceTree = "<group>"; };
 		B6ECEB60217D54DD00755239 /* Post.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Post.swift; sourceTree = "<group>"; };
 		B6ECEB62217D64AE00755239 /* Realm+Initialization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Realm+Initialization.swift"; sourceTree = "<group>"; };
@@ -153,11 +151,10 @@
 				2464D210209DE7B100C7F8FC /* UIColor+Extensions.swift */,
 				2464D220209E2CDF00C7F8FC /* ThemedSafariViewController.swift */,
 				B63E78C3217C1C6300750131 /* UIFont+Extensions.swift */,
-				B6ECEB56217C5A4E00755239 /* HNPost+Extensions.swift */,
 				B6ECEB58217CC4EA00755239 /* OpenInChromeController.swift */,
-				B6ECEB5A217D133100755239 /* LocalNotificationsCache.swift */,
 				B6ECEB5C217D16CF00755239 /* Notifications.swift */,
 				B6ECEB62217D64AE00755239 /* Realm+Initialization.swift */,
+				B663E30A217E54890062F6D9 /* HNUpdateManager.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -213,9 +210,9 @@
 		24CE5FF219434E20009D2677 /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				241E8DA91944AF870004F457 /* CommentModel.swift */,
 				24191F8C1944C991003C0D98 /* CommentsController.swift */,
 				B6ECEB60217D54DD00755239 /* Post.swift */,
+				B663E308217E43810062F6D9 /* Comment.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -414,7 +411,6 @@
 				"${PODS_ROOT}/Target Support Files/Pods-Hackers/Pods-Hackers-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/DZNEmptyDataSet/DZNEmptyDataSet.framework",
 				"${BUILT_PRODUCTS_DIR}/Eureka/Eureka.framework",
-				"${BUILT_PRODUCTS_DIR}/FMDB/FMDB.framework",
 				"${BUILT_PRODUCTS_DIR}/Kingfisher/Kingfisher.framework",
 				"${BUILT_PRODUCTS_DIR}/OpenGraph/OpenGraph.framework",
 				"${BUILT_PRODUCTS_DIR}/PromiseKit/PromiseKit.framework",
@@ -427,7 +423,6 @@
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/DZNEmptyDataSet.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Eureka.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FMDB.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Kingfisher.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/OpenGraph.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/PromiseKit.framework",
@@ -462,13 +457,10 @@
 				24CEAA9B1F8916970050DEDF /* UIView+Extensions.swift in Sources */,
 				B6ECEB5D217D16CF00755239 /* Notifications.swift in Sources */,
 				24D6B8CA1C1EDBFC00618422 /* AppTheme.swift in Sources */,
-				B6ECEB57217C5A4E00755239 /* HNPost+Extensions.swift in Sources */,
 				245DCAB01CD4DA2A00152AA3 /* SFSafariViewController+PreviewActionItems.swift in Sources */,
 				2464D221209E2CDF00C7F8FC /* ThemedSafariViewController.swift in Sources */,
 				242A00D31D086927003D915B /* UIViewControllerSmoothlyDeselectCellExtension.swift in Sources */,
 				24B5BFEF1B52CE8900328C62 /* PostTitleView.swift in Sources */,
-				B6ECEB5B217D133100755239 /* LocalNotificationsCache.swift in Sources */,
-				241E8DAA1944AF870004F457 /* CommentModel.swift in Sources */,
 				2464D208209DD7B100C7F8FC /* AppThemeProvider.swift in Sources */,
 				24191F8D1944C991003C0D98 /* CommentsController.swift in Sources */,
 				24CEAA9D1F8917D60050DEDF /* ReviewController.swift in Sources */,
@@ -482,7 +474,9 @@
 				24DFD28C19436E51007F61E7 /* CommentsViewController.swift in Sources */,
 				24448F891FE7DFB800F85A28 /* ThumbnailFetcher.swift in Sources */,
 				B6ECEB63217D64AE00755239 /* Realm+Initialization.swift in Sources */,
+				B663E309217E43810062F6D9 /* Comment.swift in Sources */,
 				2464D206209DD27A00C7F8FC /* Theming.swift in Sources */,
+				B663E30B217E54890062F6D9 /* HNUpdateManager.swift in Sources */,
 				2454B9021F654DB2005A98C7 /* MainTabBarController.swift in Sources */,
 				243271951F95EDA9008196DB /* StringExtensions.swift in Sources */,
 				B6ECEB61217D54DD00755239 /* Post.swift in Sources */,

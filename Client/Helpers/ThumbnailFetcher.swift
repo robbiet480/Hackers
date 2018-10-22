@@ -15,8 +15,6 @@ extension UIImageView {
         let placeholderImage = UIImage(named: "ThumbnailPlaceholderIcon")?.withRenderingMode(.alwaysTemplate)
         self.image = placeholderImage
 
-        let realm = Realm.live()
-
         if post.LinkIsYCDomain {
             self.image = UIImage(named: "ycombinator-logo")!
         } else {
@@ -26,7 +24,6 @@ extension UIImageView {
                 let ref = ThreadSafeReference(to: post)
 
                 post.ThumbnailURL { (url) in
-                    print("Got thumb url", url)
                     if let url = url {
                         DispatchQueue.main.async {
                             self.kf.setImage(with: url)
@@ -42,23 +39,5 @@ extension UIImageView {
                 }
             }
         }
-
-//        if post.LinkIsYCDomain {
-//            self.image = UIImage(named: "ycombinator-logo")!
-//        } else {
-//            try! realm.write {
-//                post.ThumbnailImageResource { (resource) in
-//                    if let ir = resource {
-//                        DispatchQueue.main.async {
-//                            self.kf.setImage(with: ir, placeholder: placeholderImage, completionHandler: { (_, error, _, _) in
-//                                if error == nil {
-//                                    self.backgroundColor = .clear
-//                                }
-//                            })
-//                        }
-//                    }
-//                }
-//            }
-//        }
     }
 }

@@ -9,8 +9,6 @@
 import Foundation
 import UIKit
 import SafariServices
-import libHN
-import PromiseKit
 import SkeletonView
 import Kingfisher
 import RealmSwift
@@ -19,15 +17,9 @@ class NewsViewController : UIViewController {
     @IBOutlet weak var tableView: UITableView!
     private var refreshControl: UIRefreshControl!
 
-    var posts: [PostModel] = [PostModel]() {
-        didSet {
-            let realm = Realm.live()
-            try! realm.write {
-                let filteredPosts = self.posts.filter({ $0.Type != PostType.jobs })
-                realm.add(filteredPosts, update: true)
-            }
-        }
-    }
+    var notificationToken: NotificationToken? = nil
+
+    var posts: Results<PostModel>?
     var postType: PostFilterType! = .top
     
     private var peekedIndexPath: IndexPath?
@@ -35,10 +27,40 @@ class NewsViewController : UIViewController {
     
     private var cancelFetch: (() -> Void)?
 
-    private var notifiedPostID: String?
+    private var notifiedPostID: Int?
     
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        let realm = Realm.live()
+        self.posts = realm.objects(PostModel.self).filter("Type == %@", self.postType.rawValue)
+
+        notificationToken = self.posts!.observe { [weak self] (changes: RealmCollectionChange) in
+            guard let tableView = self?.tableView else { return }
+            guard let view = self?.view else { return }
+            switch changes {
+            case .initial:
+                // Results are now populated and can be accessed without blocking the UI
+                view.hideSkeleton()
+                tableView.rowHeight = UITableView.automaticDimension
+                tableView.estimatedRowHeight = UITableView.automaticDimension
+                tableView.reloadData()
+                tableView.refreshControl?.endRefreshing()
+            case .update(_, _, let insertions, let modifications):
+                // Query results have changed, so apply them to the UITableView
+                tableView.beginUpdates()
+                tableView.insertRows(at: insertions.map({ IndexPath(row: $0, section: 0) }),
+                                     with: .automatic)
+                tableView.reloadRows(at: modifications.map({ IndexPath(row: $0, section: 0) }),
+                                     with: .automatic)
+                tableView.endUpdates()
+
+                view.hideSkeleton()
+            case .error(let error):
+                // An error occurred while opening the Realm file on the background worker thread
+                fatalError("\(error)")
+            }
+        }
 
         registerForPreviewing(with: self, sourceView: tableView)
 
@@ -49,7 +71,6 @@ class NewsViewController : UIViewController {
         setupTheming()
         
         view.showAnimatedSkeleton(usingColor: AppThemeProvider.shared.currentTheme.skeletonColor)
-        loadPosts()
 
         NotificationCenter.default.addObserver(self, selector: #selector(NewsViewController.openPostNotification(_:)), name: NSNotification.Name(rawValue: "notificationOpenPost"), object: nil)
     }
@@ -87,7 +108,7 @@ class NewsViewController : UIViewController {
     @objc func openPostNotification(_ notification: Notification) {
         print("Received notification!", notification)
 
-        if let postID = notification.userInfo?["POST_ID"] as? String {
+        if let postID = notification.userInfo?["POST_ID"] as? Int {
             print("Open post id!")
 
             self.notifiedPostID = postID
@@ -95,91 +116,45 @@ class NewsViewController : UIViewController {
             self.performSegue(withIdentifier: "ShowComments", sender: self)
         }
     }
-}
 
-extension NewsViewController { // post fetching
-    @objc func loadPosts() {
-        // cancel existing fetches
-        if let cancelFetch = cancelFetch {
-            cancelFetch()
-            self.cancelFetch = nil
-        }
-        
-        // fetch new posts
-        let (fetchPromise, cancel) = fetch()
-        fetchPromise.then {
-            (posts, nextPageIdentifier) -> Void in
-                self.posts = posts ?? [PostModel]()
-                self.nextPageIdentifier = nextPageIdentifier
-                self.view.hideSkeleton()
-                self.tableView.rowHeight = UITableView.automaticDimension
-                self.tableView.estimatedRowHeight = UITableView.automaticDimension
-                self.tableView.reloadData()
-            }.always {
-                self.view.hideSkeleton()
-                self.tableView.refreshControl?.endRefreshing()
-        }
-        
-        cancelFetch = cancel
-    }
-    
-    func fetch() -> (Promise<([PostModel]?, String?)>, cancel: () -> Void) {
-        var cancelMe = false
-        var cancel: () -> Void = { }
-        
-        let promise = Promise<([PostModel]?, String?)> { fulfill, reject in
-            cancel = {
-                cancelMe = true
-                reject(NSError.cancelledError())
-            }
-            HNManager.shared().loadPosts(with: postType) { posts, nextPageIdentifier in
-                guard !cancelMe else {
-                    reject(NSError.cancelledError())
-                    return
-                }
-                if let posts = posts as? [HNPost] {
-                    let postModels = posts.map({ PostModel($0) })
-                    fulfill((postModels, nextPageIdentifier))
-                }
-            }
-        }
-        
-        return (promise, cancel)
-    }
-    
-    func loadMorePosts() {
-        guard let nextPageIdentifier = nextPageIdentifier else { return }
-        self.nextPageIdentifier = nil
-        HNManager.shared().loadPosts(withUrlAddition: nextPageIdentifier) { posts, nextPageIdentifier in
-            guard let downcastedArray = posts as? [HNPost] else { return }
-            self.nextPageIdentifier = nextPageIdentifier
-            self.posts.append(contentsOf: downcastedArray.map({ PostModel($0) }))
-            self.tableView.reloadData()
-        }
-    }
-    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "ShowComments" {
             if let notifiedPostID = self.notifiedPostID, let segueNavigationController = segue.destination as? UINavigationController,
                 let commentsViewController = segueNavigationController.topViewController as? CommentsViewController {
 
+                self.notifiedPostID = nil
+
                 let realm = Realm.live()
-                let post = realm.object(ofType: PostModel.self, forPrimaryKey: Int(string: notifiedPostID)!)
+                let post = realm.object(ofType: PostModel.self, forPrimaryKey: notifiedPostID)
                 commentsViewController.post = post
             } else if let indexPath = tableView.indexPathForSelectedRow,
                 let segueNavigationController = segue.destination as? UINavigationController,
                 let commentsViewController = segueNavigationController.topViewController as? CommentsViewController {
         
-                let post = posts[indexPath.row]
+                let post = posts![indexPath.row]
                 commentsViewController.post = post
             }
+        }
+    }
+
+    @objc func loadPosts() {
+        _ = HNUpdateManager.shared.loadPostsForType(self.postType).done { newPosts in
+            print("Done and got new posts:", newPosts.count)
+            self.view.hideSkeleton()
+            self.tableView.rowHeight = UITableView.automaticDimension
+            self.tableView.estimatedRowHeight = UITableView.automaticDimension
+            self.tableView.reloadData()
+            self.tableView.refreshControl?.endRefreshing()
         }
     }
 }
 
 extension NewsViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return posts.count
+        if let posts = self.posts {
+            return posts.count
+        }
+        return 0
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -188,7 +163,7 @@ extension NewsViewController: UITableViewDataSource {
         cell.delegate = self
         cell.clearImage()
 
-        let post = posts[indexPath.row]
+        let post = posts![indexPath.row]
         cell.post = post
         cell.postTitleView.post = post
         cell.postTitleView.delegate = self
@@ -199,7 +174,7 @@ extension NewsViewController: UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let post = posts[indexPath.row]
+        let post = posts![indexPath.row]
         if post.Type == .jobs { // Job posts don't have comments, so lets go straight to the link
             if let vc = UserDefaults.standard.openInBrowser(post.LinkURL) {
                 self.present(vc, animated: true, completion: nil)
@@ -218,8 +193,8 @@ extension NewsViewController: UITableViewDataSource {
 
 extension NewsViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        if indexPath.row == posts.count - 5 {
-            loadMorePosts()
+        if indexPath.row == posts!.count - 5 {
+            HNUpdateManager.shared.loadMorePosts(self.postType)
         }
     }
 }
@@ -241,8 +216,8 @@ extension NewsViewController: SkeletonTableViewDataSource {
 
 extension NewsViewController: UIViewControllerPreviewingDelegate, SFSafariViewControllerPreviewActionItemsDelegate {
     func previewingContext(_ previewingContext: UIViewControllerPreviewing, viewControllerForLocation location: CGPoint) -> UIViewController? {
-        guard let indexPath = tableView.indexPathForRow(at: location), posts.count > indexPath.row else { return nil }
-        let post = posts[indexPath.row]
+        guard let indexPath = tableView.indexPathForRow(at: location), posts!.count > indexPath.row else { return nil }
+        let post = posts![indexPath.row]
         if verifyLink(post.LinkURL.description) {
             peekedIndexPath = indexPath
             previewingContext.sourceRect = tableView.rectForRow(at: indexPath)
@@ -255,7 +230,7 @@ extension NewsViewController: UIViewControllerPreviewingDelegate, SFSafariViewCo
     
     func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController) {
 
-        let post = posts[self.peekedIndexPath!.row]
+        let post = posts![self.peekedIndexPath!.row]
         if let safariViewController = UserDefaults.standard.openInBrowser(post.LinkURL) {
             safariViewController.onDoneBlock = { _ in
                 self.userActivity = nil
@@ -267,8 +242,8 @@ extension NewsViewController: UIViewControllerPreviewingDelegate, SFSafariViewCo
     
     func safariViewControllerPreviewActionItems(_ controller: SFSafariViewController) -> [UIPreviewActionItem] {
         let indexPath = self.peekedIndexPath!
-        let post = posts[indexPath.row]
-        let commentsPreviewActionTitle = post.CommentCount > 0 ? "View \(post.CommentCount) comments" : "View comments"
+        let post = posts![indexPath.row]
+        let commentsPreviewActionTitle = post.Comments.count > 0 ? "View \(post.Comments.count) comments" : "View comments"
         
         let viewCommentsPreviewAction = UIPreviewAction(title: commentsPreviewActionTitle, style: .default) {
             [unowned self, indexPath = indexPath] (action, viewController) -> Void in
@@ -311,7 +286,7 @@ extension NewsViewController: PostCellDelegate {
         guard let tapGestureRecognizer = sender as? UITapGestureRecognizer else { return }
         let point = tapGestureRecognizer.location(in: tableView)
         if let indexPath = tableView.indexPathForRow(at: point) {
-            let post = posts[indexPath.row]
+            let post = posts![indexPath.row]
             didPressLinkButton(post)
         }
     }

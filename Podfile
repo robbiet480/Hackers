@@ -5,11 +5,10 @@ inhibit_all_warnings!
 target 'Hackers' do
   pod 'DZNEmptyDataSet'
   pod 'Eureka'
-  pod 'FMDB'
   pod 'Kingfisher'
-  pod 'libHN', :git => 'https://github.com/weiran/libHN'
+  pod 'libHN', :git => 'https://github.com/weiran/libHN', :commit => '6759f4ac591f5f36b01158260627ba0bf36eddc1'
   pod 'OpenGraph'
-  pod 'PromiseKit', '~> 4.x'
+  pod 'PromiseKit'
   pod 'RealmSwift'
   pod 'SkeletonView'
 end

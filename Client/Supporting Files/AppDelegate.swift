@@ -14,7 +14,7 @@ import UserNotifications
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
-
+    
     func applicationDidFinishLaunching(_ application: UIApplication) {
         HNManager.shared().startSession()
         ReviewController.incrementLaunchCounter()
@@ -25,6 +25,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         KingfisherManager.shared.cache.pathExtension = "png"
         KingfisherManager.shared.defaultOptions = [.cacheSerializer(FormatIndicatedCacheSerializer.png), .keepCurrentImageWhileLoading]
+
+        print("Realm is stored at", Realm.live().configuration.fileURL?.description)
     }
     
     private func setAppTheme() {
@@ -47,15 +49,41 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
 
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
 
-        if let postID = response.notification.request.content.userInfo["POST_ID"] as? String {
-            print("Open post ID", postID)
+        print("Handling didReceive!")
 
-            let userInfo = ["POST_ID":postID]
-            NotificationCenter.default.post(name: Notification.Name(rawValue: "notificationOpenPost"), object: self, userInfo: userInfo)
+        let actionIdentifier = response.actionIdentifier
+        let content = response.notification.request.content
 
-            //                    self.window!.rootViewController = UINavigationController(rootViewController: YourController(yourMember: something))
+        print("didReceive identifier", actionIdentifier)
+
+        switch actionIdentifier {
+        case UNNotificationDismissActionIdentifier: // Notification was dismissed by user
+            // Do something
+            print("Dismiss action identifier didReceive!")
+            completionHandler()
+        case UNNotificationDefaultActionIdentifier: // App was opened from notification
+            // Do something
+            print("Default action identifier didReceive!")
+            if let postID = content.userInfo["POST_ID"] as? Int {
+                print("Open post ID", postID)
+
+                let userInfo = ["POST_ID":postID]
+                NotificationCenter.default.post(name: Notification.Name(rawValue: "notificationOpenPost"), object: self, userInfo: userInfo)
+
+            }
+            completionHandler()
+//        case "com.usernotificationstutorial.reply":
+//            if let textResponse = response as? UNTextInputNotificationResponse {
+//                let reply = textResponse.userText
+//                // Send reply message
+//                completionHandler()
+//            }
+//        case "com.usernotificationstutorial.delete":
+//            // Delete message
+//            completionHandler()
+        default:
+            print("Some other action identifier received", actionIdentifier)
+            completionHandler()
         }
-
-        completionHandler()
     }
 }

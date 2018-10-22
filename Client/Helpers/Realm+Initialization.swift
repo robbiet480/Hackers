@@ -41,8 +41,6 @@ extension Realm {
         let config = Realm.Configuration(fileURL: storeURL, schemaVersion: 4,
                                          migrationBlock: nil, deleteRealmIfMigrationNeeded: true)
 
-        print("Realm is stored at", storeURL)
-
         // swiftlint:disable:next force_try
         return try! Realm(configuration: config)
     }

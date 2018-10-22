@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import libHN
 
 protocol PostTitleViewDelegate {
     func didPressLinkButton(_ post: PostModel)
@@ -66,7 +65,7 @@ class PostTitleView: UIView, UIGestureRecognizerDelegate {
         
         string.append(NSAttributedString(string: post.Points.description))
         string.append(pointsIconAttributedString)
-        string.append(NSAttributedString(string: "• \(post.CommentCount)"))
+        string.append(NSAttributedString(string: "• \(post.Comments.count)"))
         string.append(commentsIconAttributedString)
         if let domainText = domainLabelText(for: post), domainText != "news.ycombinator.com" {
             string.append(NSAttributedString(string: " • \(domainText)"))

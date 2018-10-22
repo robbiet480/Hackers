@@ -15,7 +15,6 @@ class PostModel: Object {
     @objc dynamic var `Type`: PostType = .default
     @objc dynamic var Username: String = ""
     @objc dynamic var URLString: String = ""
-    @objc dynamic var URLDomain: String = ""
     @objc dynamic var Title: String = ""
     @objc dynamic var Points: Int = 0
     @objc dynamic var CommentCount: Int = 0
@@ -31,6 +30,8 @@ class PostModel: Object {
 
     @objc dynamic var ThumbnailURLString: String = ""
 
+    let Comments = LinkingObjects(fromType: CommentModel.self, property: "Post")
+
     override static func primaryKey() -> String? {
         return "ID"
     }
@@ -41,13 +42,35 @@ class PostModel: Object {
         self.`Type` = post.type
         self.Username = post.username
         self.URLString = post.urlString
-        self.URLDomain = post.urlDomain
         self.Title = post.title
         self.Points = Int(post.points)
         self.CommentCount = Int(post.commentCount)
         self.ID = Int(string: post.postId)!
         self.TimeCreatedString = post.timeCreatedString
         self.UpvoteURLAddition = post.upvoteURLAddition
+    }
+
+    func MarkAsRead() {
+        let realm = Realm.live()
+        
+        try! realm.write {
+            self.ReadAt = Date()
+        }
+    }
+
+    var OriginalPost: HNPost {
+        let newPost = HNPost()
+        newPost.type = self.`Type`
+        newPost.username = self.Username
+        newPost.urlString = self.URLString
+        newPost.title = self.Title
+        newPost.points = Int32(self.Points)
+        newPost.commentCount = Int32(self.CommentCount)
+        newPost.postId = self.ID.description
+        newPost.timeCreatedString = self.TimeCreatedString
+        newPost.upvoteURLAddition = self.UpvoteURLAddition
+
+        return newPost
     }
 
     var LinkURL: URL {
