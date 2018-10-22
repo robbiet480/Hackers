@@ -10,9 +10,10 @@ import Foundation
 import RealmSwift
 import Kingfisher
 import OpenGraph
+import HNScraper
 
 class PostModel: Object {
-    @objc dynamic var `Type`: PostType = .default
+    @objc dynamic var `Type`: Int = HNPost.PostType.defaultType.hashValue
     @objc dynamic var Username: String = ""
     @objc dynamic var URLString: String = ""
     @objc dynamic var Title: String = ""
@@ -39,20 +40,29 @@ class PostModel: Object {
     convenience init(_ post: HNPost) {
         self.init()
 
-        self.`Type` = post.type
+        if let intID = Int(string: post.id) {
+            self.ID = intID
+        } else {
+            print("Unable to cast string ID to int", post.id, post)
+        }
+
+        self.`Type` = post.type.hashValue
         self.Username = post.username
-        self.URLString = post.urlString
+        if let url = post.url {
+            self.URLString = url.absoluteString
+        }
         self.Title = post.title
         self.Points = Int(post.points)
         self.CommentCount = Int(post.commentCount)
-        self.ID = Int(string: post.postId)!
-        self.TimeCreatedString = post.timeCreatedString
-        self.UpvoteURLAddition = post.upvoteURLAddition
+        self.TimeCreatedString = post.time
+        if let upvoteAdditionURL = post.upvoteAdditionURL {
+            self.UpvoteURLAddition = upvoteAdditionURL
+        }
     }
 
     func MarkAsRead() {
         let realm = Realm.live()
-        
+
         try! realm.write {
             self.ReadAt = Date()
         }
@@ -60,15 +70,15 @@ class PostModel: Object {
 
     var OriginalPost: HNPost {
         let newPost = HNPost()
-        newPost.type = self.`Type`
+        newPost.type = HNPost.PostType(index: self.`Type`)!
         newPost.username = self.Username
-        newPost.urlString = self.URLString
+        newPost.url = self.LinkURL
         newPost.title = self.Title
-        newPost.points = Int32(self.Points)
-        newPost.commentCount = Int32(self.CommentCount)
-        newPost.postId = self.ID.description
-        newPost.timeCreatedString = self.TimeCreatedString
-        newPost.upvoteURLAddition = self.UpvoteURLAddition
+        newPost.points = self.Points
+        newPost.commentCount = self.CommentCount
+        newPost.id = self.ID.description
+        newPost.time = self.TimeCreatedString
+        newPost.upvoteAdditionURL = self.UpvoteURLAddition
 
         return newPost
     }

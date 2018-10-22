@@ -8,15 +8,14 @@
 
 import Foundation
 import RealmSwift
-import libHN
 import PromiseKit
+import HNScraper
 
 class HNUpdateManager {
     static let shared = HNUpdateManager()
 
     private var notificationToken: NotificationToken? = nil
     private var nextPageIdentifiers: [Int: String] = [:]
-    private var SharedHNManager: HNManager = HNManager.shared()!
 
     init() {
         _ = self.loadAllPosts()
@@ -46,7 +45,7 @@ class HNUpdateManager {
     func loadAllPosts() -> Promise<[PostModel]> {
         // FIXME: add .ask and .jobs once the ID is fixed...
         return firstly {
-            return when(fulfilled: [getPostsForType(.new), getPostsForType(.top), getPostsForType(.ask)]).map { Array($0.joined()) }
+            return when(fulfilled: [getPostsForType(.new), getPostsForType(.news), getPostsForType(.asks), getPostsForType(.jobs)]).map { Array($0.joined()) }
         }.then { posts -> Promise<[PostModel]> in
             print("All done with storing posts and thumbnails!", posts)
 
@@ -60,7 +59,7 @@ class HNUpdateManager {
         }
     }
 
-    func loadPostsForType(_ pType: PostFilterType) -> Promise<[PostModel]> {
+    func loadPostsForType(_ pType: HNScraper.PostListPageName) -> Promise<[PostModel]> {
         return firstly {
             getPostsForType(pType)
         }.then { posts -> Promise<[PostModel]> in
@@ -76,17 +75,17 @@ class HNUpdateManager {
         }
     }
 
-    func loadMorePosts(_ pType: PostFilterType) -> Promise<[PostModel]> {
-        guard let nextPageIdentifier = self.nextPageIdentifiers[pType.rawValue] else {
+    func loadMorePosts(_ pType: HNScraper.PostListPageName) -> Promise<[PostModel]> {
+        guard let nextPageIdentifier = self.nextPageIdentifiers[pType.hashValue] else {
             return Promise.init(error: NSError(domain: "com.weiranzhang.Hackers", code: 999, userInfo: nil))
         }
 
-        self.nextPageIdentifiers[pType.rawValue] = nil
+        self.nextPageIdentifiers[pType.hashValue] = nil
 
         return firstly {
             getPostsForPage(pType, nextPageIdentifier)
         }.then { posts -> Promise<[PostModel]> in
-            self.nextPageIdentifiers[pType.rawValue] = nextPageIdentifier
+            self.nextPageIdentifiers[pType.hashValue] = nextPageIdentifier
             print("All done with storing new page of posts and thumbnails!", posts)
 
             let realm = Realm.live()
@@ -99,7 +98,7 @@ class HNUpdateManager {
         }
     }
 
-    private func getPostsForType(_ pType: PostFilterType) -> Promise<[PostModel]> {
+    private func getPostsForType(_ pType: HNScraper.PostListPageName) -> Promise<[PostModel]> {
         return firstly {
             getPostsForTypePromise(pType)
         }.thenMap { post in
@@ -111,7 +110,7 @@ class HNUpdateManager {
         }
     }
 
-    private func getPostsForPage(_ pType: PostFilterType, _ pageIdentifier: String) -> Promise<[PostModel]> {
+    private func getPostsForPage(_ pType: HNScraper.PostListPageName, _ pageIdentifier: String) -> Promise<[PostModel]> {
         return firstly {
             getPostsForPagePromise(pType, pageIdentifier)
         }.thenMap { post in
@@ -123,29 +122,34 @@ class HNUpdateManager {
         }
     }
 
-    private func getPostsForTypePromise(_ pType: PostFilterType) -> Promise<[HNPost]> {
+    private func getPostsForTypePromise(_ pType: HNScraper.PostListPageName) -> Promise<[HNPost]> {
         return Promise { seal in
-            SharedHNManager.loadPosts(with: pType, completion: { (posts, nextPageIdentifier) in
+            HNScraper.shared.getPostsList(page: pType, completion: { (posts, nextPageIdentifier, error) in
+                if let error = error {
+                    seal.reject(error)
+                    return
+                }
                 if let npi = nextPageIdentifier {
-                    self.nextPageIdentifiers[pType.rawValue] = npi
+                    self.nextPageIdentifiers[pType.hashValue] = npi
                 }
-                if let posts = posts as? [HNPost] {
-                    seal.fulfill(posts)
-                }
+                seal.fulfill(posts)
             })
         }
     }
 
-    private func getPostsForPagePromise(_ pType: PostFilterType, _ pageIdentifier: String) -> Promise<[HNPost]> {
+    private func getPostsForPagePromise(_ pType: HNScraper.PostListPageName, _ pageIdentifier: String) -> Promise<[HNPost]> {
         return Promise { seal in
-            SharedHNManager.loadPosts(withUrlAddition: pageIdentifier, completion: { (posts, nextPageIdentifier) in
+            HNScraper.shared.getMoreItems(linkForMore: pageIdentifier, completionHandler: { (posts, nextPageIdentifier, error) in
+                if let error = error {
+                    seal.reject(error)
+                    return
+                }
+                
                 if let npi = nextPageIdentifier {
-                    self.nextPageIdentifiers[pType.rawValue] = npi
+                    self.nextPageIdentifiers[pType.hashValue] = npi
                 }
 
-                if let posts = posts as? [HNPost] {
-                    seal.fulfill(posts)
-                }
+                seal.fulfill(posts)
             })
         }
     }
@@ -163,18 +167,16 @@ class HNUpdateManager {
 
     func loadComments(_ post: HNPost) -> Promise<HNPost> {
         return Promise { seal in
-            SharedHNManager.loadComments(from: post) { comments in
-                if let downcastedArray = comments as? [HNComment] {
-                    let mappedComments = downcastedArray.map { CommentModel($0, PostModel(post)) }
+            HNScraper.shared.getComments(ByPostId: post.id, completion: { (_, comments, error) in
+                let mappedComments = comments.map { CommentModel($0, PostModel(post)) }
 
-                    let realm = Realm.live()
-                    try! realm.write {
-                        realm.add(mappedComments, update: true)
-                    }
-
-                    seal.fulfill(post)
+                let realm = Realm.live()
+                try! realm.write {
+                    realm.add(mappedComments, update: true)
                 }
-            }
+
+                seal.fulfill(post)
+            })
         }
     }
 

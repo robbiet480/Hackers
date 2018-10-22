@@ -10,10 +10,11 @@ import Foundation
 import RealmSwift
 import Kingfisher
 import OpenGraph
+import HNScraper
 
 class CommentModel: Object {
     @objc dynamic var Post: PostModel?
-    @objc dynamic var `Type`: HNCommentType = .default
+    @objc dynamic var `Type`: Int = HNComment.HNCommentType.defaultType.hashValue
     @objc dynamic var Text: String = ""
     @objc dynamic var Username: String = ""
     @objc dynamic var ID: Int = 0
@@ -21,7 +22,7 @@ class CommentModel: Object {
     @objc dynamic var TimeCreatedString: String = ""
     @objc dynamic var ReplyURLString: String = ""
     @objc dynamic var Level: Int = 0
-    let Links = List<CommentLink>()
+    let Links = List<String>()
     @objc dynamic var UpvoteURLAddition: String = ""
     @objc dynamic var DownvoteURLAddition: String = ""
     @objc dynamic var Visibility: VisibilityType = .Visible
@@ -43,43 +44,42 @@ class CommentModel: Object {
     convenience init(_ comment: HNComment, _ post: PostModel? = nil) {
         self.init()
 
-        if let strCommentID = comment.commentId, let commentID = Int(string: strCommentID) {
+        if let strCommentID = comment.id, let commentID = Int(string: strCommentID) {
             self.ID = commentID
         } else {
             print("No comment ID for a comment in post!", post)
-            print("Comment ID", comment, comment.commentId)
+            print("Comment ID", comment, comment.id)
             return
         }
-
 
         if let post = post {
             self.Post = post
         }
 
-        self.`Type` = comment.type
-        self.Text = comment.text
+        self.`Type` = comment.type.hashValue
+        self.Text = comment.text.htmlDecoded
         self.Username = comment.username
-        if let parentID = comment.parentID {
+        if let parentID = comment.parentId {
             self.ParentID.value = Int(string: parentID)
         }
-        self.TimeCreatedString = comment.timeCreatedString
+        self.TimeCreatedString = comment.created
 
-        if let replyURLString = comment.replyURLString {
+        if let replyURLString = comment.replyUrl {
             self.ReplyURLString = replyURLString
         } else {
             print("No reply URL string for comment", comment, self.ID)
         }
 
         self.Level = Int(comment.level)
-        if let upvoteURLAddition = comment.upvoteURLAddition {
+        if let upvoteURLAddition = comment.upvoteUrl {
             self.UpvoteURLAddition = upvoteURLAddition
         }
-        if let downvoteURLAddition = comment.downvoteURLAddition {
+        if let downvoteURLAddition = comment.downvoteUrl {
             self.DownvoteURLAddition = downvoteURLAddition
         }
 
-        if let links = comment.links as? [HNCommentLink] {
-            self.Links.append(objectsIn: links.map({ CommentLink($0) }))
+        if let links = comment.links as? [String] {
+            self.Links.append(objectsIn: links.map({ $0 }))
         }
     }
 
@@ -99,16 +99,4 @@ class CommentModel: Object {
         return UIActivityViewController(activityItems: [self.PageTitle, self.Link], applicationActivities: nil)
     }
 
-}
-
-class CommentLink: Object {
-    @objc dynamic var URLString: String = ""
-    @objc dynamic var HNLink: Bool = false
-
-    convenience init(_ commentLink: HNCommentLink) {
-        self.init()
-
-        self.URLString = commentLink.url.description
-        self.HNLink = commentLink.type == .HN
-    }
 }

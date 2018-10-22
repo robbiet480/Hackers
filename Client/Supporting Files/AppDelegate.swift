@@ -6,27 +6,34 @@
 //  Copyright (c) 2014 Glass Umbrella. All rights reserved.
 //
 
-import libHN
 import Kingfisher
 import RealmSwift
 import UserNotifications
+import HNScraper
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
     
     func applicationDidFinishLaunching(_ application: UIApplication) {
-        HNManager.shared().startSession()
         ReviewController.incrementLaunchCounter()
         ReviewController.requestReview()
         setAppTheme()
         UIFont.overrideInitialize()
         UNUserNotificationCenter.current().delegate = self
 
+        HNParseConfig.shared.forceRedownload { (error) in
+            if let error = error {
+                print("Error while downloading hn.json", error)
+            } else {
+                print("Downloaded hn.json")
+            }
+        }
+
         KingfisherManager.shared.cache.pathExtension = "png"
         KingfisherManager.shared.defaultOptions = [.cacheSerializer(FormatIndicatedCacheSerializer.png), .keepCurrentImageWhileLoading]
 
-        print("Realm is stored at", Realm.live().configuration.fileURL?.description)
+        print("Realm is stored at", Realm.live().configuration.fileURL!.description)
     }
     
     private func setAppTheme() {

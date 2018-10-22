@@ -20,23 +20,6 @@ extension UIImageView {
         } else {
             if let ir = post.ThumbnailImageResource {
                 self.kf.setImage(with: ir)
-            } else {
-                let ref = ThreadSafeReference(to: post)
-
-                post.ThumbnailURL { (url) in
-                    if let url = url {
-                        DispatchQueue.main.async {
-                            self.kf.setImage(with: url)
-                        }
-                        let realm = Realm.live()
-                        guard let post = realm.resolve(ref) else {
-                            return // post was deleted
-                        }
-                        try! realm.write {
-                            post.ThumbnailURLString = url.description
-                        }
-                    }
-                }
             }
         }
     }

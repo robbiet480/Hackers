@@ -12,6 +12,7 @@ import SafariServices
 import SkeletonView
 import Kingfisher
 import RealmSwift
+import HNScraper
 
 class NewsViewController : UIViewController {
     @IBOutlet weak var tableView: UITableView!
@@ -20,7 +21,7 @@ class NewsViewController : UIViewController {
     var notificationToken: NotificationToken? = nil
 
     var posts: Results<PostModel>?
-    var postType: PostFilterType! = .top
+    var postType: HNScraper.PostListPageName = .news
     
     private var peekedIndexPath: IndexPath?
     private var nextPageIdentifier: String?
@@ -33,7 +34,7 @@ class NewsViewController : UIViewController {
         super.viewDidLoad()
 
         let realm = Realm.live()
-        self.posts = realm.objects(PostModel.self).filter("Type == %@", self.postType.rawValue)
+        self.posts = realm.objects(PostModel.self).filter("Type == %@", self.postType.hashValue)
 
         notificationToken = self.posts!.observe { [weak self] (changes: RealmCollectionChange) in
             guard let tableView = self?.tableView else { return }
@@ -175,7 +176,7 @@ extension NewsViewController: UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let post = posts![indexPath.row]
-        if post.Type == .jobs { // Job posts don't have comments, so lets go straight to the link
+        if post.Type == HNPost.PostType.jobs.hashValue { // Job posts don't have comments, so lets go straight to the link
             if let vc = UserDefaults.standard.openInBrowser(post.LinkURL) {
                 self.present(vc, animated: true, completion: nil)
             }

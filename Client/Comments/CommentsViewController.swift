@@ -89,18 +89,18 @@ class CommentsViewController : UIViewController {
     }
     
     func loadComments() {
-        HNManager.shared().loadComments(from: self.post?.OriginalPost) { comments in
-            if let downcastedArray = comments as? [HNComment] {
-                let mappedComments = downcastedArray.map { CommentModel($0) }
-                self.comments = mappedComments
-            } else {
-                self.comments = [CommentModel]()
-            }
-            
-            self.view.hideSkeleton()
-            self.tableView.rowHeight = UITableView.automaticDimension
-            self.tableView.reloadData()
-        }
+//        HNManager.shared().loadComments(from: self.post?.OriginalPost) { comments in
+//            if let downcastedArray = comments as? [HNComment] {
+//                let mappedComments = downcastedArray.map { CommentModel($0) }
+//                self.comments = mappedComments
+//            } else {
+//                self.comments = [CommentModel]()
+//            }
+//            
+//            self.view.hideSkeleton()
+//            self.tableView.rowHeight = UITableView.automaticDimension
+//            self.tableView.reloadData()
+//        }
     }
     
     func setupPostTitleView() {
