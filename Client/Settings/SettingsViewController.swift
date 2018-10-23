@@ -11,6 +11,8 @@ import Eureka
 import ContextMenu
 
 class SettingsViewController: FormViewController {
+    let autoBrightnessFooterText = "The theme will automatically change based on your display brightness. You can set the threshold where the theme changes."
+
     override func viewDidLoad() {
         super.viewDidLoad()
         setupTheming()
@@ -18,10 +20,17 @@ class SettingsViewController: FormViewController {
         self.tableView.bounces = false
 
         PickerInlineRow<String>.defaultCellUpdate = defaultCellUpdate
+        PickerInlineRow<AppTheme>.defaultCellUpdate = defaultCellUpdate
 
         SwitchRow.defaultCellUpdate = defaultCellUpdate
 
         IntRow.defaultCellUpdate = defaultCellUpdate
+
+        SliderRow.defaultCellUpdate = defaultCellUpdate
+
+        let displaySectionFooter = UserDefaults.standard.automaticThemeSwitch ? self.autoBrightnessFooterText : ""
+
+        let lightThemeRowLabel = UserDefaults.standard.automaticThemeSwitch ? "Light Theme" : "Theme"
 
         form
             +++ Section(header: "General", footer: "")
@@ -36,17 +45,70 @@ class SettingsViewController: FormViewController {
                     }
                 }
 
-            +++ Section(header: "Display", footer: "")
-            <<< PickerInlineRow<String>("theme") {
-                $0.title = "Theme"
-                $0.options = ["Light", "Dark", "Black", "Original"]
-                $0.value = UserDefaults.standard.enabledTheme.description
-            }.onChange {
-                if let rowVal = $0.value {
-                    UserDefaults.standard.setTheme(rowVal)
-                    AppThemeProvider.shared.currentTheme = UserDefaults.standard.enabledTheme
+            +++ Section(header: "Display", footer: displaySectionFooter)
+            <<< PickerInlineRow<AppTheme>("lightTheme") {
+                    $0.title = lightThemeRowLabel
+                    $0.options = AppThemeProvider.shared.availableThemes
+                    $0.value = UserDefaults.standard.lightTheme
+                    $0.displayValueFor = { $0?.description }
+                }.onChange {
+                    if let rowVal = $0.value {
+                        UserDefaults.standard.lightTheme = rowVal
+                    }
                 }
-            }
+
+            <<< PickerInlineRow<AppTheme>("darkTheme") {
+                    $0.title = "Dark Theme"
+                    $0.options = AppThemeProvider.shared.availableThemes
+                    $0.value = UserDefaults.standard.darkTheme
+                    $0.displayValueFor = { $0?.description }
+                    $0.hidden = Condition(booleanLiteral: !UserDefaults.standard.automaticThemeSwitch)
+                }.onChange {
+                    if let rowVal = $0.value {
+                        UserDefaults.standard.darkTheme = rowVal
+                    }
+                }
+
+            <<< SwitchRow("switchThemeAutomatically") {
+                    $0.title = "Switch theme automatically"
+                    $0.value = UserDefaults.standard.automaticThemeSwitch
+                }.onChange { row in
+                    UserDefaults.standard.automaticThemeSwitch = row.value!
+
+                    if let lightThemeRow = self.form.rowBy(tag: "lightTheme") {
+                        lightThemeRow.title = row.value! ? "Light Theme" : "Theme"
+                        lightThemeRow.updateCell()
+                    }
+
+                    if let darkThemeRow = self.form.rowBy(tag: "darkTheme") {
+                        darkThemeRow.hidden = Condition(booleanLiteral: !row.value!)
+                        darkThemeRow.evaluateHidden()
+                    }
+
+                    if row.value! {
+                        row.section!.footer = HeaderFooterView(title: self.autoBrightnessFooterText)
+                    } else {
+                        row.section!.footer = nil
+                    }
+
+                    row.section!.reload()
+                }
+
+            <<< SliderRow("brightnessSlider") {
+                    $0.title = "Brightness"
+                    $0.shouldHideValue = true
+                    $0.steps = 100
+                    $0.cell.slider.minimumValue = 0.0
+                    $0.cell.slider.maximumValue = 1.0
+                    $0.cell.slider.isContinuous = false
+                    $0.value = UserDefaults.standard.brightnessLevelForThemeSwitch
+                    $0.hidden = "$switchThemeAutomatically == false"
+                }.onChange { row in
+                    UserDefaults.standard.brightnessLevelForThemeSwitch = row.value!
+
+                    NotificationCenter.default.post(name: UIScreen.brightnessDidChangeNotification,
+                                                    object: self, userInfo: nil)
+                }
 
             +++ Section(header: "Notifications", footer: "")
             <<< SwitchRow { row in
@@ -54,11 +116,9 @@ class SettingsViewController: FormViewController {
                 row.title = "Enable Notifications"
                 row.value = Notifications.isLocalNotificationEnabled
             }.onChange { row in
-                if let value = row.value {
-                    Notifications.isLocalNotificationEnabled = value
-                    if value == true {
-                        Notifications.configure()
-                    }
+                Notifications.isLocalNotificationEnabled = row.value!
+                if row.value! == true {
+                    Notifications.configure()
                 }
             }.onCellSelection { _, _ in
                 self.showContextualMenu(PushNotificationsDisclaimerViewController())
@@ -80,16 +140,13 @@ class SettingsViewController: FormViewController {
         dismiss(animated: true)
     }
 
-    @objc func multipleSelectorDone(_ item:UIBarButtonItem) {
-        _ = navigationController?.popViewController(animated: true)
-    }
-
     var defaultCellUpdate: ((BaseCell, BaseRow) -> Void)? {
         return { cell, row in
-            let activeTheme = UserDefaults.standard.enabledTheme
+            let activeTheme = AppThemeProvider.shared.currentTheme
             cell.textLabel?.textColor = activeTheme.textColor
             cell.textLabel?.tintColor = activeTheme.textColor
-            cell.detailTextLabel?.textColor = activeTheme.lightTextColor
+            cell.detailTextLabel?.textColor = activeTheme.barForegroundColor
+            cell.detailTextLabel?.tintColor = activeTheme.barForegroundColor
             cell.backgroundColor = activeTheme.barBackgroundColor
             cell.tintColor = activeTheme.lightTextColor
             row.baseCell.tintColor = activeTheme.lightTextColor
@@ -98,11 +155,29 @@ class SettingsViewController: FormViewController {
                 textCell.textField.textColor = activeTheme.titleTextColor
             }
 
+            if let switchCell = cell as? SwitchCell {
+                switchCell.switchControl.onTintColor = activeTheme.barForegroundColor
+                switchCell.switchControl.tintColor = activeTheme.barForegroundColor
+            }
+
+            if let sliderCell = cell as? SliderCell {
+                sliderCell.slider.tintColor = AppThemeProvider.shared.currentTheme.barForegroundColor
+            }
+
             if row.tag == "enableNotifications" {
-                let button = UIButton(type: .detailDisclosure)
-                button.frame = CGRect(x: cell.textLabel!.intrinsicContentSize.width + 5, y: cell.textLabel!.frame.maxY,
-                                      width: button.frame.width, height: button.frame.height)
-                cell.textLabel!.addSubview(button)
+                let existingButton = cell.textLabel?.subviews.first(where: { (view) -> Bool in
+                    return view.tag == 999
+                })
+                if let button = existingButton {
+                    button.frame = CGRect(x: cell.textLabel!.intrinsicContentSize.width + 5, y: button.frame.minY,
+                                              width: button.frame.width, height: button.frame.height)
+                } else {
+                    let button = UIButton(type: .detailDisclosure)
+                    button.tag = 999
+                    button.frame = CGRect(x: cell.textLabel!.intrinsicContentSize.width + 5, y: button.frame.minY,
+                                          width: button.frame.width, height: button.frame.height)
+                    cell.textLabel!.addSubview(button)
+                }
             }
         }
     }
@@ -113,5 +188,7 @@ extension SettingsViewController: Themed {
         view.backgroundColor = theme.barBackgroundColor
         tableView.backgroundColor = theme.barBackgroundColor
         tableView.separatorColor = theme.separatorColor
+
+        self.tableView.reloadData()
     }
 }

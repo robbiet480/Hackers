@@ -9,26 +9,6 @@
 import SafariServices
 
 extension UserDefaults {
-    public var enabledTheme: AppTheme {
-        let themeSetting = string(forKey: UserDefaultsKeys.Theme.rawValue)
-        switch themeSetting {
-        case "Light":
-            return AppTheme.light
-        case "Dark":
-            return AppTheme.dark
-        case "Black":
-            return AppTheme.black
-        case "Original":
-            return AppTheme.original
-        default:
-            return .light
-        }
-    }
-    
-    public func setTheme(_ themeKey: String) {
-        set(themeKey, forKey: UserDefaultsKeys.Theme.rawValue)
-    }
-
     public func openInBrowser(_ url: URL) -> ThemedSafariViewController? {
         let browserSetting = string(forKey: UserDefaultsKeys.OpenInBrowser.rawValue)
         switch browserSetting {
@@ -59,6 +39,74 @@ extension UserDefaults {
         set(browserName, forKey: UserDefaultsKeys.OpenInBrowser.rawValue)
     }
 
+    public var lightTheme: AppTheme {
+        set {
+            set(newValue.description, forKey: UserDefaultsKeys.LightTheme.rawValue)
+        }
+        get {
+            switch string(forKey: UserDefaultsKeys.LightTheme.rawValue) {
+            case "Light":
+                return AppTheme.light
+            case "Dark":
+                return AppTheme.dark
+            case "Black":
+                return AppTheme.black
+            case "Original":
+                return AppTheme.original
+            default:
+                return .light
+            }
+        }
+    }
+
+    public var darkTheme: AppTheme {
+        set {
+            set(newValue.description, forKey: UserDefaultsKeys.DarkTheme.rawValue)
+        }
+        get {
+            switch string(forKey: UserDefaultsKeys.DarkTheme.rawValue) {
+            case "Light":
+                return AppTheme.light
+            case "Dark":
+                return AppTheme.dark
+            case "Black":
+                return AppTheme.black
+            case "Original":
+                return AppTheme.original
+            default:
+                return .dark
+            }
+        }
+    }
+
+    public var brightnessCorrectTheme: AppTheme {
+        if !UserDefaults.standard.automaticThemeSwitch {
+            return UserDefaults.standard.lightTheme
+        }
+
+        let brightnessCheck = UserDefaults.standard.brightnessLevelForThemeSwitch <= Float(UIScreen.main.brightness)
+        return brightnessCheck ? UserDefaults.standard.lightTheme : UserDefaults.standard.darkTheme
+    }
+
+    public var brightnessLevelForThemeSwitch: Float {
+        set {
+            set(newValue, forKey: UserDefaultsKeys.BrightnessLevelForThemeSwitch.rawValue)
+        }
+        get {
+            return float(forKey: UserDefaultsKeys.BrightnessLevelForThemeSwitch.rawValue)
+        }
+    }
+
+    public var automaticThemeSwitch: Bool {
+        set {
+            set(newValue, forKey: UserDefaultsKeys.AutomaticThemeSwitch.rawValue)
+            AppThemeProvider.shared.currentTheme = UserDefaults.standard.brightnessCorrectTheme
+        }
+        get {
+            return bool(forKey: UserDefaultsKeys.AutomaticThemeSwitch.rawValue)
+        }
+    }
+
     public var minimumPointsForNotification: Int {
         set {
             set(newValue, forKey: UserDefaultsKeys.NotificationPointsThreshold.rawValue)
@@ -70,7 +118,10 @@ extension UserDefaults {
 }
 
 enum UserDefaultsKeys: String {
-    case Theme
+    case DarkTheme
+    case LightTheme
+    case BrightnessLevelForThemeSwitch
+    case AutomaticThemeSwitch
     case OpenInBrowser
     case NotificationPointsThreshold
 }

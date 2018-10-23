@@ -33,11 +33,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         KingfisherManager.shared.cache.pathExtension = "png"
         KingfisherManager.shared.defaultOptions = [.cacheSerializer(FormatIndicatedCacheSerializer.png), .keepCurrentImageWhileLoading]
 
+        NotificationCenter.default.addObserver(self, selector: #selector(setAppTheme),
+                                               name: UIScreen.brightnessDidChangeNotification, object: nil)
+
         print("Realm is stored at", Realm.live().configuration.fileURL!.description)
     }
     
-    private func setAppTheme() {
-        AppThemeProvider.shared.currentTheme = UserDefaults.standard.enabledTheme
+    @objc private func setAppTheme(_ notification: Notification? = nil) {
+        AppThemeProvider.shared.currentTheme = UserDefaults.standard.brightnessCorrectTheme
     }
 
     func application(_ application: UIApplication, performFetchWithCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {

@@ -8,7 +8,7 @@
 
 import UIKit
 
-public struct AppTheme {
+public struct AppTheme: Equatable {
     public var description: String
 
     var appTintColor: UIColor
