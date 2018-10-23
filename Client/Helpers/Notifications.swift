@@ -87,7 +87,8 @@ final class Notifications {
         }
 
         _ = HNUpdateManager.shared.loadAllPosts().done { _ in
-            let allPosts = Realm.live().objects(PostModel.self).filter("NotifiedAt == nil AND Points >= %d", 10)
+            let allPosts = Realm.live().objects(PostModel.self).filter("NotifiedAt == nil AND Points >= %d",
+                                                                       UserDefaults.standard.minimumPointsForNotification)
             if isLocalNotificationEnabled {
                 self.sendLocalPush(for: allPosts)
 

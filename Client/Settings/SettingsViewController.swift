@@ -16,13 +16,11 @@ class SettingsViewController: FormViewController {
 
         self.tableView.bounces = false
 
-        PickerInlineRow<String>.defaultCellUpdate = { cell, row in
-            let activeTheme = UserDefaults.standard.enabledTheme
-            cell.textLabel?.textColor = activeTheme.textColor
-            cell.detailTextLabel?.textColor = activeTheme.lightTextColor
-            cell.backgroundColor = activeTheme.barBackgroundColor
-            row.inlineRow?.cell.pickerTextAttributes = [.foregroundColor: activeTheme.titleTextColor]
-        }
+        PickerInlineRow<String>.defaultCellUpdate = defaultCellUpdate
+
+        SwitchRow.defaultCellUpdate = defaultCellUpdate
+
+        IntRow.defaultCellUpdate = defaultCellUpdate
 
         form
             +++ PickerInlineRow<String>("theme") {
@@ -64,6 +62,12 @@ class SettingsViewController: FormViewController {
             <<< IntRow { row in
                 row.tag = "pointsThreshold"
                 row.title = "Minimum points for notification"
+                row.value = UserDefaults.standard.minimumPointsForNotification
+                row.hidden = "$enableNotifications == false"
+            }.onChange { row in
+                if let value = row.value {
+                    UserDefaults.standard.minimumPointsForNotification = value
+                }
             }
     }
     
@@ -73,6 +77,26 @@ class SettingsViewController: FormViewController {
 
     @objc func multipleSelectorDone(_ item:UIBarButtonItem) {
         _ = navigationController?.popViewController(animated: true)
+    }
+
+    var defaultCellUpdate: ((BaseCell, BaseRow) -> Void)? {
+        return { cell, row in
+            let activeTheme = UserDefaults.standard.enabledTheme
+            cell.textLabel?.textColor = .white
+            cell.textLabel?.tintColor = .white
+            cell.detailTextLabel?.textColor = activeTheme.lightTextColor
+            cell.backgroundColor = activeTheme.barBackgroundColor
+            cell.tintColor = activeTheme.lightTextColor
+            row.baseCell.tintColor = activeTheme.lightTextColor
+
+            if let textCell = cell as? TextFieldCell {
+                textCell.textField.textColor = activeTheme.titleTextColor
+            }
+
+            if let pickerRow = row as? PickerInlineRow<String>, let inlineRow = pickerRow.inlineRow {
+                inlineRow.cell.pickerTextAttributes = [.foregroundColor: activeTheme.titleTextColor]
+            }
+        }
     }
 }
 

@@ -58,9 +58,19 @@ extension UserDefaults {
     public func setOpenLinksIn(_ browserName: String) {
         set(browserName, forKey: UserDefaultsKeys.OpenInBrowser.rawValue)
     }
+
+    public var minimumPointsForNotification: Int {
+        set {
+            set(newValue, forKey: UserDefaultsKeys.NotificationPointsThreshold.rawValue)
+        }
+        get {
+            return integer(forKey: UserDefaultsKeys.NotificationPointsThreshold.rawValue)
+        }
+    }
 }
 
 enum UserDefaultsKeys: String {
     case Theme
     case OpenInBrowser
+    case NotificationPointsThreshold
 }
