@@ -16,11 +16,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
     
     func applicationDidFinishLaunching(_ application: UIApplication) {
+        UIFont.overrideInitialize()
+        UNUserNotificationCenter.current().delegate = self
+
+        KingfisherManager.shared.cache.pathExtension = "png"
+        KingfisherManager.shared.defaultOptions = [.cacheSerializer(FormatIndicatedCacheSerializer.png),
+                                                   .keepCurrentImageWhileLoading]
+
         ReviewController.incrementLaunchCounter()
         ReviewController.requestReview()
         setAppTheme()
-        UIFont.overrideInitialize()
-        UNUserNotificationCenter.current().delegate = self
+
+        HNParseConfig.shared.jsonConfigURL = "http://192.168.7.25:8000/hn.json"
 
         HNParseConfig.shared.forceRedownload { (error) in
             if let error = error {
@@ -30,8 +37,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
         }
 
-        KingfisherManager.shared.cache.pathExtension = "png"
-        KingfisherManager.shared.defaultOptions = [.cacheSerializer(FormatIndicatedCacheSerializer.png), .keepCurrentImageWhileLoading]
+        HNScraper.shared.parseDead = true
 
         NotificationCenter.default.addObserver(self, selector: #selector(setAppTheme),
                                                name: UIScreen.brightnessDidChangeNotification, object: nil)
@@ -43,7 +49,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         AppThemeProvider.shared.currentTheme = UserDefaults.standard.brightnessCorrectTheme
     }
 
-    func application(_ application: UIApplication, performFetchWithCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+    func application(_ application: UIApplication,
+                     performFetchWithCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
         Notifications().fetch(application: application, handler: completionHandler)
     }
 }
@@ -57,7 +64,8 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         return
     }
 
-    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse,
+                                withCompletionHandler completionHandler: @escaping () -> Void) {
 
         print("Handling didReceive!")
 
@@ -78,16 +86,11 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
                 print("Open post ID", postID)
 
                 let userInfo = ["POST_ID":postID]
-                NotificationCenter.default.post(name: Notification.Name(rawValue: "notificationOpenPost"), object: self, userInfo: userInfo)
+                NotificationCenter.default.post(name: Notification.Name(rawValue: "notificationOpenPost"),
+                                                object: self, userInfo: userInfo)
 
             }
             completionHandler()
-//        case "com.usernotificationstutorial.reply":
-//            if let textResponse = response as? UNTextInputNotificationResponse {
-//                let reply = textResponse.userText
-//                // Send reply message
-//                completionHandler()
-//            }
 //        case "com.usernotificationstutorial.delete":
 //            // Delete message
 //            completionHandler()
