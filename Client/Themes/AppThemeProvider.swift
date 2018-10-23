@@ -28,6 +28,7 @@ final class AppThemeProvider: ThemeProvider {
     }
     
     private func setNewTheme(_ newTheme: AppTheme) {
+        print("New theme is being set!")
         let window = UIApplication.shared.delegate!.window!!
         UIView.transition(
             with: window,
@@ -36,9 +37,7 @@ final class AppThemeProvider: ThemeProvider {
             animations: {
                 self.theme.value = newTheme
                 UIFont.overrideInitialize()
-        },
-            completion: nil
-        )
+        }, completion: nil)
     }
     
     func subscribeToChanges(_ object: AnyObject, handler: @escaping (AppTheme) -> Void) {

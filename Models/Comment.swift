@@ -47,8 +47,8 @@ class CommentModel: Object {
         if let strCommentID = comment.id, let commentID = Int(string: strCommentID) {
             self.ID = commentID
         } else {
-            print("No comment ID for a comment in post!", post)
-            print("Comment ID", comment, comment.id)
+            //print("No comment ID for a comment in post!", post)
+            //print("Comment ID", comment, comment.id)
             return
         }
 

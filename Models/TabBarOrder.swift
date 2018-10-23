@@ -11,7 +11,7 @@ import RealmSwift
 import HNScraper
 
 class TabBarOrder: Object {
-    @objc dynamic var pageName: String = HNScraper.PostListPageName.news.tabTitle
+    @objc dynamic var pageName: String = HNScraper.PostListPageName.news.description
     @objc dynamic var index: Int = 0
 
     convenience init(_ index: Int, _ pageName: String) {

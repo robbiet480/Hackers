@@ -12,24 +12,23 @@ import PromiseKit
 import HNScraper
 
 class HNUpdateManager {
-    public static let shared = HNUpdateManager()
+    public static let shared: HNUpdateManager = HNUpdateManager()
 
     private var notificationToken: NotificationToken? = nil
-    private var nextPageIdentifiers: [Int: String] = [:]
+    private var nextPageIdentifiers: [HNScraper.PostListPageName: String] = [:]
 
     private let results = Realm.live().objects(PostModel.self)
 
     init() {
-        _ = self.loadAllPosts()
-
         notificationToken = results.observe { (changes: RealmCollectionChange) in
             switch changes {
             case .initial:
                 return
             case .update(_, _, let insertions, _):
                 // Query results have changed, so apply them to the UITableView
-                print("Update happened with insertions", insertions)
-                // TODO: With insertions, send notifications
+                if insertions.count > 0 {
+                    print("Update happened with insertions", insertions)
+                }
             case .error(let error):
                 // An error occurred while opening the Realm file on the background worker thread
                 fatalError("Error in Realm notification \(error)")
@@ -42,51 +41,49 @@ class HNUpdateManager {
     }
 
     func loadAllPosts() -> Promise<[PostModel]> {
+        print("LOADING ALL POSTS")
         // FIXME: add .ask and .jobs once the ID is fixed...
-        return firstly {
-            return when(fulfilled: [getPostsForType(.new), getPostsForType(.news), getPostsForType(.asks), getPostsForType(.jobs)]).map { Array($0.joined()) }
-        }.then { posts -> Promise<[PostModel]> in
-            print("All done with storing posts and thumbnails!", posts)
 
-            let realm = Realm.live()
+        let allPostTypes = [getPosts(.new),
+                            getPosts(.news),
+                            getPosts(.asks),
+                            getPosts(.jobs)]
 
-            try! realm.write {
-                realm.add(posts, update: true)
-            }
-
-            return Promise.value(posts)
+        return when(fulfilled: allPostTypes).map { Array($0.joined()) }.ensure {
+            print("Done loading all posts!")
         }
     }
 
     func loadPostsForType(_ pType: HNScraper.PostListPageName) -> Promise<[PostModel]> {
-        return firstly {
-            getPostsForType(pType)
-        }.then { posts -> Promise<[PostModel]> in
-            print("All done with storing single type of posts and thumbnails!", posts)
-
-            let realm = Realm.live()
-
-            try! realm.write {
-                realm.add(posts, update: true)
-            }
-
-            return Promise.value(posts)
-        }
+        return getPosts(pType)
     }
 
     func loadMorePosts(_ pType: HNScraper.PostListPageName) -> Promise<[PostModel]> {
-        guard let nextPageIdentifier = self.nextPageIdentifiers[pType.rawValue] else {
+        guard let nextPageIdentifier = self.nextPageIdentifiers[pType] else {
             return Promise.init(error: NSError(domain: "com.weiranzhang.Hackers", code: 999, userInfo: nil))
         }
 
-        self.nextPageIdentifiers[pType.rawValue] = nil
+        self.nextPageIdentifiers[pType] = nil
 
-        return firstly {
-            getPostsForPage(pType, nextPageIdentifier)
+        return getPosts(pType, nextPageIdentifier)
+    }
+
+    private func getPosts(_ pType: HNScraper.PostListPageName, _ pageIdentifier: String? = nil) -> Promise<[PostModel]> {
+        //let bgq = DispatchQueue.global(qos: .background)
+
+        var funcToRun = getPostsForTypePromise(pType)
+
+        if let pi = pageIdentifier {
+            funcToRun = getPostsForPagePromise(pType, pi)
+        }
+
+        return funcToRun.thenMap { post -> Promise<HNPost> in
+            self.loadComments(post)
+        }.mapValues { post -> PostModel in
+            return PostModel(post)
+        }.thenMap { post -> Promise<PostModel> in
+            return self.getPostThumbnail(post)
         }.then { posts -> Promise<[PostModel]> in
-            self.nextPageIdentifiers[pType.rawValue] = nextPageIdentifier
-            print("All done with storing new page of posts and thumbnails!", posts)
-
             let realm = Realm.live()
 
             try! realm.write {
@@ -94,30 +91,6 @@ class HNUpdateManager {
             }
 
             return Promise.value(posts)
-        }
-    }
-
-    private func getPostsForType(_ pType: HNScraper.PostListPageName) -> Promise<[PostModel]> {
-        return firstly {
-            getPostsForTypePromise(pType)
-        }.thenMap { post in
-            self.loadComments(post)
-        }.mapValues { post in
-            return PostModel(post)
-        }.thenMap { post in
-            return self.getPostThumbnail(post)
-        }
-    }
-
-    private func getPostsForPage(_ pType: HNScraper.PostListPageName, _ pageIdentifier: String) -> Promise<[PostModel]> {
-        return firstly {
-            getPostsForPagePromise(pType, pageIdentifier)
-        }.thenMap { post in
-            self.loadComments(post)
-        }.mapValues { post in
-            return PostModel(post)
-        }.thenMap { post in
-            return self.getPostThumbnail(post)
         }
     }
 
@@ -129,7 +102,7 @@ class HNUpdateManager {
                     return
                 }
                 if let npi = nextPageIdentifier {
-                    self.nextPageIdentifiers[pType.rawValue] = npi
+                    self.nextPageIdentifiers[pType] = npi
                 }
                 seal.fulfill(posts)
             })
@@ -145,7 +118,7 @@ class HNUpdateManager {
                 }
                 
                 if let npi = nextPageIdentifier {
-                    self.nextPageIdentifiers[pType.rawValue] = npi
+                    self.nextPageIdentifiers[pType] = npi
                 }
 
                 seal.fulfill(posts)
@@ -155,12 +128,12 @@ class HNUpdateManager {
 
     private func getPostThumbnail(_ post: PostModel) -> Promise<PostModel> {
         return Promise { seal in
-            post.ThumbnailURL({ (thumbURL) in
+            post.ThumbnailURL { thumbURL in
                 if let url = thumbURL {
                     post.ThumbnailURLString = url.absoluteString
                     seal.fulfill(post)
                 }
-            })
+            }
         }
     }
 

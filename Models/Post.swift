@@ -43,7 +43,7 @@ class PostModel: Object {
         if let intID = Int(string: post.id) {
             self.ID = intID
         } else {
-            print("Unable to cast string ID to int", post.id, post)
+            print("Unable to cast string ID to int", post.description)
         }
 
         self.`Type` = post.type.rawValue

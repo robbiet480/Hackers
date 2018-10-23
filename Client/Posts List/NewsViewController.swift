@@ -144,7 +144,7 @@ class NewsViewController : UIViewController {
 
     @objc func loadPosts() {
         _ = HNUpdateManager.shared.loadPostsForType(self.postType).done { newPosts in
-            print("Done and got new posts:", newPosts.count)
+            print("Done getting \(self.postType.description) posts and got \(newPosts.count) new ones")
             self.view.hideSkeleton()
             self.tableView.rowHeight = UITableView.automaticDimension
             self.tableView.estimatedRowHeight = UITableView.automaticDimension

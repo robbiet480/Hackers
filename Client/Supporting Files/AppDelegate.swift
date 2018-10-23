@@ -39,6 +39,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         HNScraper.shared.parseDead = true
 
+        //_ = HNUpdateManager.shared.loadAllPosts()
+
         NotificationCenter.default.addObserver(self, selector: #selector(setAppTheme),
                                                name: UIScreen.brightnessDidChangeNotification, object: nil)
 
