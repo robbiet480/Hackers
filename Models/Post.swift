@@ -13,7 +13,7 @@ import OpenGraph
 import HNScraper
 
 class PostModel: Object {
-    @objc dynamic var `Type`: Int = HNPost.PostType.defaultType.hashValue
+    @objc dynamic var `Type`: Int = HNPost.PostType.defaultType.rawValue
     @objc dynamic var Username: String = ""
     @objc dynamic var URLString: String = ""
     @objc dynamic var Title: String = ""
@@ -46,7 +46,7 @@ class PostModel: Object {
             print("Unable to cast string ID to int", post.id, post)
         }
 
-        self.`Type` = post.type.hashValue
+        self.`Type` = post.type.rawValue
         self.Username = post.username
         if let url = post.url {
             self.URLString = url.absoluteString

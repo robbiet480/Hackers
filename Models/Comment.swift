@@ -14,7 +14,7 @@ import HNScraper
 
 class CommentModel: Object {
     @objc dynamic var Post: PostModel?
-    @objc dynamic var `Type`: Int = HNComment.HNCommentType.defaultType.hashValue
+    @objc dynamic var `Type`: Int = HNComment.HNCommentType.defaultType.rawValue
     @objc dynamic var Text: String = ""
     @objc dynamic var Username: String = ""
     @objc dynamic var ID: Int = 0
@@ -56,7 +56,7 @@ class CommentModel: Object {
             self.Post = post
         }
 
-        self.`Type` = comment.type.hashValue
+        self.`Type` = comment.type.rawValue
         self.Text = comment.text.htmlDecoded
         self.Username = comment.username
         if let parentID = comment.parentId {

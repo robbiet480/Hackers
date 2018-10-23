@@ -9,12 +9,13 @@
 import UIKit
 
 class MainSplitViewController: UISplitViewController, UISplitViewControllerDelegate {
+
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         setupTheming()
         delegate = self
     }
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         preferredDisplayMode = .allVisible

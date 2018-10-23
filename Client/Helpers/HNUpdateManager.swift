@@ -76,16 +76,16 @@ class HNUpdateManager {
     }
 
     func loadMorePosts(_ pType: HNScraper.PostListPageName) -> Promise<[PostModel]> {
-        guard let nextPageIdentifier = self.nextPageIdentifiers[pType.hashValue] else {
+        guard let nextPageIdentifier = self.nextPageIdentifiers[pType.rawValue] else {
             return Promise.init(error: NSError(domain: "com.weiranzhang.Hackers", code: 999, userInfo: nil))
         }
 
-        self.nextPageIdentifiers[pType.hashValue] = nil
+        self.nextPageIdentifiers[pType.rawValue] = nil
 
         return firstly {
             getPostsForPage(pType, nextPageIdentifier)
         }.then { posts -> Promise<[PostModel]> in
-            self.nextPageIdentifiers[pType.hashValue] = nextPageIdentifier
+            self.nextPageIdentifiers[pType.rawValue] = nextPageIdentifier
             print("All done with storing new page of posts and thumbnails!", posts)
 
             let realm = Realm.live()
@@ -130,7 +130,7 @@ class HNUpdateManager {
                     return
                 }
                 if let npi = nextPageIdentifier {
-                    self.nextPageIdentifiers[pType.hashValue] = npi
+                    self.nextPageIdentifiers[pType.rawValue] = npi
                 }
                 seal.fulfill(posts)
             })
@@ -146,7 +146,7 @@ class HNUpdateManager {
                 }
                 
                 if let npi = nextPageIdentifier {
-                    self.nextPageIdentifiers[pType.hashValue] = npi
+                    self.nextPageIdentifiers[pType.rawValue] = npi
                 }
 
                 seal.fulfill(posts)

@@ -29,12 +29,12 @@ class NewsViewController : UIViewController {
     private var cancelFetch: (() -> Void)?
 
     private var notifiedPostID: Int?
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
         let realm = Realm.live()
-        self.posts = realm.objects(PostModel.self).filter("Type == %@", self.postType.hashValue)
+        self.posts = realm.objects(PostModel.self).filter("Type == %@", self.postType.rawValue)
 
         notificationToken = self.posts!.observe { [weak self] (changes: RealmCollectionChange) in
             guard let tableView = self?.tableView else { return }
@@ -47,12 +47,14 @@ class NewsViewController : UIViewController {
                 tableView.estimatedRowHeight = UITableView.automaticDimension
                 tableView.reloadData()
                 tableView.refreshControl?.endRefreshing()
-            case .update(_, _, let insertions, let modifications):
+            case .update(_, let deletions, let insertions, let modifications):
                 // Query results have changed, so apply them to the UITableView
                 tableView.beginUpdates()
                 tableView.insertRows(at: insertions.map({ IndexPath(row: $0, section: 0) }),
                                      with: .automatic)
                 tableView.reloadRows(at: modifications.map({ IndexPath(row: $0, section: 0) }),
+                                     with: .automatic)
+                tableView.deleteRows(at: deletions.map({ IndexPath(row: $0, section: 0) }),
                                      with: .automatic)
                 tableView.endUpdates()
 
@@ -144,7 +146,6 @@ class NewsViewController : UIViewController {
             self.view.hideSkeleton()
             self.tableView.rowHeight = UITableView.automaticDimension
             self.tableView.estimatedRowHeight = UITableView.automaticDimension
-            self.tableView.reloadData()
             self.tableView.refreshControl?.endRefreshing()
         }
     }
@@ -176,7 +177,7 @@ extension NewsViewController: UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let post = posts![indexPath.row]
-        if post.Type == HNPost.PostType.jobs.hashValue { // Job posts don't have comments, so lets go straight to the link
+        if post.Type == HNPost.PostType.jobs.rawValue { // Job posts don't have comments, so lets go straight to the link
             if let vc = UserDefaults.standard.openInBrowser(post.LinkURL) {
                 self.present(vc, animated: true, completion: nil)
             }
@@ -195,7 +196,7 @@ extension NewsViewController: UITableViewDataSource {
 extension NewsViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         if indexPath.row == posts!.count - 5 {
-            HNUpdateManager.shared.loadMorePosts(self.postType)
+            _ = HNUpdateManager.shared.loadMorePosts(self.postType)
         }
     }
 }

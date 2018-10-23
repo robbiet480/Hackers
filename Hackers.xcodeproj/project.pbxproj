@@ -48,6 +48,8 @@
 		B63E78C4217C1C6300750131 /* UIFont+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B63E78C3217C1C6300750131 /* UIFont+Extensions.swift */; };
 		B663E309217E43810062F6D9 /* Comment.swift in Sources */ = {isa = PBXBuildFile; fileRef = B663E308217E43810062F6D9 /* Comment.swift */; };
 		B663E30B217E54890062F6D9 /* HNUpdateManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B663E30A217E54890062F6D9 /* HNUpdateManager.swift */; };
+		B6CCFAFC217E96560085AC03 /* HNScraper+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6CCFAFB217E96560085AC03 /* HNScraper+Extensions.swift */; };
+		B6CCFAFE217E9F610085AC03 /* TabBarOrder.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6CCFAFD217E9F610085AC03 /* TabBarOrder.swift */; };
 		B6ECEB59217CC4EA00755239 /* OpenInChromeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6ECEB58217CC4EA00755239 /* OpenInChromeController.swift */; };
 		B6ECEB5D217D16CF00755239 /* Notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6ECEB5C217D16CF00755239 /* Notifications.swift */; };
 		B6ECEB61217D54DD00755239 /* Post.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6ECEB60217D54DD00755239 /* Post.swift */; };
@@ -103,6 +105,8 @@
 		B63E78C3217C1C6300750131 /* UIFont+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIFont+Extensions.swift"; sourceTree = "<group>"; };
 		B663E308217E43810062F6D9 /* Comment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Comment.swift; sourceTree = "<group>"; };
 		B663E30A217E54890062F6D9 /* HNUpdateManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HNUpdateManager.swift; sourceTree = "<group>"; };
+		B6CCFAFB217E96560085AC03 /* HNScraper+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "HNScraper+Extensions.swift"; sourceTree = "<group>"; };
+		B6CCFAFD217E9F610085AC03 /* TabBarOrder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarOrder.swift; sourceTree = "<group>"; };
 		B6ECEB58217CC4EA00755239 /* OpenInChromeController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenInChromeController.swift; sourceTree = "<group>"; };
 		B6ECEB5C217D16CF00755239 /* Notifications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Notifications.swift; sourceTree = "<group>"; };
 		B6ECEB60217D54DD00755239 /* Post.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Post.swift; sourceTree = "<group>"; };
@@ -155,6 +159,7 @@
 				B6ECEB5C217D16CF00755239 /* Notifications.swift */,
 				B6ECEB62217D64AE00755239 /* Realm+Initialization.swift */,
 				B663E30A217E54890062F6D9 /* HNUpdateManager.swift */,
+				B6CCFAFB217E96560085AC03 /* HNScraper+Extensions.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -213,6 +218,7 @@
 				24191F8C1944C991003C0D98 /* CommentsController.swift */,
 				B6ECEB60217D54DD00755239 /* Post.swift */,
 				B663E308217E43810062F6D9 /* Comment.swift */,
+				B6CCFAFD217E9F610085AC03 /* TabBarOrder.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -448,6 +454,7 @@
 				2464D216209DFF6D00C7F8FC /* CommentsHeaderView.swift in Sources */,
 				24CE5FED19434BDC009D2677 /* AppDelegate.swift in Sources */,
 				24CE5FF419435061009D2677 /* NewsViewController.swift in Sources */,
+				B6CCFAFE217E9F610085AC03 /* TabBarOrder.swift in Sources */,
 				2464D211209DE7B100C7F8FC /* UIColor+Extensions.swift in Sources */,
 				24E4F26119B4DA9900574B52 /* CommentDelegate.swift in Sources */,
 				2464D20D209DD8F400C7F8FC /* ArrayExtensions.swift in Sources */,
@@ -469,6 +476,7 @@
 				24C20D391A7E42D5005B759B /* MainSplitViewController.swift in Sources */,
 				2464D21F209E27FE00C7F8FC /* Settings+UserDefaultsExtensions.swift in Sources */,
 				B6ECEB59217CC4EA00755239 /* OpenInChromeController.swift in Sources */,
+				B6CCFAFC217E96560085AC03 /* HNScraper+Extensions.swift in Sources */,
 				24CE5FF819435A90009D2677 /* PostCell.swift in Sources */,
 				2464D21B209E1FA100C7F8FC /* SettingsViewController.swift in Sources */,
 				24DFD28C19436E51007F61E7 /* CommentsViewController.swift in Sources */,

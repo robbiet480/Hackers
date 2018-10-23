@@ -8,14 +8,26 @@
 
 import UIKit
 import HNScraper
+import RealmSwift
 
 class MainTabBarController: UITabBarController {
+    let tabBarOrderKey = "tabBarOrderKey"
+
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        self.delegate = self
+
         setupTheming()
 
+        setDefaultTabOrder()
+
+        let realm = Realm.live()
+
+        let orderObjs = realm.objects(TabBarOrder.self).sorted(byKeyPath: "index")
+
         guard let viewControllers = self.viewControllers else { return }
-        
+
         for (index, viewController) in viewControllers.enumerated() {
             guard let splitViewController = viewController as? UISplitViewController,
                 let navigationController = splitViewController.viewControllers.first as? UINavigationController,
@@ -23,46 +35,25 @@ class MainTabBarController: UITabBarController {
                 else {
                     return
             }
-            
-            let (postType, typeName, iconName) = tabItems(for: index)
+
+            let config = orderObjs[index]
+            let postType = HNScraper.PostListPageName(config.pageName)
+
+            // let (postType, typeName, iconName) = tabItems(for: index)
             newsViewController.postType = postType
-            splitViewController.tabBarItem.title = typeName
-            splitViewController.tabBarItem.image = UIImage(named: iconName)
+            let typeName = postType.tabTitle
+            var icon: UIImage? = nil
+
+            if let iconName = postType.iconName {
+                icon = UIImage(named: iconName)
+            }
+
+            splitViewController.tabBarItem = UITabBarItem(title: typeName, image: icon, tag: index)
         }
-        
+
+        self.customizableViewControllers = viewControllers
+
         tabBar.clipsToBounds = true
-    }
-    
-    private func tabItems(for index: Int) -> (HNScraper.PostListPageName, String, String) {
-        var postType = HNScraper.PostListPageName.news
-        var typeName = "Top"
-        var iconName = "TopIcon"
-        
-        switch index {
-        case 0:
-            postType = .news
-            typeName = "Top"
-            iconName = "TopIcon"
-        case 1:
-            postType = .asks
-            typeName = "Ask"
-            iconName = "AskIcon"
-            break
-        case 2:
-            postType = .jobs
-            typeName = "Jobs"
-            iconName = "JobsIcon"
-            break
-        case 3:
-            postType = .new
-            typeName = "New"
-            iconName = "NewIcon"
-            break
-        default:
-            break
-        }
-        
-        return (postType, typeName, iconName)
     }
 
     override func tabBar(_ tabBar: UITabBar, didSelect item: UITabBarItem) {
@@ -88,6 +79,109 @@ class MainTabBarController: UITabBarController {
 
         }
 
+    }
+
+    func setDefaultTabOrder() {
+        let realm = Realm.live()
+
+        guard realm.objects(TabBarOrder.self).count == 0 else {
+            print("Order objects count is 0, not setting the default order!")
+            return
+        }
+
+        let defaultOrder: [HNScraper.PostListPageName] = [.news, .asks, .jobs, .new, .front, .shows, .active, .best, .noob]
+
+        let orderObjs: [TabBarOrder] = defaultOrder.enumerated().map { (i, e) in
+            return TabBarOrder(i, e.tabTitle)
+        }
+
+        try! realm.write {
+            realm.add(orderObjs)
+        }
+    }
+
+    func tabBarController(_ tabBarController: UITabBarController, willBeginCustomizing viewControllers: [UIViewController]) {
+
+        // Found at http://runmad.com/blog/2010/01/coloring-fun-with-morenavigationcontroller-and-it/
+
+        let editView = tabBarController.view.subviews[1]
+        editView.backgroundColor = AppThemeProvider.shared.currentTheme.backgroundColor
+
+        if let navigationBar = editView.subviews[1] as? UINavigationBar {
+            navigationBar.barTintColor = AppThemeProvider.shared.currentTheme.barBackgroundColor
+            navigationBar.tintColor = AppThemeProvider.shared.currentTheme.barForegroundColor
+        }
+
+    }
+}
+
+extension MainTabBarController: UITabBarControllerDelegate {
+    func tabBarController(_ tabBarController: UITabBarController,
+                          shouldSelect viewController: UIViewController) -> Bool {
+        if viewController == tabBarController.moreNavigationController {
+
+            let moreNavController = viewController as! UINavigationController
+
+            print("Setting nav bar controller stuff")
+            moreNavController.navigationBar.barTintColor = AppThemeProvider.shared.currentTheme.barBackgroundColor
+            moreNavController.navigationBar.tintColor = AppThemeProvider.shared.currentTheme.barForegroundColor
+            moreNavController.navigationBar.prefersLargeTitles = true
+            moreNavController.navigationBar.titleTextAttributes = [
+                NSAttributedString.Key.foregroundColor: AppThemeProvider.shared.currentTheme.navigationBarTextColor,
+                NSAttributedString.Key.font: UIFont.mySystemFont(ofSize: 17.0)]
+            moreNavController.navigationBar.largeTitleTextAttributes = [
+                NSAttributedString.Key.foregroundColor: AppThemeProvider.shared.currentTheme.navigationBarTextColor,
+                NSAttributedString.Key.font: UIFont.myBoldSystemFont(ofSize: 31.0)]
+
+            moreNavController.view.backgroundColor = AppThemeProvider.shared.currentTheme.backgroundColor
+
+            if tabBarController.moreNavigationController.topViewController?.view is UITableView {
+                let view: UITableView = tabBarController.moreNavigationController.topViewController?.view as! UITableView
+
+                view.bounces = false
+
+                view.tintColor = AppThemeProvider.shared.currentTheme.barForegroundColor
+                view.separatorColor = AppThemeProvider.shared.currentTheme.separatorColor
+                view.backgroundColor = AppThemeProvider.shared.currentTheme.backgroundColor
+
+                for cell in view.visibleCells {
+                    cell.textLabel!.textColor = AppThemeProvider.shared.currentTheme.textColor
+                    cell.textLabel!.font = UIFont.mySystemFont(ofSize: 18.0)
+                    cell.backgroundColor = AppThemeProvider.shared.currentTheme.backgroundColor
+                }
+            }
+        }
+
+        return true
+    }
+
+    // Saves new tab bar custom order
+    func tabBarController(_ tabBarController: UITabBarController, didEndCustomizing viewControllers: [UIViewController], changed: Bool) {
+        if changed {
+            let realm = Realm.live()
+            let existingTabBarOrder = realm.objects(TabBarOrder.self)
+
+            try! realm.write {
+                realm.delete(existingTabBarOrder)
+            }
+
+            var newVCOrder: [TabBarOrder] = []
+
+            for (index, viewController) in viewControllers.enumerated() {
+                guard let splitViewController = viewController as? UISplitViewController,
+                    let navigationController = splitViewController.viewControllers.first as? UINavigationController,
+                    let newsViewController = navigationController.viewControllers.first as? NewsViewController
+                    else {
+                        return
+                }
+
+                newVCOrder.append(TabBarOrder(index, newsViewController.postType.tabTitle))
+            }
+
+            try! realm.write {
+                realm.add(newVCOrder)
+            }
+        }
     }
 }
 
