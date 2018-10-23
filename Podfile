@@ -12,6 +12,7 @@ target 'Hackers' do
   pod 'PromiseKit'
   pod 'RealmSwift'
   pod 'SkeletonView'
+  pod 'ContextMenu'
 end
 
 post_install do |installer|

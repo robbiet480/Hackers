@@ -1,4 +1,5 @@
 PODS:
+  - ContextMenu (0.4.0)
   - DZNEmptyDataSet (1.8.1)
   - Eureka (4.3.0)
   - HNScraper (0.2.2)
@@ -21,6 +22,7 @@ PODS:
   - SkeletonView (1.1.1)
 
 DEPENDENCIES:
+  - ContextMenu
   - DZNEmptyDataSet
   - Eureka
   - HNScraper (from `https://github.com/tsucres/HNScraper`)
@@ -32,6 +34,7 @@ DEPENDENCIES:
 
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
+    - ContextMenu
     - DZNEmptyDataSet
     - Eureka
     - Kingfisher
@@ -51,6 +54,7 @@ CHECKOUT OPTIONS:
     :git: https://github.com/tsucres/HNScraper
 
 SPEC CHECKSUMS:
+  ContextMenu: f835e09a93f1c28c631b76ee94396d9570397fd1
   DZNEmptyDataSet: 9525833b9e68ac21c30253e1d3d7076cc828eaa7
   Eureka: 6d711cb30ca333b4bc893110285a722ae3840114
   HNScraper: 89d135811bc8b9088adbb677c0bbc6cf8ed85cc0
@@ -61,6 +65,6 @@ SPEC CHECKSUMS:
   RealmSwift: c9580133e73ef40ed340401af2dbc9a5790dfea7
   SkeletonView: 041053e904504e7d8db83df166e599be75659fe1
 
-PODFILE CHECKSUM: e8ee2606daf1c52ee029912c10fbbcf13a11b816
+PODFILE CHECKSUM: f627ab55cd646ea92e99d7684b34047c4a0d7ed2
 
 COCOAPODS: 1.6.0.beta.1

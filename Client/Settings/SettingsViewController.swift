@@ -8,6 +8,7 @@
 
 import UIKit
 import Eureka
+import ContextMenu
 
 class SettingsViewController: FormViewController {
     override func viewDidLoad() {
@@ -23,7 +24,20 @@ class SettingsViewController: FormViewController {
         IntRow.defaultCellUpdate = defaultCellUpdate
 
         form
-            +++ PickerInlineRow<String>("theme") {
+            +++ Section(header: "General", footer: "")
+            <<< PickerInlineRow<String>() {
+                    $0.title = "Open Links In"
+                    $0.options = ["In-app browser", "In-app browser (Reader mode)", "Safari", "Google Chrome"]
+                    $0.value = "In-app browser"
+                    $0.value = UserDefaults.standard.string(forKey: UserDefaultsKeys.OpenInBrowser.rawValue)
+                }.onChange {
+                    if let rowVal = $0.value {
+                        UserDefaults.standard.setOpenLinksIn(rowVal)
+                    }
+                }
+
+            +++ Section(header: "Display", footer: "")
+            <<< PickerInlineRow<String>("theme") {
                 $0.title = "Theme"
                 $0.options = ["Light", "Dark", "Black", "Original"]
                 $0.value = UserDefaults.standard.enabledTheme.description
@@ -31,17 +45,6 @@ class SettingsViewController: FormViewController {
                 if let rowVal = $0.value {
                     UserDefaults.standard.setTheme(rowVal)
                     AppThemeProvider.shared.currentTheme = UserDefaults.standard.enabledTheme
-                }
-            }
-
-            +++ PickerInlineRow<String>() {
-                $0.title = "Open Links In"
-                $0.options = ["In-app browser", "In-app browser (Reader mode)", "Safari", "Google Chrome"]
-                $0.value = "In-app browser"
-                $0.value = UserDefaults.standard.string(forKey: UserDefaultsKeys.OpenInBrowser.rawValue)
-            }.onChange {
-                if let rowVal = $0.value {
-                    UserDefaults.standard.setOpenLinksIn(rowVal)
                 }
             }
 
@@ -57,6 +60,8 @@ class SettingsViewController: FormViewController {
                         Notifications.configure()
                     }
                 }
+            }.onCellSelection { _, _ in
+                self.showContextualMenu(PushNotificationsDisclaimerViewController())
             }
 
             <<< IntRow { row in
@@ -82,8 +87,8 @@ class SettingsViewController: FormViewController {
     var defaultCellUpdate: ((BaseCell, BaseRow) -> Void)? {
         return { cell, row in
             let activeTheme = UserDefaults.standard.enabledTheme
-            cell.textLabel?.textColor = .white
-            cell.textLabel?.tintColor = .white
+            cell.textLabel?.textColor = activeTheme.textColor
+            cell.textLabel?.tintColor = activeTheme.textColor
             cell.detailTextLabel?.textColor = activeTheme.lightTextColor
             cell.backgroundColor = activeTheme.barBackgroundColor
             cell.tintColor = activeTheme.lightTextColor
@@ -93,8 +98,11 @@ class SettingsViewController: FormViewController {
                 textCell.textField.textColor = activeTheme.titleTextColor
             }
 
-            if let pickerRow = row as? PickerInlineRow<String>, let inlineRow = pickerRow.inlineRow {
-                inlineRow.cell.pickerTextAttributes = [.foregroundColor: activeTheme.titleTextColor]
+            if row.tag == "enableNotifications" {
+                let button = UIButton(type: .detailDisclosure)
+                button.frame = CGRect(x: cell.textLabel!.intrinsicContentSize.width + 5, y: cell.textLabel!.frame.maxY,
+                                      width: button.frame.width, height: button.frame.height)
+                cell.textLabel!.addSubview(button)
             }
         }
     }
