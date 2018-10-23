@@ -347,6 +347,9 @@ extension NewsViewController: KeyCommandProvider {
         } else if keyCommand.input == "\r" {
             selectCurrent(sender: keyCommand)
             return true
+        } else if keyCommand.input == "l" {
+            openLink(sender: keyCommand)
+            return true
         }
 
         return false
@@ -364,6 +367,8 @@ extension NewsViewController: KeyCommandProvider {
                                              action: #selector(handleShortcut(keyCommand:)), discoverabilityTitle: "Next Story")
         let selectObjectCommand = UIKeyCommand(input: "\r", modifierFlags: [],
                                                action: #selector(handleShortcut(keyCommand:)), discoverabilityTitle: "Open Story Comments")
+        let openLinkCommand = UIKeyCommand(input: "l", modifierFlags: [],
+                                           action: #selector(handleShortcut(keyCommand:)), discoverabilityTitle: "Open Story Link")
 
         var shortcuts: [UIKeyCommand] = [reloadCommand]
         if let selectedRow = self.tableView?.indexPathForSelectedRow?.row {
@@ -373,7 +378,7 @@ extension NewsViewController: KeyCommandProvider {
             if selectedRow > 0 {
                 shortcuts.append(previousObjectCommand)
             }
-            shortcuts.append(selectObjectCommand)
+            shortcuts.append(contentsOf: [selectObjectCommand, openLinkCommand])
         } else {
             shortcuts.append(nextObjectCommand)
         }
@@ -396,5 +401,11 @@ extension NewsViewController: KeyCommandProvider {
 
     @objc func selectCurrent(sender: UIKeyCommand) {
         self.performSegue(withIdentifier: "ShowComments", sender: self)
+    }
+
+    @objc func openLink(sender: UIKeyCommand) {
+        if let selectedIP = self.tableView?.indexPathForSelectedRow {
+            didPressLinkButton(posts![selectedIP.row])
+        }
     }
 }
