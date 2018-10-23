@@ -20,6 +20,7 @@ final class PushNotificationsDisclaimerViewController: UIViewController {
             target: self,
             action: #selector(onDone)
         )
+        navigationItem.rightBarButtonItem?.tintColor = AppThemeProvider.shared.currentTheme.barForegroundColor
         title = NSLocalizedString("Push Notifications", comment: "")
 
         textView.textContainerInset = UIEdgeInsets(
