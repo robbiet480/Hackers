@@ -17,8 +17,6 @@ class SettingsViewController: FormViewController {
         super.viewDidLoad()
         setupTheming()
 
-        self.tableView.bounces = false
-
         PickerInlineRow<String>.defaultCellUpdate = defaultCellUpdate
         PickerInlineRow<AppTheme>.defaultCellUpdate = defaultCellUpdate
 
@@ -43,7 +41,7 @@ class SettingsViewController: FormViewController {
                     if let rowVal = $0.value {
                         UserDefaults.standard.setOpenLinksIn(rowVal)
                     }
-                }
+                }.onExpandInlineRow(inlineStringPickerOnExpandInlineRow)
 
             +++ Section(header: "Display", footer: displaySectionFooter)
             <<< PickerInlineRow<AppTheme>("lightTheme") {
@@ -54,8 +52,9 @@ class SettingsViewController: FormViewController {
                 }.onChange {
                     if let rowVal = $0.value {
                         UserDefaults.standard.lightTheme = rowVal
+                        AppThemeProvider.shared.currentTheme = UserDefaults.standard.brightnessCorrectTheme
                     }
-                }
+                }.onExpandInlineRow(inlineAppThemePickerOnExpandInlineRow)
 
             <<< PickerInlineRow<AppTheme>("darkTheme") {
                     $0.title = "Dark Theme"
@@ -66,8 +65,9 @@ class SettingsViewController: FormViewController {
                 }.onChange {
                     if let rowVal = $0.value {
                         UserDefaults.standard.darkTheme = rowVal
+                        AppThemeProvider.shared.currentTheme = UserDefaults.standard.brightnessCorrectTheme
                     }
-                }
+                }.onExpandInlineRow(inlineAppThemePickerOnExpandInlineRow)
 
             <<< SwitchRow("switchThemeAutomatically") {
                     $0.title = "Switch theme automatically"
@@ -138,6 +138,28 @@ class SettingsViewController: FormViewController {
     
     @IBAction func didPressDone(_ sender: Any) {
         dismiss(animated: true)
+    }
+
+    var inlineStringPickerOnExpandInlineRow: ((PickerInlineCell<String>, PickerInlineRow<String>, PickerRow<String>) -> Void) {
+        return { _, _, row in
+            row.cellUpdate { cell, _ in
+                cell.pickerTextAttributes = [
+                    NSAttributedString.Key.foregroundColor: AppThemeProvider.shared.currentTheme.barForegroundColor
+                ]
+                cell.backgroundColor = AppThemeProvider.shared.currentTheme.backgroundColor
+            }
+        }
+    }
+
+    var inlineAppThemePickerOnExpandInlineRow: ((PickerInlineCell<AppTheme>, PickerInlineRow<AppTheme>, PickerRow<AppTheme>) -> Void) {
+        return { _, _, row in
+            row.cellUpdate { cell, _ in
+                cell.pickerTextAttributes = [
+                    NSAttributedString.Key.foregroundColor: AppThemeProvider.shared.currentTheme.barForegroundColor
+                ]
+                cell.backgroundColor = AppThemeProvider.shared.currentTheme.backgroundColor
+            }
+        }
     }
 
     var defaultCellUpdate: ((BaseCell, BaseRow) -> Void)? {
