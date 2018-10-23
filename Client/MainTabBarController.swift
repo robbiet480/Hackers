@@ -20,9 +20,11 @@ class MainTabBarController: UITabBarController {
 
         setupTheming()
 
-        setDefaultTabOrder()
-
         let realm = Realm.live()
+
+        if realm.objects(TabBarOrder.self).count == 0 {
+            setDefaultTabOrder()
+        }
 
         let orderObjs = realm.objects(TabBarOrder.self).sorted(byKeyPath: "index")
 
@@ -39,16 +41,9 @@ class MainTabBarController: UITabBarController {
             let config = orderObjs[index]
             let postType = HNScraper.PostListPageName(config.pageName)
 
-            // let (postType, typeName, iconName) = tabItems(for: index)
             newsViewController.postType = postType
-            let typeName = postType.tabTitle
-            var icon: UIImage? = nil
 
-            if let iconName = postType.iconName {
-                icon = UIImage(named: iconName)
-            }
-
-            splitViewController.tabBarItem = UITabBarItem(title: typeName, image: icon, tag: index)
+            splitViewController.tabBarItem = postType.tabBarItem(index)
         }
 
         self.customizableViewControllers = viewControllers
@@ -84,15 +79,14 @@ class MainTabBarController: UITabBarController {
     func setDefaultTabOrder() {
         let realm = Realm.live()
 
-        guard realm.objects(TabBarOrder.self).count == 0 else {
-            print("Order objects count is 0, not setting the default order!")
-            return
-        }
+        guard realm.objects(TabBarOrder.self).count == 0 else { return }
 
         let defaultOrder: [HNScraper.PostListPageName] = [.news, .asks, .jobs, .new, .front, .shows, .active, .best, .noob]
 
-        let orderObjs: [TabBarOrder] = defaultOrder.enumerated().map { (i, e) in
-            return TabBarOrder(i, e.tabTitle)
+        let orderObjs: [TabBarOrder] = defaultOrder.enumerated().map { (arg) -> TabBarOrder in
+            
+            let (i, e) = arg
+            return TabBarOrder(i, e.description)
         }
 
         try! realm.write {
@@ -153,7 +147,6 @@ extension MainTabBarController: UITabBarControllerDelegate {
 
             let moreNavController = viewController as! UINavigationController
 
-            print("Setting nav bar controller stuff")
             moreNavController.navigationBar.barTintColor = AppThemeProvider.shared.currentTheme.barBackgroundColor
             moreNavController.navigationBar.tintColor = AppThemeProvider.shared.currentTheme.barForegroundColor
             moreNavController.navigationBar.prefersLargeTitles = true
@@ -206,7 +199,7 @@ extension MainTabBarController: UITabBarControllerDelegate {
                         return
                 }
 
-                newVCOrder.append(TabBarOrder(index, newsViewController.postType.tabTitle))
+                newVCOrder.append(TabBarOrder(index, newsViewController.postType.description))
             }
 
             try! realm.write {

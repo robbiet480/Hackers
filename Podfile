@@ -3,16 +3,16 @@ use_frameworks!
 inhibit_all_warnings!
 
 target 'Hackers' do
+  pod 'ContextMenu'
   pod 'DZNEmptyDataSet'
   pod 'Eureka'
+  pod 'FontAwesome.swift'
+  pod 'HNScraper', :path => 'HNScraper'
   pod 'Kingfisher'
-  #pod 'libHN', :git => 'https://github.com/weiran/libHN', :commit => '6759f4ac591f5f36b01158260627ba0bf36eddc1'
-  pod 'HNScraper', :git => 'https://github.com/tsucres/HNScraper'
   pod 'OpenGraph'
   pod 'PromiseKit'
   pod 'RealmSwift'
   pod 'SkeletonView'
-  pod 'ContextMenu'
 end
 
 post_install do |installer|

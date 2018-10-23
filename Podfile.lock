@@ -2,6 +2,7 @@ PODS:
   - ContextMenu (0.4.0)
   - DZNEmptyDataSet (1.8.1)
   - Eureka (4.3.0)
+  - FontAwesome.swift (1.4.5)
   - HNScraper (0.2.2)
   - Kingfisher (4.8.1)
   - OpenGraph (1.0.5)
@@ -25,7 +26,8 @@ DEPENDENCIES:
   - ContextMenu
   - DZNEmptyDataSet
   - Eureka
-  - HNScraper (from `https://github.com/tsucres/HNScraper`)
+  - FontAwesome.swift
+  - HNScraper (from `HNScraper`)
   - Kingfisher
   - OpenGraph
   - PromiseKit
@@ -37,6 +39,7 @@ SPEC REPOS:
     - ContextMenu
     - DZNEmptyDataSet
     - Eureka
+    - FontAwesome.swift
     - Kingfisher
     - OpenGraph
     - PromiseKit
@@ -46,18 +49,14 @@ SPEC REPOS:
 
 EXTERNAL SOURCES:
   HNScraper:
-    :git: https://github.com/tsucres/HNScraper
-
-CHECKOUT OPTIONS:
-  HNScraper:
-    :commit: 4ff3071df92aae84006a3c2c1ac0ed8be4d58774
-    :git: https://github.com/tsucres/HNScraper
+    :path: HNScraper
 
 SPEC CHECKSUMS:
   ContextMenu: f835e09a93f1c28c631b76ee94396d9570397fd1
   DZNEmptyDataSet: 9525833b9e68ac21c30253e1d3d7076cc828eaa7
   Eureka: 6d711cb30ca333b4bc893110285a722ae3840114
-  HNScraper: 89d135811bc8b9088adbb677c0bbc6cf8ed85cc0
+  FontAwesome.swift: a351dbb86b9fcec9aad6bce2fdd5b95e9a7b8828
+  HNScraper: eaa3dec825f7e0826a87ca1c4aa0d05294bf33e5
   Kingfisher: 868c1149679a7ab6869be118faa9b5aed154aaf0
   OpenGraph: f3529e35045abd3b163f455278d4d866c0eb061b
   PromiseKit: 27c1601bfb73405871b805bcb8cf7e55c4dad3db
@@ -65,6 +64,6 @@ SPEC CHECKSUMS:
   RealmSwift: c9580133e73ef40ed340401af2dbc9a5790dfea7
   SkeletonView: 041053e904504e7d8db83df166e599be75659fe1
 
-PODFILE CHECKSUM: f627ab55cd646ea92e99d7684b34047c4a0d7ed2
+PODFILE CHECKSUM: 7855349ffda7985d9e1e68e6a520a605f0bde1f1
 
 COCOAPODS: 1.6.0.beta.1

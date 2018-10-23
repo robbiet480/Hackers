@@ -8,6 +8,7 @@
 
 import Foundation
 import HNScraper
+import FontAwesome_swift
 
 extension HNScraper.PostListPageName {
     
@@ -39,7 +40,7 @@ extension HNScraper.PostListPageName {
     }
 
 
-    var tabTitle: String {
+    var description: String {
         switch self {
         /// Home page
         case .news:
@@ -87,5 +88,50 @@ extension HNScraper.PostListPageName {
         default:
             return nil
         }
+    }
+
+    var tabBarIcon: UIImage {
+        var iconName: FontAwesome = .questionCircle
+
+        switch self {
+        /// Home page
+        case .news:
+            iconName = .globe
+        // Today's front page
+        case .front:
+            iconName = .calendar
+        /// Latest submissions
+        case .new:
+            iconName = .clock
+        /// Jobs only (new first)
+        case .jobs:
+            iconName = .briefcase
+        /// Asks only (new first)
+        case .asks:
+            iconName = .question
+        /// Shows only (top)
+        case .shows:
+            iconName = .eye
+        /// Shows only (latest)
+        case .newshows:
+            iconName = .eye
+        /// All news with most active discussion thread first
+        case .active:
+            iconName = .fire
+        /// Highest (recent) score
+        case .best:
+            iconName = .star
+        /// More recent, only by new users
+        case .noob:
+            iconName = .child
+        }
+
+        return UIImage.fontAwesomeIcon(name: iconName, style: .solid,
+                                       textColor: AppThemeProvider.shared.currentTheme.barForegroundColor,
+                                       size: CGSize(width: 30, height: 30))
+    }
+
+    func tabBarItem(_ tag: Int) -> UITabBarItem {
+        return UITabBarItem(title: self.description, image: self.tabBarIcon, tag: tag)
     }
 }

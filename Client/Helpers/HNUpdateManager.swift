@@ -12,21 +12,20 @@ import PromiseKit
 import HNScraper
 
 class HNUpdateManager {
-    static let shared = HNUpdateManager()
+    public static let shared = HNUpdateManager()
 
     private var notificationToken: NotificationToken? = nil
     private var nextPageIdentifiers: [Int: String] = [:]
 
+    private let results = Realm.live().objects(PostModel.self)
+
     init() {
         _ = self.loadAllPosts()
-
-        let realm = Realm.live()
-        let results = realm.objects(PostModel.self)
 
         notificationToken = results.observe { (changes: RealmCollectionChange) in
             switch changes {
             case .initial:
-                print("Initial")
+                return
             case .update(_, _, let insertions, _):
                 // Query results have changed, so apply them to the UITableView
                 print("Update happened with insertions", insertions)
