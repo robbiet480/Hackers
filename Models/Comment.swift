@@ -78,7 +78,7 @@ class CommentModel: Object {
             self.DownvoteURLAddition = downvoteURLAddition
         }
 
-        if let links = comment.links as? [String] {
+        if let links = comment.links {
             self.Links.append(objectsIn: links.map({ $0 }))
         }
     }
