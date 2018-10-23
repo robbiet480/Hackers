@@ -11,6 +11,7 @@ import UIKit
 
 protocol PostCellDelegate {
     func didTapThumbnail(_ sender: Any)
+    func didLongPressCell(_ sender: Any)
 }
 
 class PostCell : UITableViewCell {
@@ -63,24 +64,9 @@ class PostCell : UITableViewCell {
         delegate?.didTapThumbnail(sender)
     }
 
-    @objc func cellLongPress() {
-        if let post = post {
-            let alertController = UIAlertController(title: "Share...", message: nil, preferredStyle: .actionSheet)
-            let postURLAction = UIAlertAction(title: "Content Link", style: .default) { action in
-                let linkVC = post.LinkActivityViewController
-                UIApplication.shared.keyWindow?.rootViewController?.present(linkVC, animated: true, completion: nil)
-            }
-            let hackerNewsURLAction = UIAlertAction(title: "Hacker News Link", style: .default) { action in
-                let commentsVC = post.CommentsActivityViewController
-                UIApplication.shared.keyWindow?.rootViewController?.present(commentsVC, animated: true, completion: nil)
-            }
-            alertController.addAction(postURLAction)
-            alertController.addAction(hackerNewsURLAction)
-            alertController.addAction(UIAlertAction(title: "Cancel", style: UIAlertAction.Style.cancel, handler: nil))
-
-            UIApplication.shared.keyWindow?.rootViewController?.present(alertController,
-                                                                        animated: true, completion: nil)
-        }
+    @objc func cellLongPress(_ sender: Any) {
+        print("cell long pressed!")
+        delegate?.didLongPressCell(sender)
     }
 }
 

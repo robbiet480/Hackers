@@ -295,6 +295,37 @@ extension NewsViewController: PostCellDelegate {
             didPressLinkButton(post)
         }
     }
+
+    func didLongPressCell(_ sender: Any) {
+        guard let longPressGestureRecognizer = sender as? UILongPressGestureRecognizer else { return }
+        let point = longPressGestureRecognizer.location(in: tableView)
+        if let indexPath = tableView.indexPathForRow(at: point) {
+            let post = posts![indexPath.row]
+
+            let alertController = UIAlertController(title: "Share...", message: nil, preferredStyle: .actionSheet)
+            let postURLAction = UIAlertAction(title: "Content Link", style: .default) { action in
+                let linkVC = post.LinkActivityViewController
+                UIApplication.shared.keyWindow?.rootViewController?.present(linkVC, animated: true, completion: nil)
+                linkVC.popoverPresentationController?.sourceView = self.tableView
+                linkVC.popoverPresentationController?.sourceRect = self.tableView.cellForRow(at: indexPath)!.frame
+            }
+            let hackerNewsURLAction = UIAlertAction(title: "Hacker News Link", style: .default) { action in
+                let commentsVC = post.CommentsActivityViewController
+                UIApplication.shared.keyWindow?.rootViewController?.present(commentsVC, animated: true, completion: nil)
+                commentsVC.popoverPresentationController?.sourceView = self.tableView
+                commentsVC.popoverPresentationController?.sourceRect = self.tableView.cellForRow(at: indexPath)!.frame
+            }
+            alertController.addAction(postURLAction)
+            alertController.addAction(hackerNewsURLAction)
+            alertController.addAction(UIAlertAction(title: "Cancel", style: UIAlertAction.Style.cancel, handler: nil))
+
+            UIApplication.shared.keyWindow?.rootViewController?.present(alertController,
+                                                                        animated: true, completion: nil)
+
+            alertController.popoverPresentationController?.sourceView = self.tableView
+            alertController.popoverPresentationController?.sourceRect = self.tableView.cellForRow(at: indexPath)!.frame
+        }
+    }
 }
 
 extension NewsViewController: KeyCommandProvider {

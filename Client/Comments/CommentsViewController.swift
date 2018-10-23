@@ -118,16 +118,16 @@ class CommentsViewController : UIViewController {
         didPressLinkButton(post!)
     }
     
-    @IBAction func shareTapped(_ sender: AnyObject) {
+    @IBAction func shareTapped(_ sender: UIBarButtonItem) {
         let alertController = UIAlertController(title: "Share...", message: nil, preferredStyle: .actionSheet)
         let postURLAction = UIAlertAction(title: "Content Link", style: .default) { action in
             let linkVC = self.post!.LinkActivityViewController
-            linkVC.popoverPresentationController?.barButtonItem = sender as? UIBarButtonItem
+            linkVC.popoverPresentationController?.barButtonItem = sender
             self.present(linkVC, animated: true, completion: nil)
         }
         let hackerNewsURLAction = UIAlertAction(title: "Hacker News Link", style: .default) { action in
             let commentsVC = self.post!.CommentsActivityViewController
-            commentsVC.popoverPresentationController?.barButtonItem = sender as? UIBarButtonItem
+            commentsVC.popoverPresentationController?.barButtonItem = sender
             self.present(commentsVC, animated: true, completion: nil)
         }
         alertController.addAction(postURLAction)
@@ -135,6 +135,8 @@ class CommentsViewController : UIViewController {
         alertController.addAction(UIAlertAction(title: "Cancel", style: UIAlertAction.Style.cancel, handler: nil))
 
         self.present(alertController, animated: true, completion: nil)
+
+        alertController.popoverPresentationController?.barButtonItem = sender
     }
 }
 
@@ -209,6 +211,20 @@ extension CommentsViewController: Themed {
 }
 
 extension CommentsViewController: CommentDelegate {
+    func commentLongPressed(_ sender: UITableViewCell) {
+
+        guard let indexPath = tableView.indexPath(for: sender) else { return }
+        guard commentsController.comments.count > indexPath.row else { return }
+        let comment = commentsController.comments[indexPath.row]
+
+        let activityVC = comment.ActivityViewController
+
+        UIApplication.shared.keyWindow?.rootViewController?.present(activityVC, animated: true, completion: nil)
+
+        activityVC.popoverPresentationController?.sourceView = self.tableView
+        activityVC.popoverPresentationController?.sourceRect = self.tableView.cellForRow(at: indexPath)!.frame
+    }
+
     func commentTapped(_ sender: UITableViewCell) {
         if let indexPath = tableView.indexPath(for: sender) {
             toggleCellVisibilityForCell(indexPath)

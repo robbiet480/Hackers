@@ -45,10 +45,7 @@ class CommentTableViewCell : UITableViewCell {
     }
 
     @objc func cellLongPress() {
-        if let comment = comment {
-            UIApplication.shared.keyWindow?.rootViewController?.present(comment.ActivityViewController,
-                                                                        animated: true, completion: nil)
-        }
+        delegate?.commentLongPressed(self)
     }
 
     func updateIndentPadding() {
