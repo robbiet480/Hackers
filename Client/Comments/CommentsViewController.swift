@@ -58,7 +58,9 @@ class CommentsViewController : UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
-        tabBarController?.tabBar.isHidden = true
+        if UIDevice().userInterfaceIdiom == .phone {
+            tabBarController?.tabBar.isHidden = true
+        }
     }
 
     override func viewWillDisappear(_ animated: Bool) {
