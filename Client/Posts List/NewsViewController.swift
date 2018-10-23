@@ -361,11 +361,11 @@ extension NewsViewController: KeyCommandProvider {
     var shortcutKeys: [UIKeyCommand] {
         let reloadCommand = UIKeyCommand(input: "r", modifierFlags: .command,
                                          action: #selector(handleShortcut(keyCommand:)), discoverabilityTitle: "Reload")
-        let previousObjectCommand = UIKeyCommand(input: "j", modifierFlags: [],
+        let previousObjectCommand = UIKeyCommand(input: "j", modifierFlags: .shift,
                                                  action: #selector(handleShortcut(keyCommand:)), discoverabilityTitle: "Previous Story")
-        let nextObjectCommand = UIKeyCommand(input: "k", modifierFlags: [],
+        let nextObjectCommand = UIKeyCommand(input: "k", modifierFlags: .shift,
                                              action: #selector(handleShortcut(keyCommand:)), discoverabilityTitle: "Next Story")
-        let selectObjectCommand = UIKeyCommand(input: "\r", modifierFlags: [],
+        let selectObjectCommand = UIKeyCommand(input: "\r", modifierFlags: .shift,
                                                action: #selector(handleShortcut(keyCommand:)), discoverabilityTitle: "Open Story Comments")
         let openLinkCommand = UIKeyCommand(input: "l", modifierFlags: [],
                                            action: #selector(handleShortcut(keyCommand:)), discoverabilityTitle: "Open Story Link")

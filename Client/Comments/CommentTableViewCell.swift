@@ -25,7 +25,7 @@ class CommentTableViewCell : UITableViewCell {
             updateCommentContent(with: comment)
         }
     }
-    
+
     @IBOutlet var commentTextView: TouchableTextView!
     @IBOutlet var authorLabel : UILabel!
     @IBOutlet var datePostedLabel : UILabel!

@@ -282,32 +282,64 @@ extension CommentsViewController: SkeletonTableViewDataSource {
     }
 }
 
-//extension CommentsViewController: KeyCommandProvider {
-//    var shortcutKeys: [UIKeyCommand] {
-//        return [
-//            UIKeyCommand(input: "d", modifierFlags: .command, action: #selector(handleShortcut(keyCommand:)), discoverabilityTitle: "Delete Note"),
-//            UIKeyCommand(input: "\u{8}", modifierFlags: [], action: #selector(handleShortcut(keyCommand:)), discoverabilityTitle: "Delete Note")
-//        ]
-//    }
-//
-//    @objc func handleShortcut(keyCommand: UIKeyCommand) -> Bool {
-//        if (keyCommand.input == "d" && keyCommand.modifierFlags == .command) || (keyCommand.input == "\u{8}" && keyCommand.modifierFlags == []) {
-//            if let note = detailItem {
-//                managedObjectContext?.delete(note)
-//
-//                do {
-//                    try managedObjectContext?.save()
-//                } catch {
-//                    let nserror = error as NSError
-//                    fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
-//                }
-//
-//                detailItem = nil
-//                configureView()
-//            }
-//            return true
-//        } else {
-//            return false
-//        }
-//    }
-//}
+extension CommentsViewController: KeyCommandProvider {
+    @objc func handleShortcut(keyCommand: UIKeyCommand) -> Bool {
+        // Why j/k? https://www.labnol.org/internet/j-k-keyboard-shortcuts/20779/
+        if keyCommand.input == "j" {
+            selectPrev(sender: keyCommand)
+            return true
+        } else if keyCommand.input == "k" {
+            selectNext(sender: keyCommand)
+            return true
+        } else if keyCommand.input == "\r" {
+            selectCurrent(sender: keyCommand)
+            return true
+        }
+
+        return false
+    }
+
+    // UITableView keyboard shortcuts found at
+    // https://stablekernel.com/creating-a-delightful-user-experience-with-ios-keyboard-shortcuts/
+
+    var shortcutKeys: [UIKeyCommand] {
+        let previousObjectCommand = UIKeyCommand(input: "j", modifierFlags: [],
+                                                 action: #selector(handleShortcut(keyCommand:)), discoverabilityTitle: "Previous Comment")
+        let nextObjectCommand = UIKeyCommand(input: "k", modifierFlags: [],
+                                             action: #selector(handleShortcut(keyCommand:)), discoverabilityTitle: "Next Comment")
+        let selectObjectCommand = UIKeyCommand(input: "\r", modifierFlags: [],
+                                               action: #selector(handleShortcut(keyCommand:)), discoverabilityTitle: "Toggle Comment Visibility")
+
+        var shortcuts: [UIKeyCommand] = []
+        if let selectedRow = self.tableView?.indexPathForSelectedRow?.row {
+            if selectedRow < self.comments!.count - 1 {
+                shortcuts.append(nextObjectCommand)
+            }
+            if selectedRow > 0 {
+                shortcuts.append(previousObjectCommand)
+            }
+            shortcuts.append(selectObjectCommand)
+        } else {
+            shortcuts.append(nextObjectCommand)
+        }
+        return shortcuts
+    }
+
+    @objc func selectNext(sender: UIKeyCommand) {
+        if let selectedIP = self.tableView?.indexPathForSelectedRow {
+            self.tableView.selectRow(at: NSIndexPath(row: selectedIP.row + 1, section: selectedIP.section) as IndexPath, animated: true, scrollPosition: .middle)
+        } else {
+            self.tableView.selectRow(at: NSIndexPath(row: 0, section: 0) as IndexPath, animated: true, scrollPosition: .top)
+        }
+    }
+
+    @objc func selectPrev(sender: UIKeyCommand) {
+        if let selectedIP = self.tableView?.indexPathForSelectedRow {
+            self.tableView.selectRow(at: NSIndexPath(row: selectedIP.row - 1, section: selectedIP.section) as IndexPath, animated: true, scrollPosition: .middle)
+        }
+    }
+
+    @objc func selectCurrent(sender: UIKeyCommand) {
+        toggleCellVisibilityForCell(self.tableView.indexPathForSelectedRow)
+    }
+}
