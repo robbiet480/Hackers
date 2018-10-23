@@ -113,6 +113,37 @@ class MainTabBarController: UITabBarController {
         }
 
     }
+
+    // Tab Bar keyboard shortcuts found at
+    // https://stablekernel.com/creating-a-delightful-user-experience-with-ios-keyboard-shortcuts/
+    func getTabBarKeyCommands() -> [UIKeyCommand] {
+        return self.tabBar.items!.enumerated().map { (index, item) -> UIKeyCommand in
+
+            var discoverabilityTitle = item.title ?? item.title ?? "Tab \(index + 1)"
+
+            if index == 7 {
+                discoverabilityTitle = "More"
+            }
+
+            return UIKeyCommand(input: (index + 1).description, modifierFlags: .command,
+                                action: #selector(selectTab), discoverabilityTitle: discoverabilityTitle)
+        }
+    }
+
+    override var keyCommands: [UIKeyCommand]? {
+        let allCommands = self.getTabBarKeyCommands()
+
+        guard let splitVC = self.selectedViewController as? MainSplitViewController,
+            let splitVCkeyCommands = splitVC.keyCommands else { return allCommands }
+
+        return allCommands + splitVCkeyCommands
+    }
+
+    @objc func selectTab(sender: UIKeyCommand) {
+        if let newIndex = Int(sender.input!), newIndex >= 1 && newIndex <= (self.tabBar.items?.count ?? 0) {
+            self.selectedIndex = newIndex - 1;
+        }
+    }
 }
 
 extension MainTabBarController: UITabBarControllerDelegate {
