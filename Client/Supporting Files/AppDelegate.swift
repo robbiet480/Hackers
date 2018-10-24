@@ -10,6 +10,7 @@ import Kingfisher
 import RealmSwift
 import UserNotifications
 import HNScraper
+import Firebase
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -19,6 +20,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         UIFont.overrideInitialize()
         UNUserNotificationCenter.current().delegate = self
 
+        FirebaseApp.configure(options: FirebaseOptions(googleAppID: "1:123456789112:ios:00a0aa1a00aa0000",
+                                                       gcmSenderID: "123456789101"))
+
         KingfisherManager.shared.cache.pathExtension = "png"
         KingfisherManager.shared.defaultOptions = [.cacheSerializer(FormatIndicatedCacheSerializer.png),
                                                    .keepCurrentImageWhileLoading]
@@ -26,6 +30,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         ReviewController.incrementLaunchCounter()
         ReviewController.requestReview()
         setAppTheme()
+
+        //HNFirebaseClient.shared.getStoriesForPage(.news)
 
         HNParseConfig.shared.jsonConfigURL = "http://192.168.7.25:8000/hn.json"
 

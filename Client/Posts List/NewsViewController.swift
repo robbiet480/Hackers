@@ -34,7 +34,7 @@ class NewsViewController : UIViewController {
         super.viewDidLoad()
 
         let realm = Realm.live()
-        self.posts = realm.objects(PostModel.self).filter("Type == %@", self.postType.rawValue)
+        self.posts = realm.objects(PostModel.self).filter("type == %@", self.postType.rawValue)
 
         notificationToken = self.posts!.observe { [weak self] (changes: RealmCollectionChange) in
             guard let tableView = self?.tableView else { return }
@@ -143,7 +143,7 @@ class NewsViewController : UIViewController {
     }
 
     @objc func loadPosts() {
-        _ = HNUpdateManager.shared.loadPostsForType(self.postType).done { newPosts in
+        _ = HNFirebaseClient.shared.getStoriesForPage(self.postType).done { newPosts in
             print("Done getting \(self.postType.description) posts and got \(newPosts.count) new ones")
             self.view.hideSkeleton()
             self.tableView.rowHeight = UITableView.automaticDimension
@@ -180,7 +180,7 @@ extension NewsViewController: UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let post = posts![indexPath.row]
-        if post.Type == HNPost.PostType.jobs.rawValue { // Job posts don't have comments, so lets go straight to the link
+        if post.type == .job { // Job posts don't have comments, so lets go straight to the link
             if let vc = UserDefaults.standard.openInBrowser(post.LinkURL) {
                 self.present(vc, animated: true, completion: nil)
             }
@@ -199,7 +199,7 @@ extension NewsViewController: UITableViewDataSource {
 extension NewsViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         if indexPath.row == posts!.count - 5 {
-            _ = HNUpdateManager.shared.loadMorePosts(self.postType)
+            _ = HNFirebaseClient.shared.getStoriesForPage(self.postType)
         }
     }
 }
@@ -265,7 +265,7 @@ extension NewsViewController: PostTitleViewDelegate {
         let activity = NSUserActivity(activityType: "com.weiranzhang.Hackers.link")
         activity.isEligibleForHandoff = true
         activity.webpageURL = post.LinkURL
-        activity.title = post.Title
+        activity.title = post.title
         self.userActivity = activity
 
         let vc = UserDefaults.standard.openInBrowser(post.LinkURL)

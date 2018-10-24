@@ -56,16 +56,16 @@ class CommentTableViewCell : UITableViewCell {
     
     func updateCommentContent(with comment: CommentModel) {
         level = comment.Level
-        datePostedLabel.text = comment.TimeCreatedString
-        authorLabel.text = comment.Username
-        
+        datePostedLabel.text = comment.time?.description
+        authorLabel.text = comment.author
+
         if let commentTextView = commentTextView {
             // only for expanded comments
             let commentFont = UIFont.systemFont(ofSize: 15)
             let commentTextColor = AppThemeProvider.shared.currentTheme.textColor
             let lineSpacing = 4 as CGFloat
             
-            let commentAttributedString = NSMutableAttributedString(string: comment.Text)
+            let commentAttributedString = NSMutableAttributedString(string: comment.text!)
             let paragraphStyle = NSMutableParagraphStyle.default.mutableCopy() as! NSMutableParagraphStyle
             paragraphStyle.lineSpacing = lineSpacing
             

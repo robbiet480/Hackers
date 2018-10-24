@@ -23,7 +23,7 @@ class PostTitleView: UIView, UIGestureRecognizerDelegate {
     var post: PostModel? {
         didSet {
             guard let post = post else { return }
-            titleLabel.text = post.Title
+            titleLabel.text = post.title!
             metadataLabel.attributedText = metadataText(for: post)
         }
     }
@@ -43,7 +43,9 @@ class PostTitleView: UIView, UIGestureRecognizerDelegate {
     }
     
     private func domainLabelText(for post: PostModel) -> String? {
-        guard let urlComponents = URLComponents(string: post.URLString), var host = urlComponents.host else {
+        guard let urlString = post.URLString else { return nil }
+
+        guard let urlComponents = URLComponents(string: urlString), var host = urlComponents.host else {
             return nil
         }
         
@@ -63,7 +65,7 @@ class PostTitleView: UIView, UIGestureRecognizerDelegate {
         let commentsIconAttachment = textAttachment(for: "CommentsIcon")
         let commentsIconAttributedString = NSAttributedString(attachment: commentsIconAttachment)
         
-        string.append(NSAttributedString(string: post.Points.description))
+        string.append(NSAttributedString(string: post.score.value!.description))
         string.append(pointsIconAttributedString)
         string.append(NSAttributedString(string: "• \(post.Comments.count)"))
         string.append(commentsIconAttributedString)

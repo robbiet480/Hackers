@@ -11,7 +11,7 @@ import UIKit
 import SafariServices
 import DZNEmptyDataSet
 import SkeletonView
-import RealmSwift
+import FirebaseDatabase
 
 class CommentsViewController : UIViewController {
     var post: PostModel?
@@ -33,20 +33,19 @@ class CommentsViewController : UIViewController {
         setupTheming()
         setupPostTitleView()
         view.showAnimatedSkeleton(usingColor: AppThemeProvider.shared.currentTheme.skeletonColor)
-        // loadComments()
+        loadComments()
+
+        self.post?.FirebaseDBRef.observe(.value, with: { (snapshot) in
+            print("Got snapshot with \(snapshot.childrenCount) IDs")
+        })
 
         self.post?.MarkAsRead()
 
-        self.comments = self.post!.Comments.filter("TRUEPREDICATE").map { $0 }
-
-        self.view.hideSkeleton()
-        self.tableView.rowHeight = UITableView.automaticDimension
-        self.tableView.reloadData()
-
         let activity = NSUserActivity(activityType: "com.weiranzhang.Hackers.comments")
         activity.isEligibleForHandoff = true
-        activity.title = self.post!.CommentsPageTitle
-        activity.webpageURL = self.post!.CommentsURL
+        // FIXME: Needs the correct comment title
+        activity.title = self.post!.ItemPageTitle
+        activity.webpageURL = self.post!.ItemURL
         self.userActivity = activity
     }
     
@@ -91,6 +90,17 @@ class CommentsViewController : UIViewController {
     }
     
     func loadComments() {
+        _ = HNFirebaseClient.shared.getAndSaveCommentsForKidIDs(self.post!.ID,
+                                                                Array(self.post!.kidsIds)).done { comments in
+
+            self.comments = comments
+
+            self.view.hideSkeleton()
+            self.tableView.rowHeight = UITableView.automaticDimension
+            self.tableView.reloadData()
+
+        }
+
 //        HNManager.shared().loadComments(from: self.post?.OriginalPost) { comments in
 //            if let downcastedArray = comments as? [HNComment] {
 //                let mappedComments = downcastedArray.map { CommentModel($0) }
@@ -153,7 +163,7 @@ extension CommentsViewController: PostTitleViewDelegate {
             let activity = NSUserActivity(activityType: "com.weiranzhang.Hackers.link")
             activity.isEligibleForHandoff = true
             activity.webpageURL = post.LinkURL
-            activity.title = post.Title
+            activity.title = post.title
             self.userActivity = activity
 
             if let safariViewController = UserDefaults.standard.openInBrowser(post.LinkURL) {
@@ -235,7 +245,7 @@ extension CommentsViewController: CommentDelegate {
         let activity = NSUserActivity(activityType: "com.weiranzhang.Hackers.link")
         activity.isEligibleForHandoff = true
         activity.webpageURL = URL
-        activity.title = post!.Title
+        activity.title = post!.title
         self.userActivity = activity
 
         if let safariViewController = UserDefaults.standard.openInBrowser(URL) {

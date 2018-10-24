@@ -8,34 +8,21 @@
 
 import Foundation
 import RealmSwift
+import ObjectMapper
 import Kingfisher
 import OpenGraph
 import HNScraper
 
-class PostModel: Object {
-    @objc dynamic var `Type`: Int = HNPost.PostType.defaultType.rawValue
-    @objc dynamic var Username: String = ""
-    @objc dynamic var URLString: String = ""
-    @objc dynamic var Title: String = ""
-    @objc dynamic var Points: Int = 0
-    @objc dynamic var CommentCount: Int = 0
-    @objc dynamic var ID: Int = 0
-    @objc dynamic var TimeCreatedString: String = ""
-    @objc dynamic var UpvoteURLAddition: String = ""
+class PostModel: HNItem {
 
-    @objc dynamic var CreatedAt: Date = Date()
-
-    @objc dynamic var ReadAt: Date?
+    /// URL of the story.
+    @objc dynamic var URLString: String?
 
     @objc dynamic var NotifiedAt: Date?
 
     @objc dynamic var ThumbnailURLString: String = ""
 
     let Comments = LinkingObjects(fromType: CommentModel.self, property: "Post")
-
-    override static func primaryKey() -> String? {
-        return "ID"
-    }
 
     convenience init(_ post: HNPost) {
         self.init()
@@ -46,18 +33,21 @@ class PostModel: Object {
             print("Unable to cast string ID to int", post.description)
         }
 
-        self.`Type` = post.type.rawValue
-        self.Username = post.username
+        // FIXME: Convert HNScraper post type to HNItem type.
+        // self.type = post.type
+        self.author = post.username
         if let url = post.url {
             self.URLString = url.absoluteString
         }
-        self.Title = post.title
-        self.Points = Int(post.points)
-        self.CommentCount = Int(post.commentCount)
-        self.TimeCreatedString = post.time
-        if let upvoteAdditionURL = post.upvoteAdditionURL {
-            self.UpvoteURLAddition = upvoteAdditionURL
-        }
+        self.title = post.title
+        self.score.value = Int(post.points)
+        self.descendants.value = Int(post.commentCount)
+    }
+
+    override public func mapping(map: Map) {
+        super.mapping(map: map)
+
+        URLString         <- map["url"]
     }
 
     func MarkAsRead() {
@@ -70,43 +60,36 @@ class PostModel: Object {
 
     var OriginalPost: HNPost {
         let newPost = HNPost()
-        newPost.type = HNPost.PostType(index: self.`Type`)!
-        newPost.username = self.Username
+        // FIXME: Convert HNItem type to HNScraper post type.
+        // newPost.type = HNPost.PostType(index: self.`Type`)!
+
+        newPost.username = self.author!
         newPost.url = self.LinkURL
-        newPost.title = self.Title
-        newPost.points = self.Points
-        newPost.commentCount = self.CommentCount
+        newPost.title = self.title!
+        newPost.points = self.score.value!
+        newPost.commentCount = self.descendants.value!
         newPost.id = self.ID.description
-        newPost.time = self.TimeCreatedString
-        newPost.upvoteAdditionURL = self.UpvoteURLAddition
 
         return newPost
     }
 
+    /// URL of the story.
     var LinkURL: URL {
-        return URL(string: self.URLString)!
-    }
-
-    var CommentsURL: URL {
-        return URL(string: "https://news.ycombinator.com/item?id=" + self.ID.description)!
-    }
-
-    var CommentsPageTitle: String {
-        return self.Title + " | Hacker News"
-    }
-
-    var CommentsActivityViewController: UIActivityViewController {
-        return UIActivityViewController(activityItems: [self.CommentsPageTitle,
-                                                        self.CommentsURL], applicationActivities: nil)
+        return URL(string: self.URLString!)!
     }
 
     var LinkActivityViewController: UIActivityViewController {
-        return UIActivityViewController(activityItems: [self.Title,
-                                                        self.LinkURL], applicationActivities: nil)
+        return UIActivityViewController(activityItems: [self.title!, self.LinkURL], applicationActivities: nil)
     }
 
     var LinkIsYCDomain: Bool {
-        return self.URLString.contains("ycombinator.com")
+        return self.URLString!.contains("ycombinator.com")
+    }
+
+    var CommentsActivityViewController: UIActivityViewController {
+        // FIXME: Needs the correct comment title
+        return UIActivityViewController(activityItems: [self.ItemPageTitle,
+                                                        self.ItemURL], applicationActivities: nil)
     }
 
     var ThumbnailCacheKey: String {
@@ -118,7 +101,7 @@ class PostModel: Object {
     }
 
     func ThumbnailURL(_ handler: @escaping (URL?) -> Void) {
-        var imageURL = URL(string: "https://image-extractor.now.sh/?url=" + self.URLString)!
+        var imageURL = URL(string: "https://image-extractor.now.sh/?url=" + self.URLString!)!
 
         OpenGraph.fetch(url: self.LinkURL) { (og, error) in
             if let image = og?[.image], let ogImageURL = URL(string: image) {

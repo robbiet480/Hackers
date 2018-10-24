@@ -86,7 +86,7 @@ final class Notifications {
             return
         }
 
-        _ = HNUpdateManager.shared.loadPostsForType(.news).done { _ in
+        _ = HNFirebaseClient.shared.getStoriesForPage(.news).done { _ in
             let allPosts = Realm.live().objects(PostModel.self).filter("NotifiedAt == nil AND Points >= \(UserDefaults.standard.minimumPointsForNotification)")
             if isLocalNotificationEnabled {
                 self.sendLocalPush(for: allPosts)
@@ -100,9 +100,9 @@ final class Notifications {
         let center = UNUserNotificationCenter.current()
         notifications.forEach { post in
             let content = UNMutableNotificationContent()
-            content.title = post.Title
+            content.title = post.title!
             content.body = post.LinkURL.host!.replacingOccurrences(of: "www.", with: "")
-            content.subtitle = post.Points.description + " points, posted by " + post.Username + " " + post.TimeCreatedString
+            content.subtitle = post.score.value!.description + " points, posted by " + post.author! + " " + post.time!.description
             content.categoryIdentifier = "POST"
             content.userInfo = ["POST_ID": post.ID]
 

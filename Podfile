@@ -13,6 +13,9 @@ target 'Hackers' do
   pod 'PromiseKit'
   pod 'RealmSwift'
   pod 'SkeletonView'
+  pod 'Firebase/Database'
+  pod 'ObjectMapper'
+  pod 'ObjectMapperAdditions/Realm'
 end
 
 post_install do |installer|

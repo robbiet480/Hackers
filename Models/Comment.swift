@@ -8,28 +8,18 @@
 
 import Foundation
 import RealmSwift
+import ObjectMapper
 import Kingfisher
 import OpenGraph
 import HNScraper
 
-class CommentModel: Object {
+class CommentModel: HNItem {
     @objc dynamic var Post: PostModel?
-    @objc dynamic var `Type`: Int = HNComment.HNCommentType.defaultType.rawValue
-    @objc dynamic var Text: String = ""
-    @objc dynamic var Username: String = ""
-    @objc dynamic var ID: Int = 0
-    let ParentID = RealmOptional<Int>()
-    @objc dynamic var TimeCreatedString: String = ""
-    @objc dynamic var ReplyURLString: String = ""
     @objc dynamic var Level: Int = 0
     let Links = List<String>()
     @objc dynamic var UpvoteURLAddition: String = ""
     @objc dynamic var DownvoteURLAddition: String = ""
     @objc dynamic var Visibility: VisibilityType = .Visible
-
-    @objc dynamic var CreatedAt: Date = Date()
-
-    @objc dynamic var ReadAt: Date?
 
     @objc enum VisibilityType: Int {
         case Visible = 3
@@ -37,8 +27,8 @@ class CommentModel: Object {
         case Hidden = 1
     }
 
-    override static func primaryKey() -> String? {
-        return "ID"
+    override func mapping(map: Map) {
+        super.mapping(map: map)
     }
 
     convenience init(_ comment: HNComment, _ post: PostModel? = nil) {
@@ -56,18 +46,10 @@ class CommentModel: Object {
             self.Post = post
         }
 
-        self.`Type` = comment.type.rawValue
-        self.Text = comment.text.htmlDecoded
-        self.Username = comment.username
+        self.text = comment.text.htmlDecoded
+        self.author = comment.username
         if let parentID = comment.parentId {
-            self.ParentID.value = Int(string: parentID)
-        }
-        self.TimeCreatedString = comment.created
-
-        if let replyURLString = comment.replyUrl {
-            self.ReplyURLString = replyURLString
-        } else {
-            print("No reply URL string for comment", comment, self.ID)
+            self.parentId.value = Int(string: parentID)
         }
 
         self.Level = Int(comment.level)
@@ -83,20 +65,12 @@ class CommentModel: Object {
         }
     }
 
-    var ReplyURL: URL {
-        return URL(string: self.ReplyURLString)!
-    }
-
-    var Link: URL {
-        return URL(string: "https://news.ycombinator.com/item?id=" + self.ID.description)!
-    }
-
-    var PageTitle: String {
-        return self.Username + "'s comment on Hacker News"
+    override var ItemPageTitle: String {
+        return self.author! + "'s comment on Hacker News"
     }
 
     var ActivityViewController: UIActivityViewController {
-        return UIActivityViewController(activityItems: [self.PageTitle, self.Link], applicationActivities: nil)
+        return UIActivityViewController(activityItems: [self.ItemPageTitle, self.ItemURL], applicationActivities: nil)
     }
 
 }
