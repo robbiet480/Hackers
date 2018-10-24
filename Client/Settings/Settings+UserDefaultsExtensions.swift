@@ -115,6 +115,15 @@ extension UserDefaults {
             return integer(forKey: UserDefaultsKeys.NotificationPointsThreshold.rawValue)
         }
     }
+
+    public var animateUpdates: Bool {
+        set {
+            set(newValue, forKey: UserDefaultsKeys.AnimateUpdates.rawValue)
+        }
+        get {
+            return bool(forKey: UserDefaultsKeys.AnimateUpdates.rawValue)
+        }
+    }
 }
 
 enum UserDefaultsKeys: String {
@@ -124,4 +133,5 @@ enum UserDefaultsKeys: String {
     case AutomaticThemeSwitch
     case OpenInBrowser
     case NotificationPointsThreshold
+    case AnimateUpdates
 }

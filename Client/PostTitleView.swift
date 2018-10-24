@@ -36,7 +36,7 @@ class PostTitleView: UIView, UIGestureRecognizerDelegate {
 
             self.metadataLabel.attributedText = self.metadataText(post)
 
-            if oldValue != nil && (pointsChanged || commentsChanged) {
+            if UserDefaults.standard.animateUpdates && oldValue != nil && (pointsChanged || commentsChanged) {
                 print("Post", self.post!.title!, "changed points: \(pointsChanged), comments: \(commentsChanged)")
 
                 cellDelegate?.didChangeMetadata()

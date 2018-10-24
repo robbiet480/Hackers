@@ -43,7 +43,14 @@ class SettingsViewController: FormViewController {
                     }
                 }.onExpandInlineRow(inlineStringPickerOnExpandInlineRow)
 
-            +++ Section(header: "Display", footer: displaySectionFooter)
+            <<< SwitchRow("animateUpdates") {
+                    $0.title = "Highlight item title on comment and point updates"
+                    $0.value = UserDefaults.standard.animateUpdates
+                }.onChange { row in
+                    UserDefaults.standard.animateUpdates = row.value!
+            }
+
+            +++ Section(header: "Theme", footer: displaySectionFooter)
             <<< PickerInlineRow<AppTheme>("lightTheme") {
                     $0.title = lightThemeRowLabel
                     $0.options = AppThemeProvider.shared.availableThemes
