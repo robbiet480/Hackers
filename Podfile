@@ -6,16 +6,17 @@ target 'Hackers' do
   pod 'ContextMenu'
   pod 'DZNEmptyDataSet'
   pod 'Eureka'
+  pod 'Firebase/Database'
   pod 'FontAwesome.swift'
-  pod 'HNScraper', :path => 'HNScraper'
+  pod 'HNScraper', :git => 'https://github.com/robbiet480/HNScraper'
   pod 'Kingfisher'
+  pod 'ObjectMapper'
+  pod 'ObjectMapperAdditions/Realm'
   pod 'OpenGraph'
   pod 'PromiseKit'
   pod 'RealmSwift'
   pod 'SkeletonView'
-  pod 'Firebase/Database'
-  pod 'ObjectMapper'
-  pod 'ObjectMapperAdditions/Realm'
+  pod 'SwiftDate'
 end
 
 post_install do |installer|

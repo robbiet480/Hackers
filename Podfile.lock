@@ -42,6 +42,7 @@ PODS:
   - RealmSwift (3.11.1):
     - Realm (= 3.11.1)
   - SkeletonView (1.1.1)
+  - SwiftDate (5.0.10)
 
 DEPENDENCIES:
   - ContextMenu
@@ -49,7 +50,7 @@ DEPENDENCIES:
   - Eureka
   - Firebase/Database
   - FontAwesome.swift
-  - HNScraper (from `HNScraper`)
+  - HNScraper (from `https://github.com/robbiet480/HNScraper`)
   - Kingfisher
   - ObjectMapper
   - ObjectMapperAdditions/Realm
@@ -57,6 +58,7 @@ DEPENDENCIES:
   - PromiseKit
   - RealmSwift
   - SkeletonView
+  - SwiftDate
 
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
@@ -77,10 +79,16 @@ SPEC REPOS:
     - Realm
     - RealmSwift
     - SkeletonView
+    - SwiftDate
 
 EXTERNAL SOURCES:
   HNScraper:
-    :path: HNScraper
+    :git: https://github.com/robbiet480/HNScraper
+
+CHECKOUT OPTIONS:
+  HNScraper:
+    :commit: 6dce2cbeacd0223521d5971624fe8dcf90485409
+    :git: https://github.com/robbiet480/HNScraper
 
 SPEC CHECKSUMS:
   ContextMenu: f835e09a93f1c28c631b76ee94396d9570397fd1
@@ -91,7 +99,7 @@ SPEC CHECKSUMS:
   FirebaseDatabase: e2bcbc106adc4b11a2da3ec2eb63c0c4a44f2f54
   FontAwesome.swift: a351dbb86b9fcec9aad6bce2fdd5b95e9a7b8828
   GoogleUtilities: 8208aee3e97a1ae93d44c57e96c476a5a3b03f0a
-  HNScraper: eaa3dec825f7e0826a87ca1c4aa0d05294bf33e5
+  HNScraper: 89d135811bc8b9088adbb677c0bbc6cf8ed85cc0
   Kingfisher: 868c1149679a7ab6869be118faa9b5aed154aaf0
   leveldb-library: 08cba283675b7ed2d99629a4bc5fd052cd2bb6a5
   ObjectMapper: b612bf8c8e99c4dc0bb6013a51f7c27966ed5da9
@@ -101,7 +109,8 @@ SPEC CHECKSUMS:
   Realm: 037c5919b9ceb59d6beed5d3b031096856b119b3
   RealmSwift: c9580133e73ef40ed340401af2dbc9a5790dfea7
   SkeletonView: 041053e904504e7d8db83df166e599be75659fe1
+  SwiftDate: fcdaa7ca22a903faf6d7ed231239a88d174dcae3
 
-PODFILE CHECKSUM: 5c2a258c44a8949d60ee8a0b8d3d3961af9094dc
+PODFILE CHECKSUM: cdf837b4ab725a5d2266c9d4047c3dfd93b1d62c
 
 COCOAPODS: 1.6.0.beta.1

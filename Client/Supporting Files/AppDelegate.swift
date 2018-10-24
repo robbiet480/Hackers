@@ -20,6 +20,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         UIFont.overrideInitialize()
         UNUserNotificationCenter.current().delegate = self
 
+        // Obviously fake credentials but it works!
         FirebaseApp.configure(options: FirebaseOptions(googleAppID: "1:123456789112:ios:00a0aa1a00aa0000",
                                                        gcmSenderID: "123456789101"))
 
@@ -31,21 +32,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         ReviewController.requestReview()
         setAppTheme()
 
-        //HNFirebaseClient.shared.getStoriesForPage(.news)
-
-        HNParseConfig.shared.jsonConfigURL = "http://192.168.7.25:8000/hn.json"
-
-        HNParseConfig.shared.forceRedownload { (error) in
-            if let error = error {
-                print("Error while downloading hn.json", error)
-            } else {
-                print("Downloaded hn.json")
-            }
-        }
-
-        HNScraper.shared.parseDead = true
-
-        //_ = HNUpdateManager.shared.loadAllPosts()
+        _ = HNFirebaseClient.shared.getStoriesForPage(.news)
 
         NotificationCenter.default.addObserver(self, selector: #selector(setAppTheme),
                                                name: UIScreen.brightnessDidChangeNotification, object: nil)
