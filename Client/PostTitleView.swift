@@ -7,6 +7,8 @@
 //
 
 import UIKit
+import RealmSwift
+import FirebaseDatabase
 
 protocol PostTitleViewDelegate {
     func didPressLinkButton(_ post: PostModel)
@@ -19,15 +21,53 @@ class PostTitleView: UIView, UIGestureRecognizerDelegate {
     var isTitleTapEnabled = false
     
     var delegate: PostTitleViewDelegate?
-    
+    var cellDelegate: PostTitleViewCellDelegate?
+
+    var firebaseHandler: UInt?
+
     var post: PostModel? {
         didSet {
             guard let post = post else { return }
+
+            let pointsChanged = oldValue?.score.value != post.score.value
+            let commentsChanged = oldValue?.descendants != post.descendants
+
             titleLabel.text = post.title!
-            metadataLabel.attributedText = metadataText(for: post)
+
+            self.metadataLabel.attributedText = self.metadataText(post)
+
+            if oldValue != nil && (pointsChanged || commentsChanged) {
+                print("Post", self.post!.title!, "changed points: \(pointsChanged), comments: \(commentsChanged)")
+
+                cellDelegate?.didChangeMetadata()
+
+//                UIView.transition(with: self.metadataLabel,
+//                                  duration: 10,
+//                                  options: [],
+//                                  animations: {
+//                                    self.metadataLabel.attributedText = self.metadataText(post, pointsChanged,
+//                                                                                          commentsChanged)
+//                                    self.metadataLabel.attributedText = self.metadataText(post)
+//                }, completion: nil)
+            }
+
+            if firebaseHandler == nil {
+                firebaseHandler = post.FirebaseDBRef.observe(.value) { self.handleFirebaseUpdate($0) }
+            }
         }
     }
-    
+
+    override func removeFromSuperview() {
+        print("Remove from superview", post?.ID)
+        post?.FirebaseDBRef.removeAllObservers()
+    }
+
+    func handleFirebaseUpdate(_ snapshot: DataSnapshot) {
+        guard let snapshotJSON = snapshot.value as? [String : Any] else { return }
+
+        self.post = PostModel(JSON: snapshotJSON)
+    }
+
     override func layoutSubviews() {
         super.layoutSubviews()
         setupTheming()
@@ -56,7 +96,8 @@ class PostTitleView: UIView, UIGestureRecognizerDelegate {
         return host
     }
     
-    private func metadataText(for post: PostModel) -> NSAttributedString {
+    private func metadataText(_ post: PostModel, _ pointsChanged: Bool = false,
+                              _ commentsChanged: Bool = false) -> NSAttributedString {
         let string = NSMutableAttributedString()
         
         let pointsIconAttachment = textAttachment(for: "PointsIcon")
@@ -64,10 +105,18 @@ class PostTitleView: UIView, UIGestureRecognizerDelegate {
         
         let commentsIconAttachment = textAttachment(for: "CommentsIcon")
         let commentsIconAttributedString = NSAttributedString(attachment: commentsIconAttachment)
-        
-        string.append(NSAttributedString(string: post.score.value!.description))
+
+        let trueColor = AppThemeProvider.shared.currentTheme.barForegroundColor
+        let falseColor = AppThemeProvider.shared.currentTheme.textColor
+
+        let pointsColor = pointsChanged ? trueColor : falseColor
+
+        let commentsColor = commentsChanged ? trueColor : falseColor
+
+        string.append(NSAttributedString.generate(from: String(post.score.value!), color: pointsColor))
         string.append(pointsIconAttributedString)
-        string.append(NSAttributedString(string: "• \(post.Comments.count)"))
+        string.append(NSAttributedString(string: "• "))
+        string.append(NSAttributedString.generate(from: String(post.descendants), color: commentsColor))
         string.append(commentsIconAttributedString)
         if let domainText = domainLabelText(for: post), domainText != "news.ycombinator.com" {
             string.append(NSAttributedString(string: " • \(domainText)"))
@@ -95,7 +144,16 @@ extension PostTitleView: Themed {
     func applyTheme(_ theme: AppTheme) {
         titleLabel.textColor = theme.titleTextColor
         titleLabel.font = UIFont.mySystemFont(ofSize: 18.0)
-        metadataLabel.textColor = theme.textColor
-        metadataLabel.font = UIFont.mySystemFont(ofSize: 14.0)
+//        metadataLabel.textColor = theme.textColor
+//        metadataLabel.font = UIFont.mySystemFont(ofSize: 14.0)
+    }
+}
+
+// MARK: Extension util which generates NSAttributedString by text,font,color,backgroundColor
+extension NSAttributedString {
+    class func generate(from text: String, font: UIFont = UIFont.systemFont(ofSize: 14), color: UIColor = .black, backgroundColor: UIColor = .clear) -> NSAttributedString {
+        let atts: [NSAttributedString.Key : Any] = [.foregroundColor: color, .font: font,
+                                                    .backgroundColor: backgroundColor]
+        return NSAttributedString(string: text, attributes: atts)
     }
 }

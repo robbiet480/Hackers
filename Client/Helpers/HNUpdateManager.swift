@@ -81,8 +81,6 @@ class HNUpdateManager {
             self.loadComments(post)
         }.mapValues { post -> PostModel in
             return PostModel(post)
-        }.thenMap { post -> Promise<PostModel> in
-            return self.getPostThumbnail(post)
         }.then { posts -> Promise<[PostModel]> in
             let realm = Realm.live()
 
@@ -123,17 +121,6 @@ class HNUpdateManager {
 
                 seal.fulfill(posts)
             })
-        }
-    }
-
-    private func getPostThumbnail(_ post: PostModel) -> Promise<PostModel> {
-        return Promise { seal in
-            post.ThumbnailURL { thumbURL in
-                if let url = thumbURL {
-                    post.ThumbnailURLString = url.absoluteString
-                    seal.fulfill(post)
-                }
-            }
         }
     }
 

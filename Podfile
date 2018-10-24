@@ -12,7 +12,7 @@ target 'Hackers' do
   pod 'Kingfisher'
   pod 'ObjectMapper'
   pod 'ObjectMapperAdditions/Realm'
-  pod 'OpenGraph'
+  pod 'OpenGraph', :git => 'https://github.com/robbiet480/OpenGraph'
   pod 'PromiseKit'
   pod 'RealmSwift'
   pod 'SkeletonView'

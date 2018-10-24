@@ -13,6 +13,7 @@ import SkeletonView
 import Kingfisher
 import RealmSwift
 import HNScraper
+import FirebaseDatabase
 
 class NewsViewController : UIViewController {
     @IBOutlet weak var tableView: UITableView!
@@ -20,7 +21,7 @@ class NewsViewController : UIViewController {
 
     var notificationToken: NotificationToken? = nil
 
-    var posts: Results<PostModel>?
+    var posts: [PostModel]?
     var postType: HNScraper.PostListPageName = .news
     
     private var peekedIndexPath: IndexPath?
@@ -33,37 +34,7 @@ class NewsViewController : UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        let realm = Realm.live()
-        self.posts = realm.objects(PostModel.self).filter("type == %@", self.postType.rawValue)
-
-        notificationToken = self.posts!.observe { [weak self] (changes: RealmCollectionChange) in
-            guard let tableView = self?.tableView else { return }
-            guard let view = self?.view else { return }
-            switch changes {
-            case .initial:
-                // Results are now populated and can be accessed without blocking the UI
-                view.hideSkeleton()
-                tableView.rowHeight = UITableView.automaticDimension
-                tableView.estimatedRowHeight = UITableView.automaticDimension
-                tableView.reloadData()
-                tableView.refreshControl?.endRefreshing()
-            case .update(_, let deletions, let insertions, let modifications):
-                // Query results have changed, so apply them to the UITableView
-                tableView.beginUpdates()
-                tableView.insertRows(at: insertions.map({ IndexPath(row: $0, section: 0) }),
-                                     with: .automatic)
-                tableView.reloadRows(at: modifications.map({ IndexPath(row: $0, section: 0) }),
-                                     with: .automatic)
-                tableView.deleteRows(at: deletions.map({ IndexPath(row: $0, section: 0) }),
-                                     with: .automatic)
-                tableView.endUpdates()
-
-                view.hideSkeleton()
-            case .error(let error):
-                // An error occurred while opening the Realm file on the background worker thread
-                fatalError("\(error)")
-            }
-        }
+        self.loadPosts()
 
         registerForPreviewing(with: self, sourceView: tableView)
 
@@ -143,12 +114,15 @@ class NewsViewController : UIViewController {
     }
 
     @objc func loadPosts() {
-        _ = HNFirebaseClient.shared.getStoriesForPage(self.postType).done { newPosts in
+        _ = HNFirebaseClient.shared.getStoriesForPage(self.postType, limit: 30).done { newPosts in
             print("Done getting \(self.postType.description) posts and got \(newPosts.count) new ones")
+
+            self.posts = newPosts
+
             self.view.hideSkeleton()
             self.tableView.rowHeight = UITableView.automaticDimension
             self.tableView.estimatedRowHeight = UITableView.automaticDimension
-            self.tableView.refreshControl?.endRefreshing()
+            self.tableView.reloadData()
         }
     }
 
@@ -198,7 +172,10 @@ extension NewsViewController: UITableViewDataSource {
 
 extension NewsViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        guard posts != nil else { return }
+
         if indexPath.row == posts!.count - 5 {
+            print("Getting stories!", indexPath.row, posts!.count)
             _ = HNFirebaseClient.shared.getStoriesForPage(self.postType)
         }
     }
@@ -248,7 +225,7 @@ extension NewsViewController: UIViewControllerPreviewingDelegate, SFSafariViewCo
     func safariViewControllerPreviewActionItems(_ controller: SFSafariViewController) -> [UIPreviewActionItem] {
         let indexPath = self.peekedIndexPath!
         let post = posts![indexPath.row]
-        let commentsPreviewActionTitle = post.Comments.count > 0 ? "View \(post.Comments.count) comments" : "View comments"
+        let commentsPreviewActionTitle = post.descendants > 0 ? "View \(post.descendants) comments" : "View comments"
         
         let viewCommentsPreviewAction = UIPreviewAction(title: commentsPreviewActionTitle, style: .default) {
             [unowned self, indexPath = indexPath] (action, viewController) -> Void in
@@ -279,7 +256,7 @@ extension NewsViewController: PostTitleViewDelegate {
             self.navigationController?.present(vc, animated: true, completion: nil)
         }
     }
-    
+
     func verifyLink(_ urlString: String?) -> Bool {
         guard let urlString = urlString, let url = URL(string: urlString) else { return false }
         return UIApplication.shared.canOpenURL(url)

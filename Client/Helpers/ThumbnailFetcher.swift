@@ -18,9 +18,7 @@ extension UIImageView {
         if post.LinkIsYCDomain {
             self.image = UIImage(named: "ycombinator-logo")!
         } else {
-            if let ir = post.ThumbnailImageResource {
-                self.kf.setImage(with: ir)
-            }
+            self.kf.setImage(with: post.ThumbnailImageResource)
         }
     }
 }

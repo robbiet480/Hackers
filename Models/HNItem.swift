@@ -62,7 +62,7 @@ public class HNItem: Object, StaticMappable {
     var pollParts = List<Int>()
 
     /// In the case of stories or polls, the total comment count.
-    var descendants = RealmOptional<Int>()
+    @objc dynamic var descendants: Int = 0
 
     /// The date when this item was imported to the Realm.
     @objc dynamic var CreatedAt: Date = Date()
@@ -100,7 +100,7 @@ public class HNItem: Object, StaticMappable {
         score.value       <- map["score"]
         title             <- map["title"]
         pollParts         <- (map["parts"], RealmTypeCastTransform())
-        descendants       <- (map["descendants"], RealmOptionalTransform())
+        descendants       <- map["descendants"]
     }
 
     override public static func primaryKey() -> String? {
@@ -124,7 +124,7 @@ public class HNItem: Object, StaticMappable {
     }
 
     var FirebaseDBRef: DatabaseReference {
-        return HNFirebaseClient.shared.dbRef.child(String(self.ID))
+        return HNFirebaseClient.shared.dbRef.child("item").child(String(self.ID))
     }
 
     /// Type of HNItem.

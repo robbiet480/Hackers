@@ -18,9 +18,33 @@ class PostModel: HNItem {
     /// URL of the story.
     @objc dynamic var URLString: String?
 
-    @objc dynamic var NotifiedAt: Date?
+    @objc private dynamic var openGraphData: Data?
 
-    @objc dynamic var ThumbnailURLString: String = ""
+    /// Open Graph Metadata for the URL
+    var OpenGraphDictionary: [OpenGraphMetadata.RawValue: String] {
+        get {
+            guard let openGraphData = openGraphData else {
+                return [OpenGraphMetadata.RawValue: String]()
+            }
+            do {
+                let dict = try JSONSerialization.jsonObject(with: openGraphData, options: []) as? [OpenGraphMetadata.RawValue: String]
+                return dict!
+            } catch {
+                return [OpenGraphMetadata.RawValue: String]()
+            }
+        }
+
+        set {
+            do {
+                let data = try JSONSerialization.data(withJSONObject: newValue, options: [])
+                openGraphData = data as Data
+            } catch {
+                openGraphData = nil
+            }
+        }
+    }
+
+    @objc dynamic var NotifiedAt: Date?
 
     let Comments = LinkingObjects(fromType: CommentModel.self, property: "Post")
 
@@ -41,7 +65,7 @@ class PostModel: HNItem {
         }
         self.title = post.title
         self.score.value = Int(post.points)
-        self.descendants.value = Int(post.commentCount)
+        self.descendants = Int(post.commentCount)
     }
 
     override public func mapping(map: Map) {
@@ -50,27 +74,16 @@ class PostModel: HNItem {
         URLString         <- map["url"]
     }
 
+    override static func ignoredProperties() -> [String] {
+        return ["OpenGraphDictionary"]
+    }
+
     func MarkAsRead() {
         let realm = Realm.live()
 
         try! realm.write {
             self.ReadAt = Date()
         }
-    }
-
-    var OriginalPost: HNPost {
-        let newPost = HNPost()
-        // FIXME: Convert HNItem type to HNScraper post type.
-        // newPost.type = HNPost.PostType(index: self.`Type`)!
-
-        newPost.username = self.author!
-        newPost.url = self.LinkURL
-        newPost.title = self.title!
-        newPost.points = self.score.value!
-        newPost.commentCount = self.descendants.value!
-        newPost.id = self.ID.description
-
-        return newPost
     }
 
     /// URL of the story.
@@ -83,7 +96,8 @@ class PostModel: HNItem {
     }
 
     var LinkIsYCDomain: Bool {
-        return self.URLString!.contains("ycombinator.com")
+        guard let urlStr = self.URLString else { return false }
+        return urlStr.contains("ycombinator.com")
     }
 
     var CommentsActivityViewController: UIActivityViewController {
@@ -100,21 +114,38 @@ class PostModel: HNItem {
         return URL(fileURLWithPath: ImageCache.default.cachePath(forKey: self.ThumbnailCacheKey))
     }
 
-    func ThumbnailURL(_ handler: @escaping (URL?) -> Void) {
-        var imageURL = URL(string: "https://image-extractor.now.sh/?url=" + self.URLString!)!
+    var ThumbnailURL: URL? {
+        guard let urlStr = self.URLString else { return nil }
 
-        OpenGraph.fetch(url: self.LinkURL) { (og, error) in
-            if let image = og?[.image], let ogImageURL = URL(string: image) {
-                imageURL = ogImageURL
+        guard let fallbackURL = URL(string: "https://image-extractor.now.sh/?url=" + urlStr) else { return nil }
+
+        guard let linkURL = URL(string: urlStr) else { return fallbackURL }
+
+        var ogImageURLTest: String? = nil
+
+        let keysToCheck: [OpenGraphMetadata] = [.image, .imageUrl, .imageSecure_url]
+
+        for ogKey in keysToCheck {
+            if let ogURL = self.OpenGraphDictionary[ogKey] {
+                ogImageURLTest = ogURL
+                break
             }
-
-            handler(imageURL)
-            return
         }
+
+        guard let ogImageURLStr = ogImageURLTest else {
+            return fallbackURL
+        }
+
+        if !ogImageURLStr.hasPrefix("http") {
+            // og:image is something like /logo.png so we need to prefix it with the base URL for a valid URL.
+            return URL(string: ogImageURLStr, relativeTo: linkURL)
+        }
+
+        return URL(string: ogImageURLStr)
     }
 
     var ThumbnailImageResource: ImageResource? {
-        if let url = URL(string: self.ThumbnailURLString) {
+        if let url = self.ThumbnailURL {
             return ImageResource(downloadURL: url, cacheKey: self.ThumbnailCacheKey)
         }
 
@@ -143,6 +174,18 @@ class PostModel: HNItem {
                 handler(image)
                 return
             }
+        }
+    }
+}
+
+extension Dictionary where Key: ExpressibleByStringLiteral {
+    subscript<Index: RawRepresentable>(index: Index) -> Value? where Index.RawValue == String {
+        get {
+            return self[index.rawValue as! Key]
+        }
+
+        set {
+            self[index.rawValue as! Key] = newValue
         }
     }
 }

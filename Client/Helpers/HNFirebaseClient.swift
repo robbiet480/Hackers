@@ -30,10 +30,18 @@ public class HNFirebaseClient {
             return self.getItemForID(postID)
         }.compactMapValues { (item: HNItem?) -> PostModel? in
             return item as? PostModel
+        }.thenMap { (post: PostModel) -> Promise<PostModel> in
+            guard let urlStr = post.URLString else { return Promise.value(post) }
+
+            return self.getPostMetadata(urlStr).then { (ogData: [OpenGraphMetadata.RawValue: String]) -> Promise<PostModel> in
+                if !ogData.isEmpty {
+                    post.OpenGraphDictionary = ogData
+                }
+                return Promise.value(post)
+            }
+
         }.map { (posts: [PostModel]) -> [PostModel] in
             return self.saveStories(posts)
-        }.thenMap { (post: PostModel) -> Promise<PostModel> in
-            return self.getAndSaveThumbnail(post)
         }
     }
 
@@ -124,12 +132,17 @@ public class HNFirebaseClient {
     }
 
     private func getPostThumbnailURL(_ urlStr: String) -> Promise<URL?> {
+        print("Getting OG data!")
+
         guard let fallbackURL = URL(string: "https://image-extractor.now.sh/?url=" + urlStr) else {
             print("Couldn't even construct fallback URL, the input URL \(urlStr) must be entirely invalid, not attempting to get thumbnail")
             return Promise.value(nil)
         }
 
-        guard let linkURL = URL(string: urlStr) else { return Promise.value(fallbackURL) }
+        guard let linkURL = URL(string: urlStr) else {
+            print("URL string was not convertible to a URL, not attempting to get thumbnail", urlStr)
+            return Promise.value(fallbackURL)
+        }
 
         return Promise { seal in
             OpenGraph.fetch(url: linkURL) { (og, error) in
@@ -140,8 +153,14 @@ public class HNFirebaseClient {
                 }
 
                 guard let ogImageURLStr = og?[.image] else {
-                    print("Got Open Graph info but no image found, returning Image Extractor URL")
+                    print("Got Open Graph info but no image found, returning Image Extractor URL", urlStr, og)
                     seal.fulfill(fallbackURL)
+                    return
+                }
+
+                if !ogImageURLStr.hasPrefix("http") {
+                    // og:image is something like /logo.png so we need to prefix it with the base URL for a valid URL.
+                    seal.fulfill(URL(string: ogImageURLStr, relativeTo: linkURL))
                     return
                 }
 
@@ -151,26 +170,35 @@ public class HNFirebaseClient {
         }
     }
 
-    private func getAndSaveThumbnail(_ post: PostModel) -> Promise<PostModel> {
-        guard let urlStr = post.URLString else {
-            print("Post does not have a URL attached, not attempting to get thumbnail", post)
-            return Promise.value(post)
+    private func getPostMetadata(_ urlStr: String) -> Promise<[OpenGraphMetadata.RawValue: String]> {
+        guard let linkURL = URL(string: urlStr) else {
+            print("URL string was not convertible to a URL, not attempting to get Open Graph data", urlStr)
+            return Promise.value([:])
         }
 
-        return self.getPostThumbnailURL(urlStr).then { (url: URL?) -> Promise<PostModel> in
+        return Promise { seal in
+            OpenGraph.fetch(url: linkURL) { (og, error) in
+                if let error = error {
+                    print("Got error while getting OpenGraph data, returning early", error)
+                    seal.fulfill([:])
+                    return
+                }
 
-            guard let absStr = url?.absoluteString else {
-                print("Got a nil URL, returning early from thumbnail saver!")
-                return Promise.value(post)
+                guard let ogData = og else {
+                    print("Could not unwrap Open Graph response")
+                    seal.fulfill([:])
+                    return
+                }
+
+                var ogDict: [OpenGraphMetadata.RawValue: String] = [:]
+
+                for ogKey in OpenGraphMetadata.allCases {
+                    ogDict[ogKey] = ogData[ogKey]
+                }
+
+                seal.fulfill(ogDict)
+                return
             }
-
-            let realm = Realm.live()
-
-            try! realm.write {
-                post.ThumbnailURLString = absStr
-            }
-
-            return Promise.value(post)
         }
     }
 }
