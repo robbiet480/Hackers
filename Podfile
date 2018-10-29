@@ -3,20 +3,24 @@ use_frameworks!
 inhibit_all_warnings!
 
 target 'Hackers' do
+  pod '1PasswordExtension'
   pod 'ContextMenu'
   pod 'DZNEmptyDataSet'
   pod 'Eureka'
   pod 'Firebase/Database'
   pod 'FontAwesome.swift'
-  pod 'HNScraper', :git => 'https://github.com/robbiet480/HNScraper'
+  pod 'HNScraper', :path => 'HNScraper'
   pod 'Kingfisher'
   pod 'ObjectMapper'
   pod 'ObjectMapperAdditions/Realm'
-  pod 'OpenGraph', :git => 'https://github.com/robbiet480/OpenGraph'
+  pod 'OpenGraph', :git => 'https://github.com/robbiet480/OpenGraph', :branch => 'patch-1'
   pod 'PromiseKit'
   pod 'RealmSwift'
   pod 'SkeletonView'
   pod 'SwiftDate'
+  pod 'SwiftSoup'
+  pod 'Alamofire'
+  pod 'PromiseKit/Alamofire'
 end
 
 post_install do |installer|

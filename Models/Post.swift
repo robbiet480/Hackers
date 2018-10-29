@@ -18,6 +18,9 @@ class PostModel: HNItem {
     /// URL of the story.
     @objc dynamic var URLString: String?
 
+    /// The time at which the user favorited the story
+    @objc dynamic var FavoritedAt: Date?
+
     @objc private dynamic var openGraphData: Data?
 
     /// Open Graph Metadata for the URL

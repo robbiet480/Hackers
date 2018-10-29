@@ -19,6 +19,7 @@ final class AppThemeProvider: ThemeProvider {
             return theme.value
         }
         set {
+            if currentTheme == newValue { return }
             setNewTheme(newValue)
         }
     }

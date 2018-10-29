@@ -22,6 +22,9 @@ class CommentTableViewCell : UITableViewCell {
     var comment: CommentModel? {
         didSet {
             guard let comment = comment else { return }
+            guard comment.isDeleted == false else { return }
+            guard comment.isDead == false else { return }
+            guard comment.text != nil else { return }
             updateCommentContent(with: comment)
         }
     }

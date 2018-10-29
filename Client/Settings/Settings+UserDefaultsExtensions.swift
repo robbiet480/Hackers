@@ -7,38 +7,9 @@
 //
 
 import SafariServices
+import HNScraper
 
 extension UserDefaults {
-    public func openInBrowser(_ url: URL) -> ThemedSafariViewController? {
-        let browserSetting = string(forKey: UserDefaultsKeys.OpenInBrowser.rawValue)
-        switch browserSetting {
-        case "Google Chrome":
-            if OpenInChromeController.sharedInstance.isChromeInstalled() {
-                _ = OpenInChromeController.sharedInstance.openInChrome(url, callbackURL: nil)
-            } else { // User uninstalled Chrome, fallback to Safari
-                UserDefaults.standard.setOpenLinksIn("Safari")
-                UIApplication.shared.open(url)
-            }
-            return nil
-        case "Safari":
-            UIApplication.shared.open(url)
-            return nil
-        case "In-app browser (Reader mode)":
-            let config = SFSafariViewController.Configuration.init()
-            config.barCollapsingEnabled = true
-            config.entersReaderIfAvailable = true
-            return ThemedSafariViewController(url: url, configuration: config)
-        default:
-            let config = SFSafariViewController.Configuration.init()
-            config.barCollapsingEnabled = true
-            return ThemedSafariViewController(url: url, configuration: config)
-        }
-    }
-
-    public func setOpenLinksIn(_ browserName: String) {
-        set(browserName, forKey: UserDefaultsKeys.OpenInBrowser.rawValue)
-    }
-
     public var lightTheme: AppTheme {
         set {
             set(newValue.description, forKey: UserDefaultsKeys.LightTheme.rawValue)
@@ -79,21 +50,30 @@ extension UserDefaults {
         }
     }
 
+    public var shouldSwitchTheme: Bool {
+        if !UserDefaults.standard.automaticThemeSwitch {
+            return false
+        }
+
+        let setLevel = UserDefaults.standard.brightnessLevelForThemeSwitch
+
+        return setLevel <= UIScreen.main.brightness
+    }
+
     public var brightnessCorrectTheme: AppTheme {
         if !UserDefaults.standard.automaticThemeSwitch {
             return UserDefaults.standard.lightTheme
         }
 
-        let brightnessCheck = UserDefaults.standard.brightnessLevelForThemeSwitch <= Float(UIScreen.main.brightness)
-        return brightnessCheck ? UserDefaults.standard.lightTheme : UserDefaults.standard.darkTheme
+        return self.shouldSwitchTheme ? UserDefaults.standard.lightTheme : UserDefaults.standard.darkTheme
     }
 
-    public var brightnessLevelForThemeSwitch: Float {
+    public var brightnessLevelForThemeSwitch: CGFloat {
         set {
             set(newValue, forKey: UserDefaultsKeys.BrightnessLevelForThemeSwitch.rawValue)
         }
         get {
-            return float(forKey: UserDefaultsKeys.BrightnessLevelForThemeSwitch.rawValue)
+            return CGFloat(float(forKey: UserDefaultsKeys.BrightnessLevelForThemeSwitch.rawValue))
         }
     }
 
@@ -124,6 +104,21 @@ extension UserDefaults {
             return bool(forKey: UserDefaultsKeys.AnimateUpdates.rawValue)
         }
     }
+
+    public var loggedInUser: HNUser? {
+        set {
+            if newValue == nil {
+                removeObject(forKey: UserDefaultsKeys.LoggedInUser.rawValue)
+                return
+            }
+            set(try? PropertyListEncoder().encode(newValue), forKey: UserDefaultsKeys.LoggedInUser.rawValue)
+        }
+        get {
+            guard let storedObj = object(forKey: UserDefaultsKeys.LoggedInUser.rawValue) as? Data else { return nil }
+            guard let user: HNUser = try? PropertyListDecoder().decode(HNUser.self, from: storedObj) else { return nil }
+            return user
+        }
+    }
 }
 
 enum UserDefaultsKeys: String {
@@ -134,4 +129,7 @@ enum UserDefaultsKeys: String {
     case OpenInBrowser
     case NotificationPointsThreshold
     case AnimateUpdates
+    case Username
+    case Password
+    case LoggedInUser
 }

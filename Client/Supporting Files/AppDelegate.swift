@@ -34,13 +34,32 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         _ = HNFirebaseClient.shared.getStoriesForPage(.news)
 
-        NotificationCenter.default.addObserver(self, selector: #selector(setAppTheme),
-                                               name: UIScreen.brightnessDidChangeNotification, object: nil)
+        // FIXME: Need to debounce smooth updates of brightness values
+//        NotificationCenter.default.addObserver(self, selector: #selector(brightnessChanged),
+//                                               name: UIScreen.brightnessDidChangeNotification, object: nil)
 
         print("Realm is stored at", Realm.live().configuration.fileURL!.description)
     }
     
-    @objc private func setAppTheme(_ notification: Notification? = nil) {
+    @objc private func setAppTheme() {
+        AppThemeProvider.shared.currentTheme = UserDefaults.standard.brightnessCorrectTheme
+    }
+
+    @objc private func brightnessChanged(note: NSNotification) {
+        print("Brightness value didChange!", UIScreen.main.brightness)
+        if let screen: UIScreen = note.object as? UIScreen {
+            let threshold = UserDefaults.standard.brightnessLevelForThemeSwitch
+            let currentTheme = AppThemeProvider.shared.currentTheme
+            if screen.brightness > threshold && currentTheme == UserDefaults.standard.darkTheme {
+                print("Go to light theme!")
+                AppThemeProvider.shared.currentTheme = UserDefaults.standard.lightTheme
+            } else if screen.brightness <= threshold && currentTheme == UserDefaults.standard.lightTheme {
+                print("Go to dark theme!")
+                AppThemeProvider.shared.currentTheme = UserDefaults.standard.darkTheme
+            }
+        }
+
+        print("Brightness value didChange!", UIScreen.main.brightness)
         AppThemeProvider.shared.currentTheme = UserDefaults.standard.brightnessCorrectTheme
     }
 

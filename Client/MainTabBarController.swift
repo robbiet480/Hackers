@@ -11,8 +11,6 @@ import HNScraper
 import RealmSwift
 
 class MainTabBarController: UITabBarController {
-    let tabBarOrderKey = "tabBarOrderKey"
-
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -53,6 +51,7 @@ class MainTabBarController: UITabBarController {
 
     override func tabBar(_ tabBar: UITabBar, didSelect item: UITabBarItem) {
         setButtonStates(item.tag)
+        print("Selected item", item)
     }
 
     func setButtonStates(_ itemTag: Int) {
@@ -106,6 +105,14 @@ class MainTabBarController: UITabBarController {
             navigationBar.tintColor = AppThemeProvider.shared.currentTheme.barForegroundColor
         }
 
+    }
+
+    func tabBarController(_ tabBarController: UITabBarController, didSelect viewController: UIViewController) {
+        print("Selected VC", viewController)
+    }
+
+    func tabBarController(_ tabBarController: UITabBarController, willEndCustomizing viewControllers: [UIViewController], changed: Bool) {
+        print("Customizing ending!")
     }
 
     // Tab Bar keyboard shortcuts found at

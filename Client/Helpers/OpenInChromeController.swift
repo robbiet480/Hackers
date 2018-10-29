@@ -46,7 +46,7 @@ private func encodeByAddingPercentEscapes(_ input: String?) -> String {
 }
 
 open class OpenInChromeController {
-    public static let sharedInstance = OpenInChromeController()
+    public static let shared = OpenInChromeController()
 
     open func isChromeInstalled() -> Bool {
         if let simpleURL = URL(string: googleChromeHTTPScheme),
@@ -57,7 +57,7 @@ open class OpenInChromeController {
     }
 
     // swiftlint:disable:next cyclomatic_complexity
-    open func openInChrome(_ url: URL, callbackURL: URL?, createNewTab: Bool = false) {
+    open func openInChrome(_ url: URL, _ callbackURL: URL? = nil, _ createNewTab: Bool = false) {
         if let chromeSimpleURL = URL(string: googleChromeHTTPScheme),
             let chromeCallbackURL = URL(string: googleChromeCallbackScheme) {
             if UIApplication.shared.canOpenURL(chromeCallbackURL) {

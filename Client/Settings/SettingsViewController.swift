@@ -8,23 +8,30 @@
 
 import UIKit
 import Eureka
+import OnePasswordExtension
 import ContextMenu
+import HNScraper
 
 class SettingsViewController: FormViewController {
     let autoBrightnessFooterText = "The theme will automatically change based on your display brightness. You can set the threshold where the theme changes."
+
+    let onepasswordButton: UIButton = UIButton()
+    let pushExplainerButton: UIButton = UIButton(type: .detailDisclosure)
 
     override func viewDidLoad() {
         super.viewDidLoad()
         setupTheming()
 
-        PickerInlineRow<String>.defaultCellUpdate = defaultCellUpdate
-        PickerInlineRow<AppTheme>.defaultCellUpdate = defaultCellUpdate
+        let onePasswordBundle = Bundle(path:
+            Bundle(for: OnePasswordExtension.self).path(forResource: "OnePasswordExtensionResources", ofType: "bundle")!)
+        let onePasswordImage = UIImage(named: "onepassword-button", in: onePasswordBundle, compatibleWith: nil)
 
-        SwitchRow.defaultCellUpdate = defaultCellUpdate
+        self.pushExplainerButton.addTarget(self, action: #selector(openPushExplainer(_:)), for: .touchUpInside)
 
-        IntRow.defaultCellUpdate = defaultCellUpdate
+        self.onepasswordButton.setImage(onePasswordImage, for: .normal)
+        self.onepasswordButton.addTarget(self, action: #selector(onepasswordButtonPressed(_:)), for: .touchUpInside)
 
-        SliderRow.defaultCellUpdate = defaultCellUpdate
+        setRowDefaults()
 
         let displaySectionFooter = UserDefaults.standard.automaticThemeSwitch ? self.autoBrightnessFooterText : ""
 
@@ -32,22 +39,76 @@ class SettingsViewController: FormViewController {
 
         form
             +++ Section(header: "General", footer: "")
-            <<< PickerInlineRow<String>() {
+            <<< PickerInlineRow<OpenInBrowser.OpenableBrowser>() {
                     $0.title = "Open Links In"
-                    $0.options = ["In-app browser", "In-app browser (Reader mode)", "Safari", "Google Chrome"]
-                    $0.value = "In-app browser"
-                    $0.value = UserDefaults.standard.string(forKey: UserDefaultsKeys.OpenInBrowser.rawValue)
+                    $0.options = OpenInBrowser.shared.installedBrowsers
+                    $0.value = OpenInBrowser.shared.browser
+                    $0.displayValueFor = { $0?.description }
                 }.onChange {
                     if let rowVal = $0.value {
-                        UserDefaults.standard.setOpenLinksIn(rowVal)
+                        OpenInBrowser.shared.browser = rowVal
                     }
                 }.onExpandInlineRow(inlineStringPickerOnExpandInlineRow)
 
             <<< SwitchRow("animateUpdates") {
-                    $0.title = "Highlight item title on comment and point updates"
+                    $0.title = "Animate realtime updates"
                     $0.value = UserDefaults.standard.animateUpdates
                 }.onChange { row in
                     UserDefaults.standard.animateUpdates = row.value!
+            }
+
+            +++ Section(header: "Login",
+                        footer: "Logging in allows you to upvote and downvote posts and comments as well as favorite posts. \r\n\r\nYour username and password is securely stored in Keychain and only ever sent to Hacker News/Y Combinator, never to the authors of Hackers.") {
+                $0.tag = "login"
+            }
+
+            <<< LabelRow("loggedInUser") {
+                $0.title = "Logged in as"
+                $0.value = UserDefaults.standard.loggedInUser?.username
+                $0.hidden = Condition(booleanLiteral: UserDefaults.standard.loggedInUser == nil)
+            }
+
+            <<< AccountRow("username") {
+                    $0.title = "Username"
+                    $0.placeholder = ["pg", "dang", "tptacek", "jacquesm", "patio11"].randomElement()
+                    $0.hidden = "$loggedInUser != nil"
+                }.onChange { row in
+                    var targetAlpha: CGFloat?
+                    if row.value == "" {
+                        targetAlpha = 1.0
+                    } else if row.value != nil {
+                        targetAlpha = 0.0
+                    }
+                    if let alpha = targetAlpha {
+                        UIView.animate(withDuration: 0.25, animations: {
+                            self.onepasswordButton.alpha = alpha
+                        })
+                    }
+                }
+
+            <<< PasswordRow("password") {
+                    $0.title = "Password"
+                    $0.placeholder = "hunter2"
+                    $0.hidden = "$loggedInUser != nil"
+                }
+
+            <<< ButtonRow() {
+                    $0.title = "Login"
+                    $0.hidden = "$loggedInUser != nil"
+            }.onCellSelection(handleLogin)
+
+            <<< ButtonRow("logout") {
+                $0.title = "Log out"
+                $0.hidden = "$loggedInUser == nil"
+            }.onCellSelection { _, row in
+                UserDefaults.standard.loggedInUser = nil
+                HNLogin.shared.logout()
+
+                if let usernameRow = self.form.rowBy(tag: "loggedInUser") as? LabelRow {
+                    usernameRow.value = nil
+                    usernameRow.hidden = true
+                    usernameRow.evaluateHidden()
+                }
             }
 
             +++ Section(header: "Theme", footer: displaySectionFooter)
@@ -108,13 +169,13 @@ class SettingsViewController: FormViewController {
                     $0.cell.slider.minimumValue = 0.0
                     $0.cell.slider.maximumValue = 1.0
                     $0.cell.slider.isContinuous = false
-                    $0.value = UserDefaults.standard.brightnessLevelForThemeSwitch
+                    $0.value = Float(UserDefaults.standard.brightnessLevelForThemeSwitch)
                     $0.hidden = "$switchThemeAutomatically == false"
                 }.onChange { row in
-                    UserDefaults.standard.brightnessLevelForThemeSwitch = row.value!
+                    UserDefaults.standard.brightnessLevelForThemeSwitch = CGFloat(row.value!)
 
-                    NotificationCenter.default.post(name: UIScreen.brightnessDidChangeNotification,
-                                                    object: self, userInfo: nil)
+                    NotificationCenter.default.post(name: UIScreen.brightnessDidChangeNotification, object: self,
+                                                    userInfo: nil)
                 }
 
             +++ Section(header: "Notifications", footer: "")
@@ -127,8 +188,6 @@ class SettingsViewController: FormViewController {
                 if row.value! == true {
                     Notifications.configure()
                 }
-            }.onCellSelection { _, _ in
-                self.showContextualMenu(PushNotificationsDisclaimerViewController())
             }
 
             <<< IntRow { row in
@@ -142,12 +201,55 @@ class SettingsViewController: FormViewController {
                 }
             }
     }
-    
+
     @IBAction func didPressDone(_ sender: Any) {
         dismiss(animated: true)
     }
 
-    var inlineStringPickerOnExpandInlineRow: ((PickerInlineCell<String>, PickerInlineRow<String>, PickerRow<String>) -> Void) {
+    var handleLogin: ((ButtonCell, ButtonRow) -> Void) {
+        return { _, row in
+            if let usernameRow = self.form.rowBy(tag: "username") as? AccountRow, let username = usernameRow.value,
+                let passwordRow = self.form.rowBy(tag: "password") as? PasswordRow, let password = passwordRow.value {
+
+                let spinner = UIViewController.displaySpinner(onView: self.navigationController!.view)
+
+                HNLogin.shared.login(username: username, psw: password, completion: { (hnUser, cookie, error) in
+
+                    var loggedInUsername: String?
+
+                    UIViewController.removeSpinner(spinner: spinner)
+
+                    var alertVC = UIAlertController(title: "Unknown error",
+                                                    message: "Received neither a valid response or error during login attempt",
+                                                    preferredStyle: .alert)
+
+                    if let err = error {
+                        print("Error during login!", err)
+                        alertVC = UIAlertController(title: "Error during login", message: error?.description, preferredStyle: .alert)
+                    }
+                    if let user = hnUser, let username = user.username {
+                        loggedInUsername = username
+                        print("Login succeeded, got user", user.description)
+                        alertVC = UIAlertController(title: "Success", message: "You are now logged in as \(username)", preferredStyle: .alert)
+                        UserDefaults.standard.loggedInUser = user
+                    }
+
+                    alertVC.addAction(UIAlertAction.init(title: "OK", style: .default, handler: nil))
+
+                    if let username = loggedInUsername,
+                        let usernameRow = self.form.rowBy(tag: "loggedInUser") as? LabelRow {
+                        usernameRow.value = username
+                        usernameRow.hidden = false
+                        usernameRow.evaluateHidden()
+                    }
+
+                    self.present(alertVC, animated: true, completion: nil)
+                })
+            }
+        }
+    }
+
+    var inlineStringPickerOnExpandInlineRow: ((PickerInlineCell<OpenInBrowser.OpenableBrowser>, PickerInlineRow<OpenInBrowser.OpenableBrowser>, PickerRow<OpenInBrowser.OpenableBrowser>) -> Void) {
         return { _, _, row in
             row.cellUpdate { cell, _ in
                 cell.pickerTextAttributes = [
@@ -177,11 +279,16 @@ class SettingsViewController: FormViewController {
             cell.detailTextLabel?.textColor = activeTheme.barForegroundColor
             cell.detailTextLabel?.tintColor = activeTheme.barForegroundColor
             cell.backgroundColor = activeTheme.barBackgroundColor
-            cell.tintColor = activeTheme.lightTextColor
-            row.baseCell.tintColor = activeTheme.lightTextColor
+            cell.tintColor = activeTheme.barForegroundColor
 
-            if let textCell = cell as? TextFieldCell {
-                textCell.textField.textColor = activeTheme.titleTextColor
+            if let textFieldCell = cell as? TextFieldCell {
+                textFieldCell.textField.tintColor = activeTheme.barForegroundColor
+                textFieldCell.textField.textColor = activeTheme.barForegroundColor
+            }
+
+            if let buttonCell = cell as? ButtonCellOf<String> {
+                buttonCell.textLabel?.textColor = activeTheme.barForegroundColor
+                buttonCell.textLabel?.tintColor = activeTheme.barForegroundColor
             }
 
             if let switchCell = cell as? SwitchCell {
@@ -190,25 +297,105 @@ class SettingsViewController: FormViewController {
             }
 
             if let sliderCell = cell as? SliderCell {
-                sliderCell.slider.tintColor = AppThemeProvider.shared.currentTheme.barForegroundColor
+                sliderCell.slider.tintColor = activeTheme.barForegroundColor
+            }
+
+            if let accountCell = cell as? AccountCell {
+                accountCell.textField.textContentType = .username
+
+                if OnePasswordExtension.shared().isAppExtensionAvailable() {
+                    self.addButtonToCell(accountCell, self.onepasswordButton)
+                }
+            }
+
+            if let passwordCell = cell as? PasswordCell {
+                passwordCell.textField.textContentType = .password
             }
 
             if row.tag == "enableNotifications" {
-                let existingButton = cell.textLabel?.subviews.first(where: { (view) -> Bool in
-                    return view.tag == 999
-                })
-                if let button = existingButton {
-                    button.frame = CGRect(x: cell.textLabel!.intrinsicContentSize.width + 5, y: button.frame.minY,
-                                              width: button.frame.width, height: button.frame.height)
-                } else {
-                    let button = UIButton(type: .detailDisclosure)
-                    button.tag = 999
-                    button.frame = CGRect(x: cell.textLabel!.intrinsicContentSize.width + 5, y: button.frame.minY,
-                                          width: button.frame.width, height: button.frame.height)
-                    cell.textLabel!.addSubview(button)
-                }
+                self.addButtonToCell(cell, self.pushExplainerButton)
+            } else if row.tag == "logout" {
+                cell.textLabel?.textColor = .red
             }
         }
+    }
+
+    @objc func openPushExplainer(_ sender: AnyObject) {
+        self.showContextualMenu(PushNotificationsDisclaimerViewController())
+    }
+
+    @objc func onepasswordButtonPressed(_ sender: AnyObject) {
+        let hnURL = "https://news.ycombinator.com"
+        OnePasswordExtension.shared().findLogin(forURLString: hnURL, for: self, sender: sender) { (loginDictionary, error) in
+            if loginDictionary == nil {
+                if error!._code != Int(AppExtensionErrorCodeCancelledByUser), let error = error {
+                    print("Error invoking 1Password App Extension for find login: \(error)")
+                }
+                return
+            }
+
+            self.form.setValues([
+                "username": loginDictionary?[AppExtensionUsernameKey] as? String,
+                "password": loginDictionary?[AppExtensionPasswordKey] as? String
+            ])
+            self.tableView?.reloadData()
+        }
+    }
+
+    func addButtonToCell(_ cell: BaseCell, _ button: UIButton) {
+        guard cell.contentView.subviews.contains(button) == false else { return }
+
+        cell.contentView.addSubview(button)
+        button.translatesAutoresizingMaskIntoConstraints = false
+
+        let constraints = [
+            NSLayoutConstraint(item: button, attribute: .height,
+                               relatedBy: .greaterThanOrEqual, toItem: cell.contentView,
+                               attribute: .height, multiplier: 1, constant: 0),
+            NSLayoutConstraint(item: button, attribute: .width,
+                               relatedBy: .greaterThanOrEqual, toItem: cell.contentView,
+                               attribute: .height, multiplier: 1, constant: 0),
+            NSLayoutConstraint(item: button, attribute: .left,
+                               relatedBy: .equal, toItem: cell.textLabel,
+                               attribute: .right, multiplier: 1, constant: 0),
+            NSLayoutConstraint(item: button, attribute: .centerY,
+                               relatedBy: .equal, toItem: cell.textLabel,
+                               attribute: .centerY, multiplier: 1, constant: 0),
+        ]
+
+        NSLayoutConstraint.activate(constraints)
+    }
+
+    func setRowDefaults() {
+        AccountRow.defaultCellSetup = defaultCellUpdate
+        AccountRow.defaultCellUpdate = defaultCellUpdate
+
+        ButtonRow.defaultCellSetup = defaultCellUpdate
+        ButtonRow.defaultCellUpdate = defaultCellUpdate
+
+        IntRow.defaultCellSetup = defaultCellUpdate
+        IntRow.defaultCellUpdate = defaultCellUpdate
+
+        LabelRow.defaultCellSetup = defaultCellUpdate
+        LabelRow.defaultCellUpdate = defaultCellUpdate
+
+        PasswordRow.defaultCellSetup = defaultCellUpdate
+        PasswordRow.defaultCellUpdate = defaultCellUpdate
+
+        PickerInlineRow<AppTheme>.defaultCellSetup = defaultCellUpdate
+        PickerInlineRow<AppTheme>.defaultCellUpdate = defaultCellUpdate
+
+        PickerInlineRow<OpenInBrowser.OpenableBrowser>.defaultCellSetup = defaultCellUpdate
+        PickerInlineRow<OpenInBrowser.OpenableBrowser>.defaultCellUpdate = defaultCellUpdate
+
+        PickerInlineRow<String>.defaultCellSetup = defaultCellUpdate
+        PickerInlineRow<String>.defaultCellUpdate = defaultCellUpdate
+
+        SliderRow.defaultCellSetup = defaultCellUpdate
+        SliderRow.defaultCellUpdate = defaultCellUpdate
+
+        SwitchRow.defaultCellSetup = defaultCellUpdate
+        SwitchRow.defaultCellUpdate = defaultCellUpdate
     }
 }
 
@@ -219,5 +406,20 @@ extension SettingsViewController: Themed {
         tableView.separatorColor = theme.separatorColor
 
         self.tableView.reloadData()
+    }
+}
+
+extension HNLogin.HNLoginError {
+    var description: String {
+        switch self {
+        case .badCredentials:
+            return "Invalid username or password"
+        case .serverUnreachable:
+            return "Hacker News is unreachable"
+        case .noInternet:
+            return "Your internet appears to be offline"
+        case .unknown:
+            return "An unknown error occurred"
+        }
     }
 }

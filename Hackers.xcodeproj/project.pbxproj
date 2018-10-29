@@ -50,9 +50,12 @@
 		B63E78C4217C1C6300750131 /* UIFont+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B63E78C3217C1C6300750131 /* UIFont+Extensions.swift */; };
 		B663E309217E43810062F6D9 /* Comment.swift in Sources */ = {isa = PBXBuildFile; fileRef = B663E308217E43810062F6D9 /* Comment.swift */; };
 		B663E30B217E54890062F6D9 /* HNUpdateManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B663E30A217E54890062F6D9 /* HNUpdateManager.swift */; };
+		B6C8E8522181353D0093112A /* OpenInFirefoxController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6C8E8512181353D0093112A /* OpenInFirefoxController.swift */; };
+		B6C8E854218135B80093112A /* OpenInBrowser.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6C8E853218135B80093112A /* OpenInBrowser.swift */; };
 		B6CCFAFC217E96560085AC03 /* HNScraper+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6CCFAFB217E96560085AC03 /* HNScraper+Extensions.swift */; };
 		B6CCFAFE217E9F610085AC03 /* TabBarOrder.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6CCFAFD217E9F610085AC03 /* TabBarOrder.swift */; };
 		B6CCFB01217EF2120085AC03 /* PushNotificationsDisclaimerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6CCFB00217EF2120085AC03 /* PushNotificationsDisclaimerViewController.swift */; };
+		B6D3744B2181007700C872F6 /* UIViewController+Spinner.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6D3744A2181007700C872F6 /* UIViewController+Spinner.swift */; };
 		B6ECEB59217CC4EA00755239 /* OpenInChromeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6ECEB58217CC4EA00755239 /* OpenInChromeController.swift */; };
 		B6ECEB5D217D16CF00755239 /* Notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6ECEB5C217D16CF00755239 /* Notifications.swift */; };
 		B6ECEB61217D54DD00755239 /* Post.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6ECEB60217D54DD00755239 /* Post.swift */; };
@@ -110,9 +113,12 @@
 		B63E78C3217C1C6300750131 /* UIFont+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIFont+Extensions.swift"; sourceTree = "<group>"; };
 		B663E308217E43810062F6D9 /* Comment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Comment.swift; sourceTree = "<group>"; };
 		B663E30A217E54890062F6D9 /* HNUpdateManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HNUpdateManager.swift; sourceTree = "<group>"; };
+		B6C8E8512181353D0093112A /* OpenInFirefoxController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenInFirefoxController.swift; sourceTree = "<group>"; };
+		B6C8E853218135B80093112A /* OpenInBrowser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenInBrowser.swift; sourceTree = "<group>"; };
 		B6CCFAFB217E96560085AC03 /* HNScraper+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "HNScraper+Extensions.swift"; sourceTree = "<group>"; };
 		B6CCFAFD217E9F610085AC03 /* TabBarOrder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarOrder.swift; sourceTree = "<group>"; };
 		B6CCFB00217EF2120085AC03 /* PushNotificationsDisclaimerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushNotificationsDisclaimerViewController.swift; sourceTree = "<group>"; };
+		B6D3744A2181007700C872F6 /* UIViewController+Spinner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Spinner.swift"; sourceTree = "<group>"; };
 		B6ECEB58217CC4EA00755239 /* OpenInChromeController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenInChromeController.swift; sourceTree = "<group>"; };
 		B6ECEB5C217D16CF00755239 /* Notifications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Notifications.swift; sourceTree = "<group>"; };
 		B6ECEB60217D54DD00755239 /* Post.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Post.swift; sourceTree = "<group>"; };
@@ -167,6 +173,9 @@
 				B663E30A217E54890062F6D9 /* HNUpdateManager.swift */,
 				B6CCFAFB217E96560085AC03 /* HNScraper+Extensions.swift */,
 				B60881CE217FBA99009C6CFA /* HNFirebaseClient.swift */,
+				B6D3744A2181007700C872F6 /* UIViewController+Spinner.swift */,
+				B6C8E8512181353D0093112A /* OpenInFirefoxController.swift */,
+				B6C8E853218135B80093112A /* OpenInBrowser.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -348,6 +357,9 @@
 							com.apple.BackgroundModes = {
 								enabled = 1;
 							};
+							com.apple.SafariKeychain = {
+								enabled = 1;
+							};
 						};
 					};
 				};
@@ -424,6 +436,8 @@
 			);
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Hackers/Pods-Hackers-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/1PasswordExtension/OnePasswordExtension.framework",
+				"${BUILT_PRODUCTS_DIR}/Alamofire/Alamofire.framework",
 				"${BUILT_PRODUCTS_DIR}/ContextMenu/ContextMenu.framework",
 				"${BUILT_PRODUCTS_DIR}/DZNEmptyDataSet/DZNEmptyDataSet.framework",
 				"${BUILT_PRODUCTS_DIR}/Eureka/Eureka.framework",
@@ -439,10 +453,13 @@
 				"${BUILT_PRODUCTS_DIR}/RealmSwift/RealmSwift.framework",
 				"${BUILT_PRODUCTS_DIR}/SkeletonView/SkeletonView.framework",
 				"${BUILT_PRODUCTS_DIR}/SwiftDate/SwiftDate.framework",
+				"${BUILT_PRODUCTS_DIR}/SwiftSoup/SwiftSoup.framework",
 				"${BUILT_PRODUCTS_DIR}/leveldb-library/leveldb.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/OnePasswordExtension.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Alamofire.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ContextMenu.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/DZNEmptyDataSet.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Eureka.framework",
@@ -458,6 +475,7 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RealmSwift.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SkeletonView.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftDate.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftSoup.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/leveldb.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -484,12 +502,14 @@
 				2454B9041F655426005A98C7 /* EmptyViewController.swift in Sources */,
 				24D811A51FF90A58000951C3 /* TouchableTextView.swift in Sources */,
 				2464D20F209DD8F400C7F8FC /* Weak.swift in Sources */,
+				B6C8E854218135B80093112A /* OpenInBrowser.swift in Sources */,
 				24CEAA9B1F8916970050DEDF /* UIView+Extensions.swift in Sources */,
 				B6ECEB5D217D16CF00755239 /* Notifications.swift in Sources */,
 				B60881D1217FD3EA009C6CFA /* HNItem.swift in Sources */,
 				24D6B8CA1C1EDBFC00618422 /* AppTheme.swift in Sources */,
 				245DCAB01CD4DA2A00152AA3 /* SFSafariViewController+PreviewActionItems.swift in Sources */,
 				B6CCFB01217EF2120085AC03 /* PushNotificationsDisclaimerViewController.swift in Sources */,
+				B6D3744B2181007700C872F6 /* UIViewController+Spinner.swift in Sources */,
 				2464D221209E2CDF00C7F8FC /* ThemedSafariViewController.swift in Sources */,
 				242A00D31D086927003D915B /* UIViewControllerSmoothlyDeselectCellExtension.swift in Sources */,
 				24B5BFEF1B52CE8900328C62 /* PostTitleView.swift in Sources */,
@@ -499,6 +519,7 @@
 				24CEAA9D1F8917D60050DEDF /* ReviewController.swift in Sources */,
 				2464D213209DEFB100C7F8FC /* AppNavigationController.swift in Sources */,
 				2464D20E209DD8F400C7F8FC /* SubscribableValue.swift in Sources */,
+				B6C8E8522181353D0093112A /* OpenInFirefoxController.swift in Sources */,
 				24C20D391A7E42D5005B759B /* MainSplitViewController.swift in Sources */,
 				2464D21F209E27FE00C7F8FC /* Settings+UserDefaultsExtensions.swift in Sources */,
 				B6ECEB59217CC4EA00755239 /* OpenInChromeController.swift in Sources */,
@@ -557,8 +578,8 @@
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
+					FIREBASE_ANALYTICS_SUPPRESS_WARNING,
 					"DEBUG=1",
-					"$(inherited)",
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -608,6 +629,7 @@
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = FIREBASE_ANALYTICS_SUPPRESS_WARNING;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;

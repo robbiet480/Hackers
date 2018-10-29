@@ -47,10 +47,62 @@ public class HNFirebaseClient {
 
     func getAndSaveCommentsForKidIDs(_ postID: Int, _ kidIDs: [Int]) -> Promise<[CommentModel]> {
         let commentIDs = self.getKidsForKidIDs(kidIDs)
-        return commentIDs.compactMapValues { item in
-            return item as? CommentModel
-        }.then { (comment: [CommentModel]) -> Promise<[CommentModel]> in
-            return self.saveComments(postID, comment)
+        return commentIDs.compactMapValues {
+            self.processComment(postID, $0)
+        }.then { comments in
+            return self.saveComments(postID, comments)
+        }
+    }
+
+    func processComment(_ postID: Int, _ item: HNItem?, _ level: Int = 0) -> CommentModel? {
+        guard let item = item else { return nil }
+        guard item.isDeleted == false else { return nil }
+        guard item.isDead == false else { return nil }
+
+        /*if item.kidsIds.count > 0 {
+            print("Comment has", item.kidsIds.count, "kids, spawning a job to download them!")
+
+            DispatchQueue.global(qos: .userInitiated).async {
+                for kidID in item.kidsIds {
+                    print("Spawned job for", kidID)
+                    self.getAndSaveComment(postID, kidID, level + 1)
+                }
+            }
+
+        }*/
+
+//        let promises: [Promise<CommentModel>] = item.kidsIds.map {
+//            self.getAndSaveComment(postID, $0, level + 1)
+//        }
+//
+//        let finalPromise: Promise<CommentModel>? = promises.reduce(nil) { (res, comment) in
+//            return res?.then { aComment in
+//                print("Comment", aComment.value.ID)
+//                return comment
+//            }
+//        }
+//
+//        print("finalPromise", finalPromise)
+
+        guard let comment = item as? CommentModel else { return nil }
+
+        comment.Level = level
+
+        return comment
+    }
+
+    func getAndSaveComment(_ postID: Int, _ commentID: Int, _ level: Int = 0) -> Promise<CommentModel> {
+        let realm = Realm.live()
+
+        if let checkForComment = realm.object(ofType: CommentModel.self, forPrimaryKey: commentID) {
+            print("Comment \(commentID) already existed!")
+            return Promise.value(checkForComment)
+        }
+
+        return self.getItemForID(commentID).compactMap {
+            return self.processComment(postID, $0, level)
+        }.then { comment -> Promise<CommentModel> in
+            return self.saveComments(postID, [comment]).firstValue
         }
     }
 
@@ -120,8 +172,8 @@ public class HNFirebaseClient {
     func getKidsForParentID(_ itemID: Int) -> Promise<[HNItem]> {
         return firstly {
             self.getItemForID(itemID).compactMap { $0 }.map { Array($0.kidsIds) }
-        }.then { ids in
-            return self.getKidsForKidIDs(ids)
+            }.then { ids in
+                return self.getKidsForKidIDs(ids)
         }
     }
 
@@ -201,6 +253,96 @@ public class HNFirebaseClient {
             }
         }
     }
+
+//    func getCommentsTree(itemID: Int, parentID: Int? = nil, level: Int = 0) -> Guarantee<[Result<[CommentModel]>]> {
+//        // 1. Get the post so we get all comment IDs
+//        // 2. Get every comment by its ID
+//        // 3. Get all children of the comment
+//        // 4. Repeat previous step for all grandchildren found in childrens
+//
+//        print("Getting tree for", itemID, "at level", level, "(parent id: \(parentID))")
+//        let retVal = self.getItemForID(itemID).compactMap { $0 }.map { hnItem -> CommentModel? in
+//            return self.mapComment(commentID: hnItem.ID, parentID: hnItem.parentId.value!, item: hnItem)
+//        }.then { item -> Promise<(Int?, List<Int>?)> in
+//            // ID checks
+//            // If parentID in function signature is nil AND item?.parentId.value is nil, itemID is post ID
+//            // If parentID in function signature is nil BUT item?.parentId.value is NOT nil, itemID is comment, item?.parentId.value is post
+//            // If parentID in function signature is NOT nil AND item?.parentId.value is NOT nil, itemID is comment, parentID is post ID and item?.parentId.value is parent comment ID
+//
+//            let itemParentID: Int = item?.parentId.value != nil ? item!.parentId.value! : itemID
+//
+//            print("itemParentID", itemParentID)
+//
+//            let parentID = parentID != nil ? parentID : itemParentID
+//
+//            print("parentID", parentID)
+//
+//            print("CHECK PARENT ID", itemID, parentID, itemParentID)
+//
+//            print("Returning new IDs!")
+//            return Promise.value((parentID, item?.kidsIds))
+//        }.then { (item: (Int?, List<Int>?)) -> Guarantee<[Result<[CommentModel]>]> in
+//            let parentID = item.0
+//            let childIDs = item.1
+//
+//            print("CHECK PARENT ID", itemID, parentID, childIDs)
+//
+//            //print("Got child IDs", childIDs, "for parent ID", parentID)
+//
+//            let mappedPromises = Array(childIDs!).map { childID -> Promise<[CommentModel]> in
+//                print("Going to call getCommentsTree with params", childID, parentID, level + 1)
+//                return self.getCommentsTree(itemID: childID, parentID: parentID, level: level + 1)
+//            }
+//
+//            let retVal = when(resolved: mappedPromises)
+//            print("retVal", retVal)
+//            return retVal
+//        }/*.thenMap { result -> Promise<[CommentModel]> in
+//            switch result {
+//            case .fulfilled(let commentsArr):
+//                print("Promise fulfilled with return value", commentsArr)
+//                let mapped = commentsArr.map { singleComment -> CommentModel in
+//                    singleComment.Level = level
+//                    singleComment.parentId.value = parentID
+//                    return singleComment
+//                }
+//                print("Mapped value", mapped)
+//                return Promise.value(mapped)
+//            case .rejected(let error):
+//                print("Failed to get comment with error", error)
+//                return Promise.value([CommentModel]())
+//            }
+//        }.then { models -> Promise<[CommentModel]> in
+//            print("Models", models.flatMap { $0 })
+//            return Promise.value(models.flatMap { $0 })
+//        }*/
+//
+//        print("retVal", retVal)
+//
+//        return retVal
+//    }
+//
+//    
+//
+//    func mapComment(commentID: Int, parentID: Int, item: HNItem, level: Int = 0) -> CommentModel? {
+//        if let comment = item as? CommentModel {
+//            let realm = Realm.live()
+//
+//            comment.Level = level
+//            if comment.parentId.value == parentID { // ParentID should only be nil if its a post
+//                comment.Post = realm.object(ofType: PostModel.self, forPrimaryKey: comment.parentId.value)
+//            } else {
+//                comment.parentId.value = parentID
+//            }
+//            print("Saving comment", comment.ID)
+//
+//            try! realm.write {
+//                realm.add(comment, update: true)
+//            }
+//        }
+//
+//        return nil
+//    }
 }
 
 extension HNScraper.PostListPageName {

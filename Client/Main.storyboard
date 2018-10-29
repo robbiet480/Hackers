@@ -181,7 +181,7 @@
                         <viewLayoutGuide key="safeArea" id="QiA-1a-N44"/>
                     </view>
                     <navigationItem key="navigationItem" title="Hacker News" id="On9-n6-9Yb">
-                        <barButtonItem key="rightBarButtonItem" title="Item" image="SettingsIcon" id="2id-E8-XJT">
+                        <barButtonItem key="rightBarButtonItem" title="Item" image="SettingsIcon" id="2id-E8-XJT" userLabel="Open Settings">
                             <connections>
                                 <segue destination="9fT-2D-AhL" kind="presentation" modalPresentationStyle="formSheet" id="3L9-P8-OTk"/>
                             </connections>
@@ -648,6 +648,6 @@
         <image name="ThumbnailPlaceholderIcon" width="42" height="42"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="wgf-Cf-hdx"/>
+        <segue reference="x05-Is-lfg"/>
     </inferredMetricsTieBreakers>
 </document>

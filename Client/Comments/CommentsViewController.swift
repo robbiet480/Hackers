@@ -12,6 +12,10 @@ import SafariServices
 import DZNEmptyDataSet
 import SkeletonView
 import FirebaseDatabase
+import HNScraper
+import RealmSwift
+import FontAwesome_swift
+import PromiseKit
 
 class CommentsViewController : UIViewController {
     var post: PostModel?
@@ -90,16 +94,24 @@ class CommentsViewController : UIViewController {
     }
     
     func loadComments() {
-        _ = HNFirebaseClient.shared.getAndSaveCommentsForKidIDs(self.post!.ID,
-                                                                Array(self.post!.kidsIds)).done { comments in
+        let realm = Realm.live()
 
-            self.comments = comments
+        self.comments = realm.objects(CommentModel.self).filter("Post.ID == %d", self.post!.ID).map { $0 }
 
-            self.view.hideSkeleton()
-            self.tableView.rowHeight = UITableView.automaticDimension
-            self.tableView.reloadData()
+        self.view.hideSkeleton()
+        self.tableView.rowHeight = UITableView.automaticDimension
+        self.tableView.reloadData()
 
-        }
+        //_ = HNFirebaseClient.shared.getAndSaveCommentsForKidIDs(self.post!.ID, Array(self.post!.kidsIds))
+        /*HNFirebaseClient.shared.getCommentsTree(itemID: self.post!.ID).then { allComments -> Promise<[CommentModel]> in
+            print("Got comments", allComments)
+            return HNFirebaseClient.shared.saveComments(self.post!.ID, allComments)
+        }.done { _ -> Void in
+            print("Done getting comments tree!")
+        }*/
+//        HNFirebaseClient.shared.getCommentsTree(itemID: self.post!.ID).done { allComments in
+//            print("Got comments", allComments)
+//        }
     }
     
     func setupPostTitleView() {
@@ -153,7 +165,7 @@ extension CommentsViewController: PostTitleViewDelegate {
             activity.title = post.title
             self.userActivity = activity
 
-            if let safariViewController = UserDefaults.standard.openInBrowser(post.LinkURL) {
+            if let safariViewController = OpenInBrowser.shared.openURL(post.LinkURL) {
                 safariViewController.onDoneBlock = { _ in
                     self.userActivity = nil
                 }
@@ -196,6 +208,92 @@ extension CommentsViewController: UITableViewDelegate {
         let view = Bundle.main.loadNibNamed("CommentsHeader", owner: nil, options: nil)?.first as? UIView
         return view
     }
+
+    func tableView(_ tableView: UITableView,
+                   leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        return self.voteComment(indexPath, .Upvote)
+    }
+
+    func tableView(_ tableView: UITableView,
+                   trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        let comment = commentsController.visibleComments[indexPath.row]
+
+        var voteAction: HNScraper.VoteAction = .Downvote
+
+        if comment.Upvoted.value != nil && Date().isBeforeDate(comment.VotedAt!.addingTimeInterval(3600), granularity: .minute) {
+            voteAction = .Unvote
+        }
+
+        return self.voteComment(indexPath, voteAction)
+    }
+
+    func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
+        return .none
+    }
+
+    func voteComment(_ indexPath: IndexPath, _ voteAction: HNScraper.VoteAction) -> UISwipeActionsConfiguration? {
+
+        // Only logged in users can swipe to upvote/downvote
+        guard UserDefaults.standard.loggedInUser != nil else { return nil }
+
+        let comment = commentsController.visibleComments[indexPath.row]
+
+        // comment was already voted on
+        guard voteAction != .Unvote && comment.VotedAt == nil else { return nil }
+
+        var title = ""
+        var color: UIColor = .clear
+        var faIcon: FontAwesome = .arrowUp
+
+        switch voteAction {
+        case .Upvote:
+            title = "Upvote"
+            color = .orange
+            faIcon = .arrowUp
+        case .Downvote:
+            title = "Downvote"
+            color = .blue
+            faIcon = .arrowDown
+        case .Unvote:
+            title = "Unvote"
+            color = .red
+            faIcon = .times
+        }
+
+        let action = UIContextualAction(style: .normal, title: title, handler: { (action, view, completionHandler) in
+
+            let commentID = comment.ID
+
+            DispatchQueue.global(qos: .userInitiated).async {
+                _ = HNScraper.shared.voteItem(commentID, action: voteAction).done { authKey in
+                    let realm = Realm.live()
+
+                    let comment = realm.object(ofType: CommentModel.self, forPrimaryKey: commentID)
+
+                    try! realm.write {
+                        switch voteAction {
+                        case .Upvote, .Downvote:
+                            comment?.VotedAt = Date()
+                            comment?.Upvoted.value = (voteAction == .Upvote)
+                            comment?.VoteKey = authKey
+                        case .Unvote:
+                            comment?.VotedAt = nil
+                            comment?.Upvoted.value = nil
+                            comment?.VoteKey = authKey
+                        }
+                    }
+                }
+            }
+
+            completionHandler(false)
+        })
+
+        action.backgroundColor = color
+        action.image = UIImage.fontAwesomeIcon(name: faIcon, style: .solid, textColor: .white,
+                                               size: CGSize(width: 36, height: 36))
+
+        return UISwipeActionsConfiguration(actions: [action])
+    }
 }
 
 extension CommentsViewController: Themed {
@@ -235,7 +333,7 @@ extension CommentsViewController: CommentDelegate {
         activity.title = post!.title
         self.userActivity = activity
 
-        if let safariViewController = UserDefaults.standard.openInBrowser(URL) {
+        if let safariViewController = OpenInBrowser.shared.openURL(URL) {
             safariViewController.onDoneBlock = { _ in
                 self.userActivity = nil
             }

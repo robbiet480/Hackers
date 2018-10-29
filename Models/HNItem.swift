@@ -64,6 +64,15 @@ public class HNItem: Object, StaticMappable {
     /// In the case of stories or polls, the total comment count.
     @objc dynamic var descendants: Int = 0
 
+    /// Whether the user upvoted. If NO, they downvoted
+    var Upvoted = RealmOptional<Bool>()
+
+    /// The authentication key for a vote. Needed to unvote for 1 hour after upvote.
+    @objc dynamic var VoteKey: String?
+
+    /// The time at which the user took a vote action
+    @objc dynamic var VotedAt: Date?
+
     /// The date when this item was imported to the Realm.
     @objc dynamic var CreatedAt: Date = Date()
 

@@ -14,6 +14,8 @@ import Kingfisher
 import RealmSwift
 import HNScraper
 import FirebaseDatabase
+import FontAwesome_swift
+import PromiseKit
 
 class NewsViewController : UIViewController {
     @IBOutlet weak var tableView: UITableView!
@@ -155,7 +157,7 @@ extension NewsViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let post = posts![indexPath.row]
         if post.type == .job { // Job posts don't have comments, so lets go straight to the link
-            if let vc = UserDefaults.standard.openInBrowser(post.LinkURL) {
+            if let vc = OpenInBrowser.shared.openURL(post.LinkURL) {
                 self.present(vc, animated: true, completion: nil)
             }
         } else {
@@ -178,6 +180,49 @@ extension NewsViewController: UITableViewDelegate {
             print("Getting stories!", indexPath.row, posts!.count)
             _ = HNFirebaseClient.shared.getStoriesForPage(self.postType)
         }
+    }
+
+    func tableView(_ tableView: UITableView,
+                   leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+
+            // Only logged in users can swipe to upvote/downvote
+            guard UserDefaults.standard.loggedInUser != nil else { return nil }
+
+            let post = posts![indexPath.row]
+
+            // Post was already voted on
+            guard post.VotedAt == nil else { return nil }
+
+            let action = UIContextualAction(style: .normal, title: "Upvote", handler: { (action, view, completionHandler) in
+
+                let postID = post.ID
+
+                DispatchQueue.global(qos: .userInitiated).async {
+                    _ = HNScraper.shared.voteItem(postID, action: .Upvote).done { authKey in
+                        let realm = Realm.live()
+
+                        let post = realm.object(ofType: PostModel.self, forPrimaryKey: postID)
+
+                        try! realm.write {
+                            post?.VotedAt = Date()
+                            post?.Upvoted.value = true
+                            post?.VoteKey = authKey
+                        }
+                    }
+                }
+
+                completionHandler(false)
+            })
+
+            action.backgroundColor = .orange
+            action.image = UIImage.fontAwesomeIcon(name: .arrowUp, style: .solid,
+                                                   textColor: .white, size: CGSize(width: 36, height: 36))
+
+            return UISwipeActionsConfiguration(actions: [action])
+    }
+
+    func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
+        return .none
     }
 }
 
@@ -213,7 +258,7 @@ extension NewsViewController: UIViewControllerPreviewingDelegate, SFSafariViewCo
     func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController) {
 
         let post = posts![self.peekedIndexPath!.row]
-        if let safariViewController = UserDefaults.standard.openInBrowser(post.LinkURL) {
+        if let safariViewController = OpenInBrowser.shared.openURL(post.LinkURL) {
             safariViewController.onDoneBlock = { _ in
                 self.userActivity = nil
             }
@@ -245,7 +290,7 @@ extension NewsViewController: PostTitleViewDelegate {
         activity.title = post.title
         self.userActivity = activity
 
-        let vc = UserDefaults.standard.openInBrowser(post.LinkURL)
+        let vc = OpenInBrowser.shared.openURL(post.LinkURL)
         if let vc = vc {
             vc.previewActionItemsDelegate = self
 

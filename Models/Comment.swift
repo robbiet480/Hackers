@@ -13,7 +13,7 @@ import Kingfisher
 import OpenGraph
 import HNScraper
 
-class CommentModel: HNItem {
+public class CommentModel: HNItem {
     @objc dynamic var Post: PostModel?
     @objc dynamic var Level: Int = 0
     let Links = List<String>()
@@ -27,7 +27,7 @@ class CommentModel: HNItem {
         case Hidden = 1
     }
 
-    override func mapping(map: Map) {
+    override public func mapping(map: Map) {
         super.mapping(map: map)
     }
 
