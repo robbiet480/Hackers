@@ -47,9 +47,30 @@
 		24F39F9B18AFB1150055F8DC /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 24F39F9A18AFB1150055F8DC /* Images.xcassets */; };
 		B60881CF217FBA99009C6CFA /* HNFirebaseClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = B60881CE217FBA99009C6CFA /* HNFirebaseClient.swift */; };
 		B60881D1217FD3EA009C6CFA /* HNItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = B60881D0217FD3EA009C6CFA /* HNItem.swift */; };
+		B614BF442186F01400918E0F /* DateFormatter+ISO8601Full.swift in Sources */ = {isa = PBXBuildFile; fileRef = B614BF432186F01400918E0F /* DateFormatter+ISO8601Full.swift */; };
+		B614BF462186F09000918E0F /* Codable+Alamofire.swift in Sources */ = {isa = PBXBuildFile; fileRef = B614BF452186F09000918E0F /* Codable+Alamofire.swift */; };
+		B614BF4821870A4A00918E0F /* HNLeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = B614BF4721870A4A00918E0F /* HNLeader.swift */; };
+		B614BF4B2187186A00918E0F /* Algolia.swift in Sources */ = {isa = PBXBuildFile; fileRef = B614BF4A2187186A00918E0F /* Algolia.swift */; };
+		B614BF4D2187187100918E0F /* HTML.swift in Sources */ = {isa = PBXBuildFile; fileRef = B614BF4C2187187100918E0F /* HTML.swift */; };
+		B614BF4F2187187B00918E0F /* Firebase.swift in Sources */ = {isa = PBXBuildFile; fileRef = B614BF4E2187187B00918E0F /* Firebase.swift */; };
+		B614BF512187188800918E0F /* HNSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = B614BF502187188800918E0F /* HNSource.swift */; };
+		B614BF562187C66900918E0F /* AlgoliaHNUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = B614BF552187C66900918E0F /* AlgoliaHNUser.swift */; };
+		B614BF582187C70D00918E0F /* AlgoliaHNItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = B614BF572187C70D00918E0F /* AlgoliaHNItem.swift */; };
+		B614BF5A2187C78E00918E0F /* FirebaseHNUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = B614BF592187C78E00918E0F /* FirebaseHNUser.swift */; };
+		B614BF5C2187C8AC00918E0F /* FirebaseHNItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = B614BF5B2187C8AC00918E0F /* FirebaseHNItem.swift */; };
+		B614BF5E2187CCF200918E0F /* AlgoliaSearch.swift in Sources */ = {isa = PBXBuildFile; fileRef = B614BF5D2187CCF200918E0F /* AlgoliaSearch.swift */; };
+		B614BF602187DC6F00918E0F /* HTMLHNUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = B614BF5F2187DC6F00918E0F /* HTMLHNUser.swift */; };
+		B614BF622187DF0B00918E0F /* CustomStringConvertible+Description.swift in Sources */ = {isa = PBXBuildFile; fileRef = B614BF612187DF0B00918E0F /* CustomStringConvertible+Description.swift */; };
+		B614BF652187E30A00918E0F /* HNRealtime.swift in Sources */ = {isa = PBXBuildFile; fileRef = B614BF642187E30A00918E0F /* HNRealtime.swift */; };
+		B614BF672187E80500918E0F /* HNLogin.swift in Sources */ = {isa = PBXBuildFile; fileRef = B614BF662187E80500918E0F /* HNLogin.swift */; };
 		B63E78C4217C1C6300750131 /* UIFont+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B63E78C3217C1C6300750131 /* UIFont+Extensions.swift */; };
 		B663E309217E43810062F6D9 /* Comment.swift in Sources */ = {isa = PBXBuildFile; fileRef = B663E308217E43810062F6D9 /* Comment.swift */; };
 		B663E30B217E54890062F6D9 /* HNUpdateManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B663E30A217E54890062F6D9 /* HNUpdateManager.swift */; };
+		B6C86D002186A59B00FB18E8 /* HNPost.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6C86CFF2186A59B00FB18E8 /* HNPost.swift */; };
+		B6C86D022186A5A400FB18E8 /* HNComment.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6C86D012186A5A400FB18E8 /* HNComment.swift */; };
+		B6C86D042186A5AE00FB18E8 /* HNUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6C86D032186A5AE00FB18E8 /* HNUser.swift */; };
+		B6C86D062186A62300FB18E8 /* HNScraper.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6C86D052186A62300FB18E8 /* HNScraper.swift */; };
+		B6C86D0A2186D7C600FB18E8 /* NewHNItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6C86D092186D7C500FB18E8 /* NewHNItem.swift */; };
 		B6C8E8522181353D0093112A /* OpenInFirefoxController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6C8E8512181353D0093112A /* OpenInFirefoxController.swift */; };
 		B6C8E854218135B80093112A /* OpenInBrowser.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6C8E853218135B80093112A /* OpenInBrowser.swift */; };
 		B6CCFAFC217E96560085AC03 /* HNScraper+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6CCFAFB217E96560085AC03 /* HNScraper+Extensions.swift */; };
@@ -110,9 +131,30 @@
 		9D41F6A856DA1B6671301AAD /* Pods-Hackers.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Hackers.release.xcconfig"; path = "Pods/Target Support Files/Pods-Hackers/Pods-Hackers.release.xcconfig"; sourceTree = "<group>"; };
 		B60881CE217FBA99009C6CFA /* HNFirebaseClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HNFirebaseClient.swift; sourceTree = "<group>"; };
 		B60881D0217FD3EA009C6CFA /* HNItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HNItem.swift; sourceTree = "<group>"; };
+		B614BF432186F01400918E0F /* DateFormatter+ISO8601Full.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DateFormatter+ISO8601Full.swift"; sourceTree = "<group>"; };
+		B614BF452186F09000918E0F /* Codable+Alamofire.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Codable+Alamofire.swift"; sourceTree = "<group>"; };
+		B614BF4721870A4A00918E0F /* HNLeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HNLeader.swift; sourceTree = "<group>"; };
+		B614BF4A2187186A00918E0F /* Algolia.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Algolia.swift; sourceTree = "<group>"; };
+		B614BF4C2187187100918E0F /* HTML.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTML.swift; sourceTree = "<group>"; };
+		B614BF4E2187187B00918E0F /* Firebase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Firebase.swift; sourceTree = "<group>"; };
+		B614BF502187188800918E0F /* HNSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HNSource.swift; sourceTree = "<group>"; };
+		B614BF552187C66900918E0F /* AlgoliaHNUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlgoliaHNUser.swift; sourceTree = "<group>"; };
+		B614BF572187C70D00918E0F /* AlgoliaHNItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlgoliaHNItem.swift; sourceTree = "<group>"; };
+		B614BF592187C78E00918E0F /* FirebaseHNUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseHNUser.swift; sourceTree = "<group>"; };
+		B614BF5B2187C8AC00918E0F /* FirebaseHNItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseHNItem.swift; sourceTree = "<group>"; };
+		B614BF5D2187CCF200918E0F /* AlgoliaSearch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlgoliaSearch.swift; sourceTree = "<group>"; };
+		B614BF5F2187DC6F00918E0F /* HTMLHNUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTMLHNUser.swift; sourceTree = "<group>"; };
+		B614BF612187DF0B00918E0F /* CustomStringConvertible+Description.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CustomStringConvertible+Description.swift"; sourceTree = "<group>"; };
+		B614BF642187E30A00918E0F /* HNRealtime.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HNRealtime.swift; sourceTree = "<group>"; };
+		B614BF662187E80500918E0F /* HNLogin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HNLogin.swift; sourceTree = "<group>"; };
 		B63E78C3217C1C6300750131 /* UIFont+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIFont+Extensions.swift"; sourceTree = "<group>"; };
 		B663E308217E43810062F6D9 /* Comment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Comment.swift; sourceTree = "<group>"; };
 		B663E30A217E54890062F6D9 /* HNUpdateManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HNUpdateManager.swift; sourceTree = "<group>"; };
+		B6C86CFF2186A59B00FB18E8 /* HNPost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HNPost.swift; sourceTree = "<group>"; };
+		B6C86D012186A5A400FB18E8 /* HNComment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HNComment.swift; sourceTree = "<group>"; };
+		B6C86D032186A5AE00FB18E8 /* HNUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HNUser.swift; sourceTree = "<group>"; };
+		B6C86D052186A62300FB18E8 /* HNScraper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HNScraper.swift; sourceTree = "<group>"; };
+		B6C86D092186D7C500FB18E8 /* NewHNItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewHNItem.swift; sourceTree = "<group>"; };
 		B6C8E8512181353D0093112A /* OpenInFirefoxController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenInFirefoxController.swift; sourceTree = "<group>"; };
 		B6C8E853218135B80093112A /* OpenInBrowser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenInBrowser.swift; sourceTree = "<group>"; };
 		B6CCFAFB217E96560085AC03 /* HNScraper+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "HNScraper+Extensions.swift"; sourceTree = "<group>"; };
@@ -176,6 +218,9 @@
 				B6D3744A2181007700C872F6 /* UIViewController+Spinner.swift */,
 				B6C8E8512181353D0093112A /* OpenInFirefoxController.swift */,
 				B6C8E853218135B80093112A /* OpenInBrowser.swift */,
+				B614BF432186F01400918E0F /* DateFormatter+ISO8601Full.swift */,
+				B614BF452186F09000918E0F /* Codable+Alamofire.swift */,
+				B614BF612187DF0B00918E0F /* CustomStringConvertible+Description.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -243,6 +288,7 @@
 		24F39F7C18AFB1150055F8DC = {
 			isa = PBXGroup;
 			children = (
+				B6C86CFE2186A54300FB18E8 /* UltraHN */,
 				24F39F8E18AFB1150055F8DC /* Client */,
 				24CE5FF219434E20009D2677 /* Models */,
 				24CE5FF119434E0B009D2677 /* Assets */,
@@ -311,6 +357,71 @@
 				9D41F6A856DA1B6671301AAD /* Pods-Hackers.release.xcconfig */,
 			);
 			name = Pods;
+			sourceTree = "<group>";
+		};
+		B614BF492187186000918E0F /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				B614BF522187C62200918E0F /* Algolia */,
+				B614BF532187C62A00918E0F /* Firebase */,
+				B614BF542187C62F00918E0F /* HTML */,
+				B614BF502187188800918E0F /* HNSource.swift */,
+			);
+			path = Sources;
+			sourceTree = "<group>";
+		};
+		B614BF522187C62200918E0F /* Algolia */ = {
+			isa = PBXGroup;
+			children = (
+				B614BF4A2187186A00918E0F /* Algolia.swift */,
+				B614BF572187C70D00918E0F /* AlgoliaHNItem.swift */,
+				B614BF552187C66900918E0F /* AlgoliaHNUser.swift */,
+				B614BF5D2187CCF200918E0F /* AlgoliaSearch.swift */,
+			);
+			path = Algolia;
+			sourceTree = "<group>";
+		};
+		B614BF532187C62A00918E0F /* Firebase */ = {
+			isa = PBXGroup;
+			children = (
+				B614BF4E2187187B00918E0F /* Firebase.swift */,
+				B614BF592187C78E00918E0F /* FirebaseHNUser.swift */,
+				B614BF5B2187C8AC00918E0F /* FirebaseHNItem.swift */,
+			);
+			path = Firebase;
+			sourceTree = "<group>";
+		};
+		B614BF542187C62F00918E0F /* HTML */ = {
+			isa = PBXGroup;
+			children = (
+				B614BF4C2187187100918E0F /* HTML.swift */,
+				B614BF5F2187DC6F00918E0F /* HTMLHNUser.swift */,
+			);
+			path = HTML;
+			sourceTree = "<group>";
+		};
+		B614BF632187DF6600918E0F /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				B6C86D092186D7C500FB18E8 /* NewHNItem.swift */,
+				B6C86CFF2186A59B00FB18E8 /* HNPost.swift */,
+				B6C86D012186A5A400FB18E8 /* HNComment.swift */,
+				B614BF4721870A4A00918E0F /* HNLeader.swift */,
+				B6C86D032186A5AE00FB18E8 /* HNUser.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		B6C86CFE2186A54300FB18E8 /* UltraHN */ = {
+			isa = PBXGroup;
+			children = (
+				B614BF632187DF6600918E0F /* Models */,
+				B614BF492187186000918E0F /* Sources */,
+				B614BF642187E30A00918E0F /* HNRealtime.swift */,
+				B6C86D052186A62300FB18E8 /* HNScraper.swift */,
+				B614BF662187E80500918E0F /* HNLogin.swift */,
+			);
+			path = UltraHN;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -438,6 +549,7 @@
 				"${PODS_ROOT}/Target Support Files/Pods-Hackers/Pods-Hackers-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/1PasswordExtension/OnePasswordExtension.framework",
 				"${BUILT_PRODUCTS_DIR}/Alamofire/Alamofire.framework",
+				"${BUILT_PRODUCTS_DIR}/CodableFirebase/CodableFirebase.framework",
 				"${BUILT_PRODUCTS_DIR}/ContextMenu/ContextMenu.framework",
 				"${BUILT_PRODUCTS_DIR}/DZNEmptyDataSet/DZNEmptyDataSet.framework",
 				"${BUILT_PRODUCTS_DIR}/Eureka/Eureka.framework",
@@ -460,6 +572,7 @@
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/OnePasswordExtension.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Alamofire.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/CodableFirebase.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ContextMenu.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/DZNEmptyDataSet.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Eureka.framework",
@@ -494,25 +607,39 @@
 				B63E78C4217C1C6300750131 /* UIFont+Extensions.swift in Sources */,
 				2464D216209DFF6D00C7F8FC /* CommentsHeaderView.swift in Sources */,
 				24CE5FED19434BDC009D2677 /* AppDelegate.swift in Sources */,
+				B614BF4821870A4A00918E0F /* HNLeader.swift in Sources */,
+				B614BF4D2187187100918E0F /* HTML.swift in Sources */,
+				B614BF4B2187186A00918E0F /* Algolia.swift in Sources */,
 				24CE5FF419435061009D2677 /* NewsViewController.swift in Sources */,
 				B6CCFAFE217E9F610085AC03 /* TabBarOrder.swift in Sources */,
+				B614BF512187188800918E0F /* HNSource.swift in Sources */,
+				B614BF652187E30A00918E0F /* HNRealtime.swift in Sources */,
 				2464D211209DE7B100C7F8FC /* UIColor+Extensions.swift in Sources */,
 				24E4F26119B4DA9900574B52 /* CommentDelegate.swift in Sources */,
 				2464D20D209DD8F400C7F8FC /* ArrayExtensions.swift in Sources */,
 				2454B9041F655426005A98C7 /* EmptyViewController.swift in Sources */,
 				24D811A51FF90A58000951C3 /* TouchableTextView.swift in Sources */,
 				2464D20F209DD8F400C7F8FC /* Weak.swift in Sources */,
+				B614BF5C2187C8AC00918E0F /* FirebaseHNItem.swift in Sources */,
 				B6C8E854218135B80093112A /* OpenInBrowser.swift in Sources */,
+				B614BF442186F01400918E0F /* DateFormatter+ISO8601Full.swift in Sources */,
 				24CEAA9B1F8916970050DEDF /* UIView+Extensions.swift in Sources */,
+				B614BF462186F09000918E0F /* Codable+Alamofire.swift in Sources */,
+				B614BF562187C66900918E0F /* AlgoliaHNUser.swift in Sources */,
 				B6ECEB5D217D16CF00755239 /* Notifications.swift in Sources */,
+				B6C86D002186A59B00FB18E8 /* HNPost.swift in Sources */,
 				B60881D1217FD3EA009C6CFA /* HNItem.swift in Sources */,
 				24D6B8CA1C1EDBFC00618422 /* AppTheme.swift in Sources */,
+				B614BF672187E80500918E0F /* HNLogin.swift in Sources */,
+				B614BF5A2187C78E00918E0F /* FirebaseHNUser.swift in Sources */,
 				245DCAB01CD4DA2A00152AA3 /* SFSafariViewController+PreviewActionItems.swift in Sources */,
 				B6CCFB01217EF2120085AC03 /* PushNotificationsDisclaimerViewController.swift in Sources */,
+				B6C86D0A2186D7C600FB18E8 /* NewHNItem.swift in Sources */,
 				B6D3744B2181007700C872F6 /* UIViewController+Spinner.swift in Sources */,
 				2464D221209E2CDF00C7F8FC /* ThemedSafariViewController.swift in Sources */,
 				242A00D31D086927003D915B /* UIViewControllerSmoothlyDeselectCellExtension.swift in Sources */,
 				24B5BFEF1B52CE8900328C62 /* PostTitleView.swift in Sources */,
+				B614BF622187DF0B00918E0F /* CustomStringConvertible+Description.swift in Sources */,
 				B60881CF217FBA99009C6CFA /* HNFirebaseClient.swift in Sources */,
 				2464D208209DD7B100C7F8FC /* AppThemeProvider.swift in Sources */,
 				24191F8D1944C991003C0D98 /* CommentsController.swift in Sources */,
@@ -520,21 +647,28 @@
 				2464D213209DEFB100C7F8FC /* AppNavigationController.swift in Sources */,
 				2464D20E209DD8F400C7F8FC /* SubscribableValue.swift in Sources */,
 				B6C8E8522181353D0093112A /* OpenInFirefoxController.swift in Sources */,
+				B614BF5E2187CCF200918E0F /* AlgoliaSearch.swift in Sources */,
+				B6C86D062186A62300FB18E8 /* HNScraper.swift in Sources */,
 				24C20D391A7E42D5005B759B /* MainSplitViewController.swift in Sources */,
 				2464D21F209E27FE00C7F8FC /* Settings+UserDefaultsExtensions.swift in Sources */,
 				B6ECEB59217CC4EA00755239 /* OpenInChromeController.swift in Sources */,
 				B6CCFAFC217E96560085AC03 /* HNScraper+Extensions.swift in Sources */,
+				B614BF4F2187187B00918E0F /* Firebase.swift in Sources */,
 				24CE5FF819435A90009D2677 /* PostCell.swift in Sources */,
 				2464D21B209E1FA100C7F8FC /* SettingsViewController.swift in Sources */,
 				24DFD28C19436E51007F61E7 /* CommentsViewController.swift in Sources */,
 				24448F891FE7DFB800F85A28 /* ThumbnailFetcher.swift in Sources */,
 				B6ECEB63217D64AE00755239 /* Realm+Initialization.swift in Sources */,
+				B614BF602187DC6F00918E0F /* HTMLHNUser.swift in Sources */,
 				B663E309217E43810062F6D9 /* Comment.swift in Sources */,
 				2464D206209DD27A00C7F8FC /* Theming.swift in Sources */,
 				B663E30B217E54890062F6D9 /* HNUpdateManager.swift in Sources */,
 				2454B9021F654DB2005A98C7 /* MainTabBarController.swift in Sources */,
+				B6C86D042186A5AE00FB18E8 /* HNUser.swift in Sources */,
 				243271951F95EDA9008196DB /* StringExtensions.swift in Sources */,
+				B614BF582187C70D00918E0F /* AlgoliaHNItem.swift in Sources */,
 				B6ECEB61217D54DD00755239 /* Post.swift in Sources */,
+				B6C86D022186A5A400FB18E8 /* HNComment.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

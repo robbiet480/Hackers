@@ -120,7 +120,13 @@ class PostModel: HNItem {
     var ThumbnailURL: URL? {
         guard let urlStr = self.URLString else { return nil }
 
-        guard let fallbackURL = URL(string: "https://image-extractor.now.sh/?url=" + urlStr) else { return nil }
+        // https://drcs9k8uelb9s.cloudfront.net/ is the hn.algolia.com thumbnail cache
+        // three sizes are available
+        // /id.png - 100x100
+        // /id-600x315.png - 600x315
+        // /id-240x180.png - 240x180
+        // Previous to this discovery, we used https://image-extractor.now.sh/?url=
+        guard let fallbackURL = URL(string: "https://drcs9k8uelb9s.cloudfront.net/" + self.ID.description + "-600x315.png") else { return nil }
 
         guard let linkURL = URL(string: urlStr) else { return fallbackURL }
 

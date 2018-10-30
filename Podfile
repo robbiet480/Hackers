@@ -4,6 +4,8 @@ inhibit_all_warnings!
 
 target 'Hackers' do
   pod '1PasswordExtension'
+  pod 'Alamofire'
+  pod 'CodableFirebase'
   pod 'ContextMenu'
   pod 'DZNEmptyDataSet'
   pod 'Eureka'
@@ -15,12 +17,11 @@ target 'Hackers' do
   pod 'ObjectMapperAdditions/Realm'
   pod 'OpenGraph', :git => 'https://github.com/robbiet480/OpenGraph', :branch => 'patch-1'
   pod 'PromiseKit'
+  pod 'PromiseKit/Alamofire'
   pod 'RealmSwift'
   pod 'SkeletonView'
   pod 'SwiftDate'
   pod 'SwiftSoup'
-  pod 'Alamofire'
-  pod 'PromiseKit/Alamofire'
 end
 
 post_install do |installer|

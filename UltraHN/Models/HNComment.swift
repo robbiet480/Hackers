@@ -7,3 +7,5 @@
 //
 
 import Foundation
+
+open class NewHNComment: NewHNItem {}
