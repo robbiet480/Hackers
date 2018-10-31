@@ -16,8 +16,10 @@ public class FirebaseDataSource: HNDataSource {
 
     public static let dbRef: DatabaseReference = Database.database(url: "https://hacker-news.firebaseio.com").reference().child("v0")
 
-    public func GetPage(_ pageName: NewHNScraper.Page) -> Promise<[NewHNItem]?> {
-        guard let path = pageName.firebasePath else { return Promise.value([NewHNItem]()) }
+    public init() { }
+
+    public func GetPage(_ pageName: HNScraper.Page, pageNumber: Int = 1) -> Promise<[HNItem]?> {
+        guard let path = pageName.firebasePath else { return Promise.value([HNItem]()) }
 
         return Promise { seal in
             FirebaseDataSource.dbRef.child(path).observeSingleEvent(of: .value, with: { (snapshot) in
@@ -34,7 +36,7 @@ public class FirebaseDataSource: HNDataSource {
         }
     }
 
-    public func GetItem(_ itemID: Int) -> Promise<NewHNItem?> {
+    public func GetItem(_ itemID: Int) -> Promise<HNItem?> {
         let itemRef = FirebaseDataSource.dbRef.child("item/" + itemID.description)
 
         return Promise {seal in
@@ -52,7 +54,7 @@ public class FirebaseDataSource: HNDataSource {
         }
     }
 
-    public func GetUser(_ username: String) -> Promise<NewHNUser?> {
+    public func GetUser(_ username: String) -> Promise<HNUser?> {
         let itemRef = FirebaseDataSource.dbRef.child("user/"+username)
 
         return Promise {seal in
@@ -70,12 +72,12 @@ public class FirebaseDataSource: HNDataSource {
         }
     }
 
-    public var SupportedPages: [NewHNScraper.Page] {
+    public var SupportedPages: [HNScraper.Page] {
         return [.Home, .New, .Jobs, .AskHN, .ShowHN, .Best, .SubmissionsForUsername(username: "")]
     }
 }
 
-extension NewHNScraper.Page {
+extension HNScraper.Page {
     var firebasePath: String? {
         switch self {
         case .Home:

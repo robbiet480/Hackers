@@ -10,8 +10,8 @@ import Foundation
 import Alamofire
 import PromiseKit
 
-open class AlgoliaHNItem: NewHNItem {
-    enum CodingKeys: String, CodingKey {
+public class AlgoliaHNItem: HNItem {
+    private enum CodingKeys: String, CodingKey {
         case Author = "author"
         case Title = "title"
         case Text = "text"
@@ -23,44 +23,25 @@ open class AlgoliaHNItem: NewHNItem {
         case StoryID = "story_id"
         case Children = "children"
     }
-}
 
-// MARK: - Alamofire response handlers
+    required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        // let superDecoder = try container.superDecoder()
+        // try super.init(from: superDecoder)
+        super.init()
 
-public extension Alamofire.DataRequest {
-    fileprivate func decodableResponseSerializer<T: Decodable>() -> DataResponseSerializer<T> {
-        return DataResponseSerializer { _, response, data, error in
-            guard error == nil else { return .failure(error!) }
-
-            guard let data = data else {
-                return .failure(AFError.responseSerializationFailed(reason: .inputDataNil))
-            }
-
-            return Result { try newJSONDecoder().decode(T.self, from: data) }
-        }
-    }
-
-    @discardableResult
-    fileprivate func responseDecodable<T: Decodable>(queue: DispatchQueue? = nil, completionHandler: @escaping (DataResponse<T>) -> Void) -> Self {
-        return response(queue: queue, responseSerializer: decodableResponseSerializer(), completionHandler: completionHandler)
-    }
-
-    @discardableResult
-    public func responseAlgoliaHNItem(queue: DispatchQueue? = nil, completionHandler: @escaping (DataResponse<AlgoliaHNItem>) -> Void) -> Self {
-        return responseDecodable(queue: queue, completionHandler: completionHandler)
-    }
-
-    public func responseAlgoliaHNItem(queue: DispatchQueue? = nil) -> Promise<(item: AlgoliaHNItem, response: PMKAlamofireDataResponse)> {
-        return Promise { seal in
-            responseAlgoliaHNItem(queue: queue) { response in
-                switch response.result {
-                case .success(let value):
-                    seal.fulfill((value, PMKAlamofireDataResponse(response)))
-                case .failure(let error):
-                    seal.reject(error)
-                }
-            }
+        self.Author = HNUser(username: try container.decode(String.self, forKey: .Author))
+        self.Title = try? container.decode(String.self, forKey: .Title)
+        self.Text = try? container.decode(String.self, forKey: .Text)
+        self.Score = try? container.decode(Int.self, forKey: .Score)
+        self.ID = try container.decode(Int.self, forKey: .ID)
+        self.CreatedAt = try? container.decode(Date.self, forKey: .CreatedAt)
+        self.`Type` = try container.decode(HNItemType.self, forKey: .`Type`)
+        self.ParentID = try? container.decode(Int.self, forKey: .ParentID)
+        self.StoryID = try? container.decode(Int.self, forKey: .StoryID)
+        if let children = try? container.decode([AlgoliaHNItem].self, forKey: .Children) {
+            self.Children = children
+            self.TotalChildren = children.count
         }
     }
 }
-

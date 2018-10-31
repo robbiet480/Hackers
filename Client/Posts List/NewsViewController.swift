@@ -12,8 +12,6 @@ import SafariServices
 import SkeletonView
 import Kingfisher
 import RealmSwift
-import HNScraper
-import FirebaseDatabase
 import FontAwesome_swift
 import PromiseKit
 
@@ -23,9 +21,10 @@ class NewsViewController : UIViewController {
 
     var notificationToken: NotificationToken? = nil
 
-    var posts: [PostModel]?
-    var postType: HNScraper.PostListPageName = .news
-    
+    var posts: [HNPost]?
+    var postType: HNScraper.Page = .Home
+    var pageNumber: Int = 1
+
     private var peekedIndexPath: IndexPath?
     private var nextPageIdentifier: String?
     
@@ -102,9 +101,9 @@ class NewsViewController : UIViewController {
 
                 self.notifiedPostID = nil
 
-                let realm = Realm.live()
-                let post = realm.object(ofType: PostModel.self, forPrimaryKey: notifiedPostID)
-                commentsViewController.post = post
+                HNScraper.shared.GetItem(notifiedPostID).done {
+                    commentsViewController.post = $0 as? HNPost
+                }
             } else if let indexPath = tableView.indexPathForSelectedRow,
                 let segueNavigationController = segue.destination as? UINavigationController,
                 let commentsViewController = segueNavigationController.topViewController as? CommentsViewController {
@@ -116,7 +115,8 @@ class NewsViewController : UIViewController {
     }
 
     @objc func loadPosts() {
-        _ = HNFirebaseClient.shared.getStoriesForPage(self.postType, limit: 30).done { newPosts in
+        _ = HNScraper.shared.GetPage(self.postType, pageNumber: self.pageNumber).done { newPosts in
+            guard let newPosts = newPosts as? [HNPost] else { return }
             print("Done getting \(self.postType.description) posts and got \(newPosts.count) new ones")
 
             self.posts = newPosts
@@ -156,18 +156,12 @@ extension NewsViewController: UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let post = posts![indexPath.row]
-        if post.type == .job { // Job posts don't have comments, so lets go straight to the link
-            if let vc = OpenInBrowser.shared.openURL(post.LinkURL) {
+        if post.Type == .job { // Job posts don't have comments, so lets go straight to the link
+            if let link = post.Link, let vc = OpenInBrowser.shared.openURL(link) {
                 self.present(vc, animated: true, completion: nil)
             }
         } else {
             self.performSegue(withIdentifier: "ShowComments", sender: self)
-        }
-    }
-
-    func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        if let cell = cell as? PostCell {
-            cell.thumbnailImageView.kf.cancelDownloadTask()
         }
     }
 }
@@ -177,8 +171,18 @@ extension NewsViewController: UITableViewDelegate {
         guard posts != nil else { return }
 
         if indexPath.row == posts!.count - 5 {
-            print("Getting stories!", indexPath.row, posts!.count)
-            _ = HNFirebaseClient.shared.getStoriesForPage(self.postType)
+            print("Getting next page of stories!", indexPath.row, posts!.count)
+
+            self.pageNumber += 1
+
+            _ = HNScraper.shared.GetPage(self.postType, pageNumber: self.pageNumber).done { newPosts in
+                guard let newPosts = newPosts as? [HNPost] else { return }
+                print("Done getting \(self.postType.description) posts and got \(newPosts.count) new ones")
+
+                self.posts!.append(contentsOf: newPosts)
+
+                self.tableView.reloadData()
+            }
         }
     }
 
@@ -191,25 +195,11 @@ extension NewsViewController: UITableViewDelegate {
             let post = posts![indexPath.row]
 
             // Post was already voted on
-            guard post.VotedAt == nil else { return nil }
+            guard let upvoteAction = post.Actions?.Upvote else { return nil }
 
             let action = UIContextualAction(style: .normal, title: "Upvote", handler: { (action, view, completionHandler) in
 
-                let postID = post.ID
-
-                DispatchQueue.global(qos: .userInitiated).async {
-                    _ = HNScraper.shared.voteItem(postID, action: .Upvote).done { authKey in
-                        let realm = Realm.live()
-
-                        let post = realm.object(ofType: PostModel.self, forPrimaryKey: postID)
-
-                        try! realm.write {
-                            post?.VotedAt = Date()
-                            post?.Upvoted.value = true
-                            post?.VoteKey = authKey
-                        }
-                    }
-                }
+                _ = post.FireAction(upvoteAction)
 
                 completionHandler(false)
             })
@@ -221,8 +211,39 @@ extension NewsViewController: UITableViewDelegate {
             return UISwipeActionsConfiguration(actions: [action])
     }
 
+    func tableView(_ tableView: UITableView,
+                   trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+
+        // Only logged in users can swipe to upvote/downvote
+        guard UserDefaults.standard.loggedInUser != nil else { return nil }
+
+        let post = posts![indexPath.row]
+
+        // Post was already voted on
+        guard let downvoteAction = post.Actions?.Downvote else { return nil }
+
+        let action = UIContextualAction(style: .normal, title: "Downvote", handler: { (action, view, completionHandler) in
+
+            _ = post.FireAction(downvoteAction)
+
+            completionHandler(false)
+        })
+
+        action.backgroundColor = .blue
+        action.image = UIImage.fontAwesomeIcon(name: .arrowDown, style: .solid,
+                                               textColor: .white, size: CGSize(width: 36, height: 36))
+
+        return UISwipeActionsConfiguration(actions: [action])
+    }
+
     func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
         return .none
+    }
+
+    func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        if let cell = cell as? PostCell {
+            cell.thumbnailImageView.kf.cancelDownloadTask()
+        }
     }
 }
 
@@ -245,32 +266,31 @@ extension NewsViewController: UIViewControllerPreviewingDelegate, SFSafariViewCo
     func previewingContext(_ previewingContext: UIViewControllerPreviewing, viewControllerForLocation location: CGPoint) -> UIViewController? {
         guard let indexPath = tableView.indexPathForRow(at: location), posts!.count > indexPath.row else { return nil }
         let post = posts![indexPath.row]
-        if verifyLink(post.LinkURL.description) {
-            peekedIndexPath = indexPath
-            previewingContext.sourceRect = tableView.rectForRow(at: indexPath)
-            let safariViewController = ThemedSafariViewController(url: post.LinkURL)
-            safariViewController.previewActionItemsDelegate = self
-            return safariViewController
-        }
-        return nil
+        peekedIndexPath = indexPath
+        previewingContext.sourceRect = tableView.rectForRow(at: indexPath)
+        guard let link = post.Link else { return nil }
+        let safariViewController = ThemedSafariViewController(url: link)
+        safariViewController.previewActionItemsDelegate = self
+        return safariViewController
     }
     
     func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController) {
 
         let post = posts![self.peekedIndexPath!.row]
-        if let safariViewController = OpenInBrowser.shared.openURL(post.LinkURL) {
+        if let link = post.Link, let safariViewController = OpenInBrowser.shared.openURL(link) {
             safariViewController.onDoneBlock = { _ in
                 self.userActivity = nil
             }
 
             self.present(safariViewController, animated: true, completion: nil)
         }
+
     }
     
     func safariViewControllerPreviewActionItems(_ controller: SFSafariViewController) -> [UIPreviewActionItem] {
         let indexPath = self.peekedIndexPath!
         let post = posts![indexPath.row]
-        let commentsPreviewActionTitle = post.descendants > 0 ? "View \(post.descendants) comments" : "View comments"
+        let commentsPreviewActionTitle = post.TotalChildren > 0 ? "View \(post.TotalChildren) comments" : "View comments"
         
         let viewCommentsPreviewAction = UIPreviewAction(title: commentsPreviewActionTitle, style: .default) {
             [unowned self, indexPath = indexPath] (action, viewController) -> Void in
@@ -282,16 +302,14 @@ extension NewsViewController: UIViewControllerPreviewingDelegate, SFSafariViewCo
 }
 
 extension NewsViewController: PostTitleViewDelegate {
-    func didPressLinkButton(_ post: PostModel) {
-        guard verifyLink(post.URLString) else { return }
+    func didPressLinkButton(_ post: HNPost) {
         let activity = NSUserActivity(activityType: "com.weiranzhang.Hackers.link")
         activity.isEligibleForHandoff = true
-        activity.webpageURL = post.LinkURL
-        activity.title = post.title
+        activity.webpageURL = post.Link
+        activity.title = post.Title
         self.userActivity = activity
 
-        let vc = OpenInBrowser.shared.openURL(post.LinkURL)
-        if let vc = vc {
+        if let link = post.Link, let vc = OpenInBrowser.shared.openURL(link) {
             vc.previewActionItemsDelegate = self
 
             vc.onDoneBlock = { _ in
@@ -300,11 +318,6 @@ extension NewsViewController: PostTitleViewDelegate {
 
             self.navigationController?.present(vc, animated: true, completion: nil)
         }
-    }
-
-    func verifyLink(_ urlString: String?) -> Bool {
-        guard let urlString = urlString, let url = URL(string: urlString) else { return false }
-        return UIApplication.shared.canOpenURL(url)
     }
 }
 

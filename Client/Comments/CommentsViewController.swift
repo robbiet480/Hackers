@@ -12,15 +12,14 @@ import SafariServices
 import DZNEmptyDataSet
 import SkeletonView
 import FirebaseDatabase
-import HNScraper
 import RealmSwift
 import FontAwesome_swift
 import PromiseKit
 
 class CommentsViewController : UIViewController {
-    var post: PostModel?
+    var post: HNPost?
 
-    var comments: [CommentModel]? {
+    var comments: [HNItem]? {
         didSet { commentsController.comments = comments! }
     }
     
@@ -39,11 +38,8 @@ class CommentsViewController : UIViewController {
         view.showAnimatedSkeleton(usingColor: AppThemeProvider.shared.currentTheme.skeletonColor)
         loadComments()
 
-        self.post?.FirebaseDBRef.observe(.value, with: { (snapshot) in
-            print("Got snapshot with \(snapshot.childrenCount) IDs")
-        })
-
-        self.post?.MarkAsRead()
+        // FIXME: Mark as read
+        //self.post?.MarkAsRead()
 
         let activity = NSUserActivity(activityType: "com.weiranzhang.Hackers.comments")
         activity.isEligibleForHandoff = true
@@ -94,24 +90,17 @@ class CommentsViewController : UIViewController {
     }
     
     func loadComments() {
-        let realm = Realm.live()
+        HNScraper.shared.GetChildren(self.post!.ID).done {
+            print("Got comments", $0)
+            self.comments = $0
 
-        self.comments = realm.objects(CommentModel.self).filter("Post.ID == %d", self.post!.ID).map { $0 }
+            self.view.hideSkeleton()
+            self.tableView.rowHeight = UITableView.automaticDimension
+            self.tableView.reloadData()
 
-        self.view.hideSkeleton()
-        self.tableView.rowHeight = UITableView.automaticDimension
-        self.tableView.reloadData()
-
-        //_ = HNFirebaseClient.shared.getAndSaveCommentsForKidIDs(self.post!.ID, Array(self.post!.kidsIds))
-        /*HNFirebaseClient.shared.getCommentsTree(itemID: self.post!.ID).then { allComments -> Promise<[CommentModel]> in
-            print("Got comments", allComments)
-            return HNFirebaseClient.shared.saveComments(self.post!.ID, allComments)
-        }.done { _ -> Void in
-            print("Done getting comments tree!")
-        }*/
-//        HNFirebaseClient.shared.getCommentsTree(itemID: self.post!.ID).done { allComments in
-//            print("Got comments", allComments)
-//        }
+        }.catch { error in
+            print("Got error while loading comments!", error)
+        }
     }
     
     func setupPostTitleView() {
@@ -150,28 +139,26 @@ class CommentsViewController : UIViewController {
 }
 
 extension CommentsViewController: PostTitleViewDelegate {
-    func didPressLinkButton(_ post: PostModel) {
-        if verifyLink(post.URLString) {
-            // animate background colour for tap
-            self.tableView.tableHeaderView?.backgroundColor = AppThemeProvider.shared.currentTheme.cellHighlightColor
-            UIView.animate(withDuration: 0.3, animations: {
-                self.tableView.tableHeaderView?.backgroundColor = AppThemeProvider.shared.currentTheme.backgroundColor
-            })
-            
-            // show link
-            let activity = NSUserActivity(activityType: "com.weiranzhang.Hackers.link")
-            activity.isEligibleForHandoff = true
-            activity.webpageURL = post.LinkURL
-            activity.title = post.title
-            self.userActivity = activity
+    func didPressLinkButton(_ post: HNPost) {
+        // animate background colour for tap
+        self.tableView.tableHeaderView?.backgroundColor = AppThemeProvider.shared.currentTheme.cellHighlightColor
+        UIView.animate(withDuration: 0.3, animations: {
+            self.tableView.tableHeaderView?.backgroundColor = AppThemeProvider.shared.currentTheme.backgroundColor
+        })
 
-            if let safariViewController = OpenInBrowser.shared.openURL(post.LinkURL) {
-                safariViewController.onDoneBlock = { _ in
-                    self.userActivity = nil
-                }
+        // show link
+        let activity = NSUserActivity(activityType: "com.weiranzhang.Hackers.link")
+        activity.isEligibleForHandoff = true
+        activity.webpageURL = post.Link
+        activity.title = post.Title
+        self.userActivity = activity
 
-                self.present(safariViewController, animated: true, completion: nil)
+        if let link = post.Link, let safariViewController = OpenInBrowser.shared.openURL(link) {
+            safariViewController.onDoneBlock = { _ in
+                self.userActivity = nil
             }
+
+            self.present(safariViewController, animated: true, completion: nil)
         }
     }
     
@@ -190,8 +177,8 @@ extension CommentsViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let comment = commentsController.visibleComments[indexPath.row]
-        assert(comment.Visibility != CommentModel.VisibilityType.Hidden, "Cell cannot be hidden and in the array of visible cells")
-        let cellIdentifier = comment.Visibility == CommentModel.VisibilityType.Visible ? "OpenCommentCell" : "ClosedCommentCell"
+        assert(comment.Visibility != HNItem.ItemVisibilityType.Hidden, "Cell cannot be hidden and in the array of visible cells")
+        let cellIdentifier = comment.Visibility == HNItem.ItemVisibilityType.Visible ? "OpenCommentCell" : "ClosedCommentCell"
         
         let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath) as! CommentTableViewCell
 
@@ -211,27 +198,34 @@ extension CommentsViewController: UITableViewDelegate {
 
     func tableView(_ tableView: UITableView,
                    leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-        return self.voteComment(indexPath, .Upvote)
+
+        let comment = commentsController.visibleComments[indexPath.row]
+
+        print("post?.ChildActions[comment.ID]?.Upvote", post?.AllActions)
+
+        return self.runItemAction(indexPath, post?.AllActions[comment.ID]?.Upvote)
     }
 
     func tableView(_ tableView: UITableView,
                    trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let comment = commentsController.visibleComments[indexPath.row]
 
-        var voteAction: HNScraper.VoteAction = .Downvote
+        var action: HNItem.ActionType? = post?.AllActions[comment.ID]?.Downvote
 
-        if comment.Upvoted.value != nil && Date().isBeforeDate(comment.VotedAt!.addingTimeInterval(3600), granularity: .minute) {
-            voteAction = .Unvote
+        if comment.Upvoted != nil && Date().isBeforeDate(comment.VotedAt!.addingTimeInterval(3600), granularity: .minute) {
+            action = post?.AllActions[comment.ID]?.Unvote
         }
 
-        return self.voteComment(indexPath, voteAction)
+        return self.runItemAction(indexPath, action)
     }
 
     func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
         return .none
     }
 
-    func voteComment(_ indexPath: IndexPath, _ voteAction: HNScraper.VoteAction) -> UISwipeActionsConfiguration? {
+    func runItemAction(_ indexPath: IndexPath, _ action: HNItem.ActionType?) -> UISwipeActionsConfiguration? {
+
+        guard let action = action else { return nil }
 
         // Only logged in users can swipe to upvote/downvote
         guard UserDefaults.standard.loggedInUser != nil else { return nil }
@@ -239,60 +233,76 @@ extension CommentsViewController: UITableViewDelegate {
         let comment = commentsController.visibleComments[indexPath.row]
 
         // comment was already voted on
-        guard voteAction != .Unvote && comment.VotedAt == nil else { return nil }
+        // FIXME: Ensure that users can't double vote
+        // guard voteAction != .Unvote && comment.VotedAt == nil else { return nil }
 
         var title = ""
         var color: UIColor = .clear
         var faIcon: FontAwesome = .arrowUp
 
-        switch voteAction {
-        case .Upvote:
-            title = "Upvote"
+        switch action {
+        case .Favorite:
+            title = "Favorite"
+            color = .yellow
+            faIcon = .star
+        case .Flag:
+            title = "flag"
             color = .orange
-            faIcon = .arrowUp
-        case .Downvote:
-            title = "Downvote"
-            color = .blue
-            faIcon = .arrowDown
+            faIcon = .flag
         case .Unvote:
             title = "Unvote"
             color = .red
             faIcon = .times
+        case .Vote(_, _, let direction):
+            switch direction {
+            case .Up:
+                title = "Upvote"
+                color = .orange
+                faIcon = .arrowUp
+            case .Down:
+                title = "Downvote"
+                color = .blue
+                faIcon = .arrowDown
+            }
+        default:
+            print("Not handling", action)
         }
 
-        let action = UIContextualAction(style: .normal, title: title, handler: { (action, view, completionHandler) in
+        let tableAction = UIContextualAction(style: .normal, title: title, handler: { (action, view, completionHandler) in
 
             let commentID = comment.ID
 
-            DispatchQueue.global(qos: .userInitiated).async {
-                _ = HNScraper.shared.voteItem(commentID, action: voteAction).done { authKey in
-                    let realm = Realm.live()
+            // FIXME: Actually vote
 
-                    let comment = realm.object(ofType: CommentModel.self, forPrimaryKey: commentID)
-
-                    try! realm.write {
-                        switch voteAction {
-                        case .Upvote, .Downvote:
-                            comment?.VotedAt = Date()
-                            comment?.Upvoted.value = (voteAction == .Upvote)
-                            comment?.VoteKey = authKey
-                        case .Unvote:
-                            comment?.VotedAt = nil
-                            comment?.Upvoted.value = nil
-                            comment?.VoteKey = authKey
-                        }
-                    }
-                }
-            }
+//            DispatchQueue.global(qos: .userInitiated).async {
+//                _ = HNScraper.shared.voteItem(commentID, action: voteAction).done { authKey in
+//                    let realm = Realm.live()
+//
+//                    let comment = realm.object(ofType: CommentModel.self, forPrimaryKey: commentID)
+//
+//                    try! realm.write {
+//                        switch voteAction {
+//                        case .Upvote, .Downvote:
+//                            comment?.VotedAt = Date()
+//                            comment?.Upvoted.value = (voteAction == .Upvote)
+//                            comment?.VoteKey = authKey
+//                        case .Unvote:
+//                            comment?.VotedAt = nil
+//                            comment?.Upvoted.value = nil
+//                            comment?.VoteKey = authKey
+//                        }
+//                    }
+//                }
+//            }
 
             completionHandler(false)
         })
 
-        action.backgroundColor = color
-        action.image = UIImage.fontAwesomeIcon(name: faIcon, style: .solid, textColor: .white,
-                                               size: CGSize(width: 36, height: 36))
+        tableAction.backgroundColor = color
+        tableAction.image = UIImage.fontAwesomeIcon(name: faIcon, style: .solid, textColor: .white,
+                                                    size: CGSize(width: 36, height: 36))
 
-        return UISwipeActionsConfiguration(actions: [action])
+        return UISwipeActionsConfiguration(actions: [tableAction])
     }
 }
 
@@ -312,7 +322,7 @@ extension CommentsViewController: CommentDelegate {
         guard commentsController.comments.count > indexPath.row else { return }
         let comment = commentsController.comments[indexPath.row]
 
-        let activityVC = comment.ActivityViewController
+        let activityVC = comment.CommentsActivityViewController
 
         UIApplication.shared.keyWindow?.rootViewController?.present(activityVC, animated: true, completion: nil)
 
@@ -330,7 +340,7 @@ extension CommentsViewController: CommentDelegate {
         let activity = NSUserActivity(activityType: "com.weiranzhang.Hackers.link")
         activity.isEligibleForHandoff = true
         activity.webpageURL = URL
-        activity.title = post!.title
+        activity.title = post!.Title
         self.userActivity = activity
 
         if let safariViewController = OpenInBrowser.shared.openURL(URL) {
@@ -349,7 +359,7 @@ extension CommentsViewController: CommentDelegate {
         
         tableView.beginUpdates()
         tableView.reloadRows(at: [indexPath], with: .fade)
-        if visibility == CommentModel.VisibilityType.Hidden {
+        if visibility == HNItem.ItemVisibilityType.Hidden {
             tableView.deleteRows(at: modifiedIndexPaths, with: .top)
         } else {
             tableView.insertRows(at: modifiedIndexPaths, with: .top)

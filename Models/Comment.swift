@@ -8,17 +8,12 @@
 
 import Foundation
 import RealmSwift
-import ObjectMapper
 import Kingfisher
 import OpenGraph
-import HNScraper
 
-public class CommentModel: HNItem {
+public class CommentModel: BaseHNItem {
     @objc dynamic var Post: PostModel?
     @objc dynamic var Level: Int = 0
-    let Links = List<String>()
-    @objc dynamic var UpvoteURLAddition: String = ""
-    @objc dynamic var DownvoteURLAddition: String = ""
     @objc dynamic var Visibility: VisibilityType = .Visible
 
     @objc enum VisibilityType: Int {
@@ -27,42 +22,20 @@ public class CommentModel: HNItem {
         case Hidden = 1
     }
 
-    override public func mapping(map: Map) {
-        super.mapping(map: map)
-    }
-
-    convenience init(_ comment: HNComment, _ post: PostModel? = nil) {
+    convenience init(_ comment: HNItem, _ post: PostModel? = nil) {
         self.init()
 
-        if let strCommentID = comment.id, let commentID = Int(string: strCommentID) {
-            self.ID = commentID
-        } else {
-            //print("No comment ID for a comment in post!", post)
-            //print("Comment ID", comment, comment.id)
-            return
-        }
+        self.ID = comment.ID
 
         if let post = post {
             self.Post = post
         }
 
-        self.text = comment.text.htmlDecoded
-        self.author = comment.username
-        if let parentID = comment.parentId {
-            self.parentId.value = Int(string: parentID)
-        }
+        self.text = comment.Text
+        self.author = comment.Author?.Username
+        self.parentId.value = comment.ParentID
 
-        self.Level = Int(comment.level)
-        if let upvoteURLAddition = comment.upvoteUrl {
-            self.UpvoteURLAddition = upvoteURLAddition
-        }
-        if let downvoteURLAddition = comment.downvoteUrl {
-            self.DownvoteURLAddition = downvoteURLAddition
-        }
-
-        if let links = comment.links {
-            self.Links.append(objectsIn: links.map({ $0 }))
-        }
+        self.Level = comment.Level
     }
 
     override var ItemPageTitle: String {

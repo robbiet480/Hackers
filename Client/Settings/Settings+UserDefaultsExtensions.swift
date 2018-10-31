@@ -7,7 +7,6 @@
 //
 
 import SafariServices
-import HNScraper
 
 extension UserDefaults {
     public var lightTheme: AppTheme {

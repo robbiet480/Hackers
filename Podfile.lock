@@ -19,7 +19,6 @@ PODS:
   - GoogleUtilities/Environment (5.3.3)
   - GoogleUtilities/Logger (5.3.3):
     - GoogleUtilities/Environment
-  - HNScraper (0.2.2)
   - Kingfisher (4.8.1)
   - leveldb-library (1.20)
   - ObjectMapper (3.3.0)
@@ -60,7 +59,6 @@ DEPENDENCIES:
   - Eureka
   - Firebase/Database
   - FontAwesome.swift
-  - HNScraper (from `HNScraper`)
   - Kingfisher
   - ObjectMapper
   - ObjectMapperAdditions/Realm
@@ -97,8 +95,6 @@ SPEC REPOS:
     - SwiftSoup
 
 EXTERNAL SOURCES:
-  HNScraper:
-    :path: HNScraper
   OpenGraph:
     :branch: patch-1
     :git: https://github.com/robbiet480/OpenGraph
@@ -120,7 +116,6 @@ SPEC CHECKSUMS:
   FirebaseDatabase: e2bcbc106adc4b11a2da3ec2eb63c0c4a44f2f54
   FontAwesome.swift: a351dbb86b9fcec9aad6bce2fdd5b95e9a7b8828
   GoogleUtilities: 8208aee3e97a1ae93d44c57e96c476a5a3b03f0a
-  HNScraper: eaa3dec825f7e0826a87ca1c4aa0d05294bf33e5
   Kingfisher: 868c1149679a7ab6869be118faa9b5aed154aaf0
   leveldb-library: 08cba283675b7ed2d99629a4bc5fd052cd2bb6a5
   ObjectMapper: b612bf8c8e99c4dc0bb6013a51f7c27966ed5da9
@@ -133,6 +128,6 @@ SPEC CHECKSUMS:
   SwiftDate: fcdaa7ca22a903faf6d7ed231239a88d174dcae3
   SwiftSoup: 92f5b348c131aed8af04f4326db1579ab19fa08c
 
-PODFILE CHECKSUM: 73155fa2959a2629defffd075e52709e8b7a1ed8
+PODFILE CHECKSUM: 9c82b23e8bfa3039b03a5b52e293c9418c9646b7
 
 COCOAPODS: 1.6.0.beta.1

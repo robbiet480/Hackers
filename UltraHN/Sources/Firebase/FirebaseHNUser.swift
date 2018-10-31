@@ -9,7 +9,7 @@
 import Foundation
 import CodableFirebase
 
-open class FirebaseHNUser: NewHNUser {
+public class FirebaseHNUser: HNUser {
     enum CodingKeys: String, CodingKey {
         case Username = "id"
         case Karma = "karma"

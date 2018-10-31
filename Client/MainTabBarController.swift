@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import HNScraper
 import RealmSwift
 
 class MainTabBarController: UITabBarController {
@@ -20,11 +19,11 @@ class MainTabBarController: UITabBarController {
 
         let realm = Realm.live()
 
-        if realm.objects(TabBarOrder.self).count == 0 {
+        if realm.objects(TabBarItem.self).count == 0 {
             setDefaultTabOrder()
         }
 
-        let orderObjs = realm.objects(TabBarOrder.self).sorted(byKeyPath: "index")
+        let orderObjs = realm.objects(TabBarItem.self).sorted(byKeyPath: "index")
 
         guard let viewControllers = self.viewControllers else { return }
 
@@ -37,11 +36,10 @@ class MainTabBarController: UITabBarController {
             }
 
             let config = orderObjs[index]
-            let postType = HNScraper.PostListPageName(config.pageName)
 
-            newsViewController.postType = postType
+            newsViewController.postType = config.view.scraperPage
 
-            splitViewController.tabBarItem = postType.tabBarItem(index)
+            splitViewController.tabBarItem = config.view.barItem(index)
         }
 
         self.customizableViewControllers = viewControllers
@@ -51,7 +49,6 @@ class MainTabBarController: UITabBarController {
 
     override func tabBar(_ tabBar: UITabBar, didSelect item: UITabBarItem) {
         setButtonStates(item.tag)
-        print("Selected item", item)
     }
 
     func setButtonStates(_ itemTag: Int) {
@@ -78,14 +75,13 @@ class MainTabBarController: UITabBarController {
     func setDefaultTabOrder() {
         let realm = Realm.live()
 
-        guard realm.objects(TabBarOrder.self).count == 0 else { return }
+        guard realm.objects(TabBarItem.self).count == 0 else { return }
 
-        let defaultOrder: [HNScraper.PostListPageName] = [.news, .asks, .jobs, .new, .front, .shows, .active, .best, .noob]
+        let defaultOrder: [TabBarItem.View] = [.Home, .AskHN, .Jobs, .New, .ShowHN, .Active, .Best, .Noob]
 
-        let orderObjs: [TabBarOrder] = defaultOrder.enumerated().map { (arg) -> TabBarOrder in
-            
+        let orderObjs: [TabBarItem] = defaultOrder.enumerated().map { (arg) -> TabBarItem in
             let (i, e) = arg
-            return TabBarOrder(i, e.description)
+            return TabBarItem(i, e)
         }
 
         try! realm.write {
@@ -105,14 +101,6 @@ class MainTabBarController: UITabBarController {
             navigationBar.tintColor = AppThemeProvider.shared.currentTheme.barForegroundColor
         }
 
-    }
-
-    func tabBarController(_ tabBarController: UITabBarController, didSelect viewController: UIViewController) {
-        print("Selected VC", viewController)
-    }
-
-    func tabBarController(_ tabBarController: UITabBarController, willEndCustomizing viewControllers: [UIViewController], changed: Bool) {
-        print("Customizing ending!")
     }
 
     // Tab Bar keyboard shortcuts found at
@@ -190,23 +178,24 @@ extension MainTabBarController: UITabBarControllerDelegate {
     func tabBarController(_ tabBarController: UITabBarController, didEndCustomizing viewControllers: [UIViewController], changed: Bool) {
         if changed {
             let realm = Realm.live()
-            let existingTabBarOrder = realm.objects(TabBarOrder.self)
+            let existingTabBarItems = realm.objects(TabBarItem.self)
 
             try! realm.write {
-                realm.delete(existingTabBarOrder)
+                realm.delete(existingTabBarItems)
             }
 
-            var newVCOrder: [TabBarOrder] = []
+            var newVCOrder: [TabBarItem] = []
 
             for (index, viewController) in viewControllers.enumerated() {
                 guard let splitViewController = viewController as? UISplitViewController,
                     let navigationController = splitViewController.viewControllers.first as? UINavigationController,
-                    let newsViewController = navigationController.viewControllers.first as? NewsViewController
+                    let newsViewController = navigationController.viewControllers.first as? NewsViewController,
+                    let tbi = TabBarItem.View(newsViewController.postType)
                     else {
                         return
                 }
 
-                newVCOrder.append(TabBarOrder(index, newsViewController.postType.description))
+                newVCOrder.append(TabBarItem(index, tbi))
             }
 
             try! realm.write {

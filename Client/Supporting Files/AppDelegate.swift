@@ -9,7 +9,6 @@
 import Kingfisher
 import RealmSwift
 import UserNotifications
-import HNScraper
 import Firebase
 
 @UIApplicationMain
@@ -31,8 +30,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         ReviewController.incrementLaunchCounter()
         ReviewController.requestReview()
         setAppTheme()
-
-        _ = HNFirebaseClient.shared.getStoriesForPage(.news)
 
         // FIXME: Need to debounce smooth updates of brightness values
 //        NotificationCenter.default.addObserver(self, selector: #selector(brightnessChanged),

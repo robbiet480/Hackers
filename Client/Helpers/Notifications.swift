@@ -11,6 +11,7 @@ import Kingfisher
 import UserNotifications
 import MobileCoreServices.UTType
 import RealmSwift
+import SwiftDate
 
 final class Notifications {
 
@@ -86,23 +87,26 @@ final class Notifications {
             return
         }
 
-        _ = HNFirebaseClient.shared.getStoriesForPage(.news).done { _ in
-            let allPosts = Realm.live().objects(PostModel.self).filter("NotifiedAt == nil AND Points >= \(UserDefaults.standard.minimumPointsForNotification)")
-            if isLocalNotificationEnabled {
-                self.sendLocalPush(for: allPosts)
-
-                handler(allPosts.count > 0 ? .newData : .noData)
-            }
-        }
+        // FIXME: During the fetch we should be caching posts for faster startup times.
+//        _ = HNFirebaseClient.shared.getStoriesForPage(.Home).done { _ in
+//            let allPosts = Realm.live().objects(HNPost.self).filter("NotifiedAt == nil AND Points >= \(UserDefaults.standard.minimumPointsForNotification)")
+//            if isLocalNotificationEnabled {
+//                self.sendLocalPush(for: allPosts)
+//
+//                handler(allPosts.count > 0 ? .newData : .noData)
+//            }
+//        }
     }
 
-    private func sendLocalPush(for notifications: Results<PostModel>) {
+    private func sendLocalPush(for notifications: [HNPost]) {
         let center = UNUserNotificationCenter.current()
         notifications.forEach { post in
             let content = UNMutableNotificationContent()
-            content.title = post.title!
-            content.body = post.LinkURL.host!.replacingOccurrences(of: "www.", with: "")
-            content.subtitle = post.score.value!.description + " points, posted by " + post.author! + " " + post.time!.description
+            content.title = post.Title!
+            if let link = post.Link {
+                content.body = link.host!.replacingOccurrences(of: "www.", with: "")
+            }
+            content.subtitle = post.Score!.description + " points, posted by " + post.Author!.Username + " " + post.CreatedAt!.toRelative(style: RelativeFormatter.twitterStyle())
             content.categoryIdentifier = "POST"
             content.userInfo = ["POST_ID": post.ID]
 
@@ -112,7 +116,7 @@ final class Notifications {
                 }
 
                 let request = UNNotificationRequest(
-                    identifier: post.ID.description,
+                    identifier: post.IDString,
                     content: content,
                     trigger: UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
                 )
@@ -121,15 +125,15 @@ final class Notifications {
         }
     }
 
-    func getAttachmentForPost(_ post: PostModel, handler: @escaping (UNNotificationAttachment?) -> Void) {
+    func getAttachmentForPost(_ post: HNPost, handler: @escaping (UNNotificationAttachment?) -> Void) {
         post.Thumbnail(true) { (image) in
             if image != nil {
                 let options = [UNNotificationAttachmentOptionsTypeHintKey: kUTTypePNG]
                 do {
-                    let attachment = try UNNotificationAttachment.init(identifier: post.ID.description, url: post.ThumbnailFileURL, options: options as [NSObject: AnyObject])
+                    let attachment = try UNNotificationAttachment.init(identifier: post.IDString, url: post.ThumbnailFileURL, options: options as [NSObject: AnyObject])
                     handler(attachment)
                 } catch let attachmentError {
-                    print("Error when building attachment", post.URLString, post.ID, post.ThumbnailFileURL, attachmentError)
+                    print("Error when building attachment", post.Link, post.IDString, post.ThumbnailFileURL, attachmentError)
                     handler(nil)
                 }
             }

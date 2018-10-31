@@ -246,7 +246,6 @@
                         <segue destination="506-JC-FDt" kind="relationship" relationship="viewControllers" id="Asn-MV-L7x"/>
                         <segue destination="506-JC-FDt" kind="relationship" relationship="viewControllers" id="whd-ly-Vii"/>
                         <segue destination="506-JC-FDt" kind="relationship" relationship="viewControllers" id="wgf-Cf-hdx"/>
-                        <segue destination="506-JC-FDt" kind="relationship" relationship="viewControllers" id="OaZ-EP-Nzh"/>
                     </connections>
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Txu-0A-weJ" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -648,6 +647,6 @@
         <image name="ThumbnailPlaceholderIcon" width="42" height="42"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="x05-Is-lfg"/>
+        <segue reference="Zx6-Yi-k6e"/>
     </inferredMetricsTieBreakers>
 </document>

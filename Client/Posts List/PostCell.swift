@@ -19,7 +19,7 @@ protocol PostTitleViewCellDelegate {
 }
 
 class PostCell : UITableViewCell {
-    var post: PostModel?
+    var post: HNPost?
     var delegate: PostCellDelegate?
     
     @IBOutlet weak var postTitleView: PostTitleView!

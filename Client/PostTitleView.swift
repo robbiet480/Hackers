@@ -8,10 +8,9 @@
 
 import UIKit
 import RealmSwift
-import FirebaseDatabase
 
 protocol PostTitleViewDelegate {
-    func didPressLinkButton(_ post: PostModel)
+    func didPressLinkButton(_ post: HNPost)
 }
 
 class PostTitleView: UIView, UIGestureRecognizerDelegate {
@@ -23,21 +22,19 @@ class PostTitleView: UIView, UIGestureRecognizerDelegate {
     var delegate: PostTitleViewDelegate?
     var cellDelegate: PostTitleViewCellDelegate?
 
-    var firebaseHandler: UInt?
-
-    var post: PostModel? {
+    var post: HNPost? {
         didSet {
             guard let post = post else { return }
 
-            let pointsChanged = oldValue?.score.value != post.score.value
-            let commentsChanged = oldValue?.descendants != post.descendants
+            let pointsChanged = oldValue?.Score != post.Score
+            let commentsChanged = oldValue?.TotalChildren != post.TotalChildren
 
-            titleLabel.text = post.title!
+            titleLabel.text = post.Title
 
             self.metadataLabel.attributedText = self.metadataText(post)
 
             if UserDefaults.standard.animateUpdates && oldValue != nil && (pointsChanged || commentsChanged) {
-                print("Post", self.post!.title!, "changed points: \(pointsChanged), comments: \(commentsChanged)")
+                print("Post", self.post!.Title, "changed points: \(pointsChanged), comments: \(commentsChanged)")
 
                 cellDelegate?.didChangeMetadata()
 
@@ -50,22 +47,7 @@ class PostTitleView: UIView, UIGestureRecognizerDelegate {
 //                                    self.metadataLabel.attributedText = self.metadataText(post)
 //                }, completion: nil)
             }
-
-            if firebaseHandler == nil {
-                firebaseHandler = post.FirebaseDBRef.observe(.value) { self.handleFirebaseUpdate($0) }
-            }
         }
-    }
-
-    override func removeFromSuperview() {
-        print("Remove from superview", post?.ID)
-        post?.FirebaseDBRef.removeAllObservers()
-    }
-
-    func handleFirebaseUpdate(_ snapshot: DataSnapshot) {
-        guard let snapshotJSON = snapshot.value as? [String : Any] else { return }
-
-        self.post = PostModel(JSON: snapshotJSON)
     }
 
     override func layoutSubviews() {
@@ -82,10 +64,11 @@ class PostTitleView: UIView, UIGestureRecognizerDelegate {
         }
     }
     
-    private func domainLabelText(for post: PostModel) -> String? {
-        guard let urlString = post.URLString else { return nil }
+    private func domainLabelText(for post: HNPost) -> String? {
+        guard let link = post.Link else { return nil }
 
-        guard let urlComponents = URLComponents(string: urlString), var host = urlComponents.host else {
+        guard let urlComponents = URLComponents(url: link, resolvingAgainstBaseURL: true),
+            var host = urlComponents.host else {
             return nil
         }
         
@@ -96,8 +79,9 @@ class PostTitleView: UIView, UIGestureRecognizerDelegate {
         return host
     }
     
-    private func metadataText(_ post: PostModel, _ pointsChanged: Bool = false,
+    private func metadataText(_ post: HNPost, _ pointsChanged: Bool = false,
                               _ commentsChanged: Bool = false) -> NSAttributedString {
+
         let string = NSMutableAttributedString()
         
         let pointsIconAttachment = textAttachment(for: "PointsIcon")
@@ -113,10 +97,10 @@ class PostTitleView: UIView, UIGestureRecognizerDelegate {
 
         let commentsColor = commentsChanged ? trueColor : falseColor
 
-        string.append(NSAttributedString.generate(from: String(post.score.value!), color: pointsColor))
+        string.append(NSAttributedString.generate(from: String(post.Score ?? 0), color: pointsColor))
         string.append(pointsIconAttributedString)
         string.append(NSAttributedString(string: "• "))
-        string.append(NSAttributedString.generate(from: String(post.descendants), color: commentsColor))
+        string.append(NSAttributedString.generate(from: String(post.TotalChildren), color: commentsColor))
         string.append(commentsIconAttributedString)
         if let domainText = domainLabelText(for: post), domainText != "news.ycombinator.com" {
             string.append(NSAttributedString(string: " • \(domainText)"))

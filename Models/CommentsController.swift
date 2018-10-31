@@ -11,24 +11,24 @@ import UIKit
 import RealmSwift
 
 class CommentsController {
-    var comments: [CommentModel]
+    var comments: [HNItem]
     
-    var visibleComments: [CommentModel] {
+    var visibleComments: [HNItem] {
         get {
-            return comments.filter { $0.Visibility != CommentModel.VisibilityType.Hidden }
+            return comments.filter { $0.Visibility != HNItem.ItemVisibilityType.Hidden }
         }
     }
     
     convenience init() {
-        self.init(source: [CommentModel]())
+        self.init(source: [HNItem]())
     }
     
-    init(source: [CommentModel]) {
+    init(source: [HNItem]) {
         comments = source
     }
     
-    func toggleCommentChildrenVisibility(_ comment: CommentModel) -> ([IndexPath], CommentModel.VisibilityType) {
-        let visible = comment.Visibility == CommentModel.VisibilityType.Visible
+    func toggleCommentChildrenVisibility(_ comment: HNItem) -> ([IndexPath], HNItem.ItemVisibilityType) {
+        let visible = comment.Visibility == HNItem.ItemVisibilityType.Visible
         let visibleIndex = indexOfComment(comment, source: visibleComments)!
         let commentIndex = indexOfComment(comment, source: comments)!
         let childrenCount = countChildren(comment)
@@ -46,10 +46,10 @@ class CommentsController {
             for i in 1...childrenCount {
                 let currentComment = comments[commentIndex + i]
                 
-                if visible && currentComment.Visibility == CommentModel.VisibilityType.Hidden { continue }
+                if visible && currentComment.Visibility == HNItem.ItemVisibilityType.Hidden { continue }
 
                 try! realm.write {
-                    currentComment.Visibility = visible ? CommentModel.VisibilityType.Hidden : CommentModel.VisibilityType.Visible
+                    currentComment.Visibility = visible ? HNItem.ItemVisibilityType.Hidden : HNItem.ItemVisibilityType.Visible
                 }
 
                 modifiedIndexPaths.append(IndexPath(row: currentIndex, section: 0))
@@ -60,14 +60,14 @@ class CommentsController {
         return (modifiedIndexPaths, visible ? .Hidden : .Visible)
     }
     
-    func indexOfComment(_ comment: CommentModel, source: [CommentModel]) -> Int? {
+    func indexOfComment(_ comment: HNItem, source: [HNItem]) -> Int? {
         for (index, value) in source.enumerated() {
             if comment.ID == value.ID { return index }
         }
         return nil
     }
     
-    func countChildren(_ comment: CommentModel) -> Int {
+    func countChildren(_ comment: HNItem) -> Int {
         let startIndex = indexOfComment(comment, source: comments)! + 1
         var count = 0
         

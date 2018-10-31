@@ -17,14 +17,13 @@ class CommentTableViewCell : UITableViewCell {
         didSet { updateIndentPadding() }
     }
 
-    var post: PostModel?
+    var post: HNPost?
 
-    var comment: CommentModel? {
+    var comment: HNItem? {
         didSet {
             guard let comment = comment else { return }
-            guard comment.isDeleted == false else { return }
-            guard comment.isDead == false else { return }
-            guard comment.text != nil else { return }
+            guard comment.Text != nil else { return }
+
             updateCommentContent(with: comment)
         }
     }
@@ -57,10 +56,10 @@ class CommentTableViewCell : UITableViewCell {
         leftPaddingConstraint.constant = padding
     }
     
-    func updateCommentContent(with comment: CommentModel) {
+    func updateCommentContent(with comment: HNItem) {
         level = comment.Level
-        datePostedLabel.text = comment.time?.toRelative(style: RelativeFormatter.twitterStyle())
-        authorLabel.text = comment.author
+        datePostedLabel.text = comment.CreatedAt?.toRelative(style: RelativeFormatter.twitterStyle())
+        authorLabel.text = comment.Author?.Username
 
         if let commentTextView = commentTextView {
             // only for expanded comments
@@ -68,7 +67,7 @@ class CommentTableViewCell : UITableViewCell {
             let commentTextColor = AppThemeProvider.shared.currentTheme.textColor
             let lineSpacing = 4 as CGFloat
             
-            let commentAttributedString = NSMutableAttributedString(string: comment.text!)
+            let commentAttributedString = NSMutableAttributedString(string: comment.Text!.htmlDecoded)
             let paragraphStyle = NSMutableParagraphStyle.default.mutableCopy() as! NSMutableParagraphStyle
             paragraphStyle.lineSpacing = lineSpacing
             

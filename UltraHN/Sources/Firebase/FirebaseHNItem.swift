@@ -8,7 +8,7 @@
 
 import Foundation
 
-open class FirebaseHNItem: NewHNItem {
+public class FirebaseHNItem: HNItem {
     enum CodingKeys: String, CodingKey {
         case Author = "by"
         case Title = "title"

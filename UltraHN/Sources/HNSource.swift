@@ -10,10 +10,9 @@ import Foundation
 import PromiseKit
 
 public protocol HNDataSource {
-    func GetPage(_ pageName: NewHNScraper.Page) -> Promise<[NewHNItem]?>
-    func GetItem(_ itemID: Int) -> Promise<NewHNItem?>
-    func GetUser(_ username: String) -> Promise<NewHNUser?>
-    // func GetComments(_ itemID: Int) -> Promise<[NewHNComment]?>
+    func GetPage(_ pageName: HNScraper.Page, pageNumber: Int) -> Promise<[HNItem]?>
+    func GetItem(_ itemID: Int) -> Promise<HNItem?>
+    func GetUser(_ username: String) -> Promise<HNUser?>
 
-    var SupportedPages: [NewHNScraper.Page] { get }
+    var SupportedPages: [HNScraper.Page] { get }
 }

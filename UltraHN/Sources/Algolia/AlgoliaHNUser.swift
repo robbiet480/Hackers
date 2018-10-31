@@ -10,7 +10,7 @@ import Foundation
 import Alamofire
 import PromiseKit
 
-open class AlgoliaHNUser: NewHNUser {
+public class AlgoliaHNUser: HNUser {
     enum CodingKeys: String, CodingKey {
         case Username = "username"
         case Karma = "karma"
@@ -22,43 +22,20 @@ open class AlgoliaHNUser: NewHNUser {
         case SubmissionCount = "submission_count"
         case UpdatedAt = "updated_at"
     }
-}
 
-// MARK: - Alamofire response handlers
+    required init(from decoder: Decoder) throws {
+        super.init()
 
-public extension Alamofire.DataRequest {
-    fileprivate func decodableResponseSerializer<T: Decodable>() -> DataResponseSerializer<T> {
-        return DataResponseSerializer { _, response, data, error in
-            guard error == nil else { return .failure(error!) }
+        let container = try decoder.container(keyedBy: CodingKeys.self)
 
-            guard let data = data else {
-                return .failure(AFError.responseSerializationFailed(reason: .inputDataNil))
-            }
-
-            return Result { try newJSONDecoder().decode(T.self, from: data) }
-        }
-    }
-
-    @discardableResult
-    fileprivate func responseDecodable<T: Decodable>(queue: DispatchQueue? = nil, completionHandler: @escaping (DataResponse<T>) -> Void) -> Self {
-        return response(queue: queue, responseSerializer: decodableResponseSerializer(), completionHandler: completionHandler)
-    }
-
-    @discardableResult
-    public func responseAlgoliaHNUser(queue: DispatchQueue? = nil, completionHandler: @escaping (DataResponse<AlgoliaHNUser>) -> Void) -> Self {
-        return responseDecodable(queue: queue, completionHandler: completionHandler)
-    }
-
-    public func responseAlgoliaHNUser(queue: DispatchQueue? = nil) -> Promise<(user: AlgoliaHNUser, response: PMKAlamofireDataResponse)> {
-        return Promise { seal in
-            responseAlgoliaHNUser(queue: queue) { response in
-                switch response.result {
-                case .success(let value):
-                    seal.fulfill((value, PMKAlamofireDataResponse(response)))
-                case .failure(let error):
-                    seal.reject(error)
-                }
-            }
-        }
+        self.Username = try container.decode(String.self, forKey: .Username)
+        self.Karma = try container.decode(Int.self, forKey: .Karma)
+        self.CreatedAt = try? container.decode(Date.self, forKey: .CreatedAt)
+        self.About = try? container.decode(String.self, forKey: .About)
+        self.CommentCount = try? container.decode(Int.self, forKey: .CommentCount)
+        self.Average = try? container.decode(Double.self, forKey: .Average)
+        self.Delay = try? container.decode(Double.self, forKey: .Delay)
+        self.SubmissionCount = try? container.decode(Int.self, forKey: .SubmissionCount)
+        self.UpdatedAt = try? container.decode(Date.self, forKey: .UpdatedAt)
     }
 }

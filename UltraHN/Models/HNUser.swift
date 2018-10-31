@@ -8,7 +8,7 @@
 
 import Foundation
 
-open class NewHNUser: NSObject, Codable {
+public class HNUser: NSObject, Codable {
     public var Username: String = "Unknown"
     public var Karma: Int = 0
     public var CreatedAt: Date?
@@ -35,6 +35,10 @@ open class NewHNUser: NSObject, Codable {
         super.init()
     }
 
+    public init(username: String) {
+        self.Username = username
+    }
+
     public init(about: String?, average: Double?, commentCount: Int?, createdAt: Date?, delay: Double?, isNew: Bool,
                 isYC: Bool, karma: Int, submissionCount: Int?, updatedAt: Date?, username: String) {
         self.About = about
@@ -58,7 +62,7 @@ open class NewHNUser: NSObject, Codable {
         self.IsNew = isNew
     }
 
-//    override open var description: String {
-//        return "HNUser: \(self.Username), karma: \(self.Karma)"
-//    }
+    override public var description: String {
+        return "HNUser: \(self.Username), karma: \(self.Karma)"
+    }
 }

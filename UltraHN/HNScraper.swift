@@ -11,21 +11,26 @@ import SwiftSoup
 import Alamofire
 import PromiseKit
 
-public class NewHNScraper {
-    public static let shared: NewHNScraper = NewHNScraper()
+public class HNScraper {
+    public static let shared: HNScraper = HNScraper()
 
     public static var defaultDataSource = HTMLDataSource()
 
-    public func GetPage(_ pageName: NewHNScraper.Page, dataSource: HNDataSource = defaultDataSource) -> Promise<[NewHNItem]?> {
-        return dataSource.GetPage(pageName)
+    public func GetPage(_ pageName: HNScraper.Page,
+                        pageNumber: Int = 1, dataSource: HNDataSource = defaultDataSource) -> Promise<[HNItem]?> {
+        return dataSource.GetPage(pageName, pageNumber: pageNumber)
     }
 
-    public func GetItem(_ itemID: Int, dataSource: HNDataSource = defaultDataSource) -> Promise<NewHNItem?> {
+    public func GetItem(_ itemID: Int, dataSource: HNDataSource = defaultDataSource) -> Promise<HNItem?> {
         return dataSource.GetItem(itemID)
     }
 
-    public func GetUser(_ username: String, dataSource: HNDataSource = defaultDataSource) -> Promise<NewHNUser?> {
+    public func GetUser(_ username: String, dataSource: HNDataSource = defaultDataSource) -> Promise<HNUser?> {
         return dataSource.GetUser(username)
+    }
+
+    public func GetChildren(_ itemID: Int, dataSource: HNDataSource = AlgoliaDataSource()) -> Promise<[HNItem]?> {
+        return dataSource.GetItem(itemID).map({ $0?.Children as [HNItem]? })
     }
 
     /// Errors thrown by the scraper
@@ -73,8 +78,6 @@ public class NewHNScraper {
         case Home
         /// Classic algorithm home page
         case Classic
-        /// Today's front page
-        case Front
         /// Latest submissions
         case New
         /// Jobs only
@@ -107,7 +110,7 @@ public class NewHNScraper {
         case Hidden(username: String)
 
         public static var allCases: [Page] {
-            return [.Home, .Classic, .Front, .New, .Jobs, .AskHN, .ShowHN, .ShowHNNew, .Active, .Best, .Noob]
+            return [.Home, .Classic, .New, .Jobs, .AskHN, .ShowHN, .ShowHNNew, .Active, .Best, .Noob, .ForDate(date: Date())]
         }
 
         var description: String {
@@ -118,9 +121,6 @@ public class NewHNScraper {
             /// Classic algorithm home page
             case .Classic:
                 return "Classic"
-            /// Today's front page
-            case .Front:
-                return "Front"
             /// Latest submissions
             case .New:
                 return "New"
@@ -147,6 +147,8 @@ public class NewHNScraper {
                 return "Noob"
             case .Over(let points):
                 return "Submissions with over " + points.description + " points"
+            /// Front page submissions for a given day ordered by time spent there.
+            /// If date is nil, today is used.
             case .ForDate(let storedDate):
                 let date = storedDate != nil ? storedDate! : Date()
 

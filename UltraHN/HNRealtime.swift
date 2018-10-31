@@ -36,7 +36,7 @@ class HNRealtime {
         return self.monitor(self.dbRef.child("user/" + username))
     }
 
-    public func Monitor(_ pageName: NewHNScraper.Page) -> DatabaseHandle? {
+    public func Monitor(_ pageName: HNScraper.Page) -> DatabaseHandle? {
         guard let path = pageName.firebasePath else { return nil }
 
         return self.monitor(self.dbRef.child(path))
@@ -50,7 +50,7 @@ class HNRealtime {
         return self.unmonitor(self.dbRef.child("user/" + username))
     }
 
-    public func Unmonitor(_ pageName: NewHNScraper.Page) -> Bool {
+    public func Unmonitor(_ pageName: HNScraper.Page) -> Bool {
         guard let path = pageName.firebasePath else { return false }
 
         return self.unmonitor(self.dbRef.child(path))

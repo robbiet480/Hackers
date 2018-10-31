@@ -11,17 +11,17 @@ import Alamofire
 import PromiseKit
 import SwiftSoup
 
-public protocol NewHNLoginDelegate {
-    func didLogin(user: NewHNUser, cookie: HTTPCookie)
+public protocol HNLoginDelegate {
+    func didLogin(user: HNUser, cookie: HTTPCookie)
 }
 
-public class NewHNLogin {
+public class HNLogin {
     public let LoggedInNotificationName = Notification.Name(rawValue: "UltraHN.LoggedIn")
     public let LoggedOutNotificationName = Notification.Name(rawValue: "UltraHN.LoggedOut")
 
-    private var observers: [NewHNLoginDelegate] = []
+    private var observers: [HNLoginDelegate] = []
 
-    public func addObserver(_ observer: NewHNLoginDelegate) {
+    public func addObserver(_ observer: HNLoginDelegate) {
         self.observers.append(observer)
     }
 
@@ -42,7 +42,7 @@ public class NewHNLogin {
         }
     }
 
-    public static let shared = NewHNLogin()
+    public static let shared = HNLogin()
 
     public var cookie: HTTPCookie? {
         get {
@@ -51,14 +51,13 @@ public class NewHNLogin {
         }
     }
 
-    public func Login(_ username: String, _ password: String) -> Promise<NewHNUser?> {
+    public func Login(_ username: String, _ password: String) -> Promise<HNUser?> {
         let url = "https://news.ycombinator.com/login"
 
         let params: Parameters = ["acct": username, "pw": password, "goto": "user?id=" + username]
 
-        return Alamofire.request(url, method: .post,
-                                 parameters: params,
-                                 encoding: URLEncoding.httpBody).responseString().then { (resp) -> Promise<NewHNUser?> in
+        return Alamofire.request(url, method: .post, parameters: params,
+                                 encoding: URLEncoding.httpBody).responseString().then { (resp) -> Promise<HNUser?> in
 
             let document: Document = try SwiftSoup.parse(resp.string)
 

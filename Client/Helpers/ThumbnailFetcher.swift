@@ -10,7 +10,7 @@ import Kingfisher
 import RealmSwift
 
 extension UIImageView {
-    func setImage(_ post: PostModel) {
+    func setImage(_ post: HNPost) {
 
         let placeholderImage = UIImage(named: "ThumbnailPlaceholderIcon")?.withRenderingMode(.alwaysTemplate)
         self.image = placeholderImage

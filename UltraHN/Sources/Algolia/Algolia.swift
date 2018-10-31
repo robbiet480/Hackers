@@ -13,51 +13,39 @@ import PromiseKit
 public class AlgoliaDataSource: HNDataSource {
     public let baseURL = "https://hn.algolia.com/api/v1/"
 
-    public func GetPage(_ pageName: NewHNScraper.Page) -> Promise<[NewHNItem]?> {
-        guard let url = pageName.algoliaQueryURL else { return Promise.value([NewHNItem]()) }
+    public init() { }
+
+    public func GetPage(_ pageName: HNScraper.Page, pageNumber: Int = 1) -> Promise<[HNItem]?> {
+        guard let url = pageName.algoliaQueryURL else { return Promise.value([HNItem]()) }
 
         return firstly {
-                Alamofire.request(url).responseAlgoliaSearchResult()
-            }.then { (resp) -> Promise<[NewHNItem]?> in
-                let mapped: [NewHNItem] = resp.item.hits.map { $0.hnItem }
+                Alamofire.request(url).responseDecodable(AlgoliaSearchResult.self, decoder: ISO8601FullJSONDecoder())
+            }.then { (resp) -> Promise<[HNItem]?> in
+                let mapped: [HNItem] = resp.hits.map { $0.hnItem }
 
                 return Promise.value(mapped)
             }
     }
 
-    public func GetItem(_ itemID: Int) -> Promise<NewHNItem?> {
-        let algoliaURL = self.baseURL + "items/" + itemID.description
-        return Alamofire.request(algoliaURL).responseNewHNItem().then { resp -> Promise<NewHNItem?> in
-            _ = resp.item.collectChildren()
-
-            return Promise.value(resp.item)
-        }
+    public func GetItem(_ itemID: Int) -> Promise<HNItem?> {
+        let itemURL = self.baseURL + "items/" + itemID.description
+        return Alamofire.request(itemURL).responseDecodable(AlgoliaHNItem.self,
+                                                            decoder: ISO8601FullJSONDecoder()).map { $0 }
     }
 
-    public func GetUser(_ username: String) -> Promise<NewHNUser?> {
-        let pageURL = self.baseURL + "users/" + username
-
-        return Alamofire.request(pageURL).responseAlgoliaHNUser().then({ (arg0) -> Promise<NewHNUser?> in
-            return Promise.value(arg0.user as NewHNUser)
-        })
+    public func GetUser(_ username: String) -> Promise<HNUser?> {
+        let userURL = self.baseURL + "users/" + username
+        return Alamofire.request(userURL).responseDecodable(AlgoliaHNUser.self,
+                                                            decoder: ISO8601FullJSONDecoder()).map { $0 as HNUser? }
     }
 
-    func GetComments(_ itemID: Int) -> Promise<[NewHNComment]?> {
-        return self.GetItem(itemID).then { item -> Promise<[NewHNComment]?> in
-            guard let children = item?.Children else { return Promise.value([NewHNComment]()) }
-
-            guard let castedChildren = children as? [NewHNComment] else { return Promise.value([NewHNComment]()) }
-
-            return Promise.value(castedChildren)
-        }
-    }
-
-    public var SupportedPages: [NewHNScraper.Page] {
-        return [.Home, .New, .ShowHN, .AskHN, .Jobs, .Over(points: 0), .ForDate(date: nil), .CommentsForUsername(username: ""), .SubmissionsForUsername(username: "")]
+    public var SupportedPages: [HNScraper.Page] {
+        return [.Home, .New, .ShowHN, .AskHN, .Jobs, .Over(points: 0), .ForDate(date: nil),
+                .CommentsForUsername(username: ""), .SubmissionsForUsername(username: "")]
     }
 }
 
-fileprivate extension NewHNScraper.Page {
+fileprivate extension HNScraper.Page {
     var algoliaQueryURL: URL? {
         var path = "search"
         switch self {

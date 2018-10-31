@@ -110,12 +110,14 @@ class AlgoliaHit: Codable {
         self.highlightResults = highlightResults ?? [:]
     }
 
-    var hnItem: NewHNItem {
-        let item = NewHNItem()
+    var hnItem: HNItem {
+        let item = HNItem()
         item.ID = self.objectID
         item.CreatedAt = self.createdAt
         item.Title = self.title
-        item.Author = self.author
+        if let author = self.author {
+            item.Author = HNUser(username: author)
+        }
         item.Score = self.points
         if let text = self.storyText {
             item.Text = text
@@ -131,7 +133,7 @@ class AlgoliaHit: Codable {
         item.ParentID = self.parentID
 
         // Item has a URL, must be a post not comment
-        if let urlStr = self.url, let url = URL(string: urlStr), let post = item as? NewHNPost {
+        if let urlStr = self.url, let url = URL(string: urlStr), let post = item as? HNPost {
             post.Link = url
 
             return post
@@ -166,46 +168,4 @@ enum MatchLevel: String, Codable {
     case none = "none"
     case partial = "partial"
     case full = "full"
-}
-
-// MARK: - Alamofire response handlers
-
-extension DataRequest {
-    fileprivate func decodableResponseSerializer<T: Decodable>() -> DataResponseSerializer<T> {
-        return DataResponseSerializer { _, response, data, error in
-            guard error == nil else { return .failure(error!) }
-
-            guard let data = data else {
-                return .failure(AFError.responseSerializationFailed(reason: .inputDataNil))
-            }
-
-            return Result { try newJSONDecoder().decode(T.self, from: data) }
-        }
-    }
-
-    @discardableResult
-    fileprivate func responseDecodable<T: Decodable>(queue: DispatchQueue? = nil,
-                                                     completionHandler: @escaping (DataResponse<T>) -> Void) -> Self {
-        return response(queue: queue, responseSerializer: decodableResponseSerializer(),
-                        completionHandler: completionHandler)
-    }
-
-    @discardableResult
-    func responseAlgoliaSearchResult(queue: DispatchQueue? = nil,
-                                     completionHandler: @escaping (DataResponse<AlgoliaSearchResult>) -> Void) -> Self {
-        return responseDecodable(queue: queue, completionHandler: completionHandler)
-    }
-
-    func responseAlgoliaSearchResult(queue: DispatchQueue? = nil) -> Promise<(item: AlgoliaSearchResult, response: PMKAlamofireDataResponse)> {
-        return Promise { seal in
-            responseAlgoliaSearchResult(queue: queue) { response in
-                switch response.result {
-                case .success(let value):
-                    seal.fulfill((value, PMKAlamofireDataResponse(response)))
-                case .failure(let error):
-                    seal.reject(error)
-                }
-            }
-        }
-    }
 }

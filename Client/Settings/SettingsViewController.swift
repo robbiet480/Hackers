@@ -10,7 +10,6 @@ import UIKit
 import Eureka
 import OnePasswordExtension
 import ContextMenu
-import HNScraper
 
 class SettingsViewController: FormViewController {
     let autoBrightnessFooterText = "The theme will automatically change based on your display brightness. You can set the threshold where the theme changes."
@@ -64,7 +63,7 @@ class SettingsViewController: FormViewController {
 
             <<< LabelRow("loggedInUser") {
                 $0.title = "Logged in as"
-                $0.value = UserDefaults.standard.loggedInUser?.username
+                $0.value = UserDefaults.standard.loggedInUser?.Username
                 $0.hidden = Condition(booleanLiteral: UserDefaults.standard.loggedInUser == nil)
             }
 
@@ -102,7 +101,7 @@ class SettingsViewController: FormViewController {
                 $0.hidden = "$loggedInUser == nil"
             }.onCellSelection { _, row in
                 UserDefaults.standard.loggedInUser = nil
-                HNLogin.shared.logout()
+                HNLogin.shared.Logout()
 
                 if let usernameRow = self.form.rowBy(tag: "loggedInUser") as? LabelRow {
                     usernameRow.value = nil
@@ -213,8 +212,7 @@ class SettingsViewController: FormViewController {
 
                 let spinner = UIViewController.displaySpinner(onView: self.navigationController!.view)
 
-                HNLogin.shared.login(username: username, psw: password, completion: { (hnUser, cookie, error) in
-
+                HNLogin.shared.Login(username, password).done { user in
                     var loggedInUsername: String?
 
                     UIViewController.removeSpinner(spinner: spinner)
@@ -223,11 +221,8 @@ class SettingsViewController: FormViewController {
                                                     message: "Received neither a valid response or error during login attempt",
                                                     preferredStyle: .alert)
 
-                    if let err = error {
-                        print("Error during login!", err)
-                        alertVC = UIAlertController(title: "Error during login", message: error?.description, preferredStyle: .alert)
-                    }
-                    if let user = hnUser, let username = user.username {
+                    if let user = user {
+                        let username = user.Username
                         loggedInUsername = username
                         print("Login succeeded, got user", user.description)
                         alertVC = UIAlertController(title: "Success", message: "You are now logged in as \(username)", preferredStyle: .alert)
@@ -244,7 +239,15 @@ class SettingsViewController: FormViewController {
                     }
 
                     self.present(alertVC, animated: true, completion: nil)
-                })
+                }.catch { error in
+                    UIViewController.removeSpinner(spinner: spinner)
+
+                    let alertVC = UIAlertController(title: "Error during login", message: error.localizedDescription,
+                                                    preferredStyle: .alert)
+                    alertVC.addAction(UIAlertAction.init(title: "OK", style: .default, handler: nil))
+                    self.present(alertVC, animated: true, completion: nil)
+                }
+
             }
         }
     }
@@ -406,20 +409,5 @@ extension SettingsViewController: Themed {
         tableView.separatorColor = theme.separatorColor
 
         self.tableView.reloadData()
-    }
-}
-
-extension HNLogin.HNLoginError {
-    var description: String {
-        switch self {
-        case .badCredentials:
-            return "Invalid username or password"
-        case .serverUnreachable:
-            return "Hacker News is unreachable"
-        case .noInternet:
-            return "Your internet appears to be offline"
-        case .unknown:
-            return "An unknown error occurred"
-        }
     }
 }

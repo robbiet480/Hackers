@@ -12,6 +12,8 @@ import Alamofire
 import SwiftSoup
 
 public class HTMLDataSource: HNDataSource {
+    public init() { }
+
     public enum ParsingLinkType: CaseIterable {
         case Page
         case Story
@@ -38,26 +40,26 @@ public class HTMLDataSource: HNDataSource {
         return Alamofire.request(url, method: .post, parameters: parameters).responseString()
     }
 
-    public func GetItem(_ itemID: Int) -> Promise<NewHNItem?> {
+    public func GetItem(_ itemID: Int) -> Promise<HNItem?> {
         let url = "https://news.ycombinator.com/item?id=" + itemID.description
 
         return firstly {
                 return self.Get(url)
-            }.then { html, _ -> Promise<NewHNItem?> in
+            }.then { html, _ -> Promise<HNItem?> in
                 let parsedHTML = try SwiftSoup.parse(html)
 
                 let selectingClass: ParsingLinkType = (try parsedHTML.select(".fatitem .comment").first() != nil) ? .Comment : .Story
 
                 let html = try parsedHTML.select(selectingClass.htmlSelector).first()
 
-                return Promise.value(try NewHNPost(html!, rank: nil))
+                return Promise.value(try HNPost(html!, rank: nil))
         }
     }
 
-    public func GetPage(_ pageName: NewHNScraper.Page) -> Promise<[NewHNItem]?> {
+    public func GetPage(_ pageName: HNScraper.Page, pageNumber: Int = 1) -> Promise<[HNItem]?> {
         return firstly {
-                return self.Get(pageName.url)
-            }.then { html, _ -> Promise<[NewHNItem]?> in
+                return self.Get(pageName.url(pageNumber))
+            }.then { html, _ -> Promise<[HNItem]?> in
                 let parsedHTML = try SwiftSoup.parse(html)
 
                 var selectingClass = ParsingLinkType.Page
@@ -69,19 +71,19 @@ public class HTMLDataSource: HNDataSource {
                 let postLines = try parsedHTML.select(selectingClass.htmlSelector)
 
                 let posts = postLines.enumerated().compactMap { item in
-                    return try? NewHNPost(item.element, rank: item.offset + 1)
+                    return try? HNPost(item.element, rank: item.offset + 1)
                 }
 
-                // return Promise.value((posts: posts, user: try NewHNUser(documentWithHeader: parsedHTML)))
+                // return Promise.value((posts: posts, user: try HNUser(documentWithHeader: parsedHTML)))
                 return Promise.value(posts)
 
         }
     }
 
-    public func GetUser(_ username: String) -> Promise<NewHNUser?> {
+    public func GetUser(_ username: String) -> Promise<HNUser?> {
         let pageURL = "https://news.ycombinator.com/user?id=" + username
 
-        return self.Get(pageURL).then({ (arg0) -> Promise<NewHNUser?> in
+        return self.Get(pageURL).then({ (arg0) -> Promise<HNUser?> in
             guard let parsedHTML = try? SwiftSoup.parse(arg0.string) else { return Promise.value(nil) }
 
             guard let user = try? HTMLHNUser(userPage: parsedHTML) else { return Promise.value(nil) }
@@ -90,8 +92,8 @@ public class HTMLDataSource: HNDataSource {
         })
     }
 
-    public var SupportedPages: [NewHNScraper.Page] {
-        return NewHNScraper.Page.allCases
+    public var SupportedPages: [HNScraper.Page] {
+        return HNScraper.Page.allCases
     }
 
     public func GetLeaders() -> Promise<[HNLeader]> {
@@ -128,14 +130,14 @@ public class HTMLDataSource: HNDataSource {
         })
     }
 
-    public func GetIDsOnPage(_ pageName: NewHNScraper.Page) -> Promise<[Int]> {
+    public func GetIDsOnPage(_ pageName: HNScraper.Page) -> Promise<[Int]> {
         return self.GetPage(pageName).compactMap { $0 }.mapValues { $0.ID }
     }
 }
 
-extension NewHNPost {
+extension HNPost {
     public convenience init(_ element: Element, rank: Int? = nil) throws {
-        try self.init(element)
+        self.init()
 
         do {
             var commentsParsed = false
@@ -161,7 +163,7 @@ extension NewHNPost {
             self.Title = try link.text().trimmingCharacters(in: .whitespacesAndNewlines)
 
             if var linkStr: String = try? link.attr("href") {
-                if linkStr == "item?id=" + String(self.ID) {
+                if linkStr == "item?id=" + self.IDString {
                     linkStr = "https://news.ycombinator.com/" + linkStr
                 }
 
@@ -170,14 +172,15 @@ extension NewHNPost {
 
             self.Site = try element.select(".sitestr").text()
 
-            if let scoreStr = try metadataLine?.select(".score").text(), let numStr = scoreStr.split(separator: .space).first, let intScore = Int(string: numStr.description) {
+            if let scoreStr = try metadataLine?.select(".score").text(),
+                let numStr = scoreStr.split(separator: .space).first, let intScore = Int(string: numStr.description) {
                 self.Score = intScore
                 scoreParsed = true
             }
 
-            self.Author = try metadataLine?.select(".hnuser").text()
-
-            self.AuthorIsNew = try metadataLine?.select(".hnuser font").first() != nil
+            if let hnUserElms = try metadataLine?.select(".hnuser"), let hnUser = hnUserElms.first() {
+                self.Author = HTMLHNUser(hnUserElement: hnUser)
+            }
 
             if let time = try metadataLine?.select(".age").text() {
                 self.RelativeTime = time
@@ -187,67 +190,84 @@ extension NewHNPost {
                 let escaped = try? Entities.unescape(countText).trimmingCharacters(in: .whitespacesAndNewlines),
                 let split = escaped.split(separator: " ").first?.description, let intCount = Int(string: split) {
 
-                self.CommentCount = intCount
+                self.TotalChildren = intCount
                 commentsParsed = true
             }
 
             if !scoreParsed && !commentsParsed {
-                self.Type = .jobs
+                self.Type = .job
             } else if !scoreParsed {
                 self.Type = .askHN
             }
+
+            self.ReplyHMAC = try element.select("input[name='hmac']").val()
+
+            self.ExtractActions(element.ownerDocument()!)
         } catch let error as NSError {
             throw error
         }
     }
 }
 
-extension NewHNScraper.Page {
-    var url: URL {
-        var urlStr = "https://news.ycombinator.com/"
+extension HNScraper.Page {
+    fileprivate func url(_ pageNumber: Int = 1) -> URL {
+        var components = URLComponents(string: "https://news.ycombinator.com/")!
+
+        var queryItems: [URLQueryItem] = []
+
+        queryItems.append(URLQueryItem(name: "p", value: String(pageNumber)))
+
         switch self {
         case .Home:
-            urlStr += "news"
+            components.path = "/news"
         case .Classic:
-            urlStr += "classic"
-        case .Front:
-            urlStr += "front"
+            components.path = "/classic"
         case .New:
-            urlStr += "newest"
+            components.path = "/newest"
         case .Jobs:
-            urlStr += "jobs"
+            components.path = "/jobs"
         case .AskHN:
-            urlStr += "ask"
+            components.path = "/ask"
         case .ShowHN:
-            urlStr += "show"
+            components.path = "/show"
         case .ShowHNNew:
-            urlStr += "shownew"
+            components.path = "/shownew"
         case .Active:
-            urlStr += "active"
+            components.path = "/active"
         case .Best:
-            urlStr += "best"
+            components.path = "/best"
         case .Noob:
-            urlStr += "noobstories"
+            components.path = "/noobstories"
         case .Over(let points):
-            urlStr += "over?points=" + points.description
+            components.path = "/over"
+
+            queryItems.append(URLQueryItem(name: "points", value: String(points)))
         case .ForDate(let storedDate):
             let date = storedDate != nil ? storedDate! : Date()
             let dateFormatter = DateFormatter()
             dateFormatter.locale = Locale(identifier: "en_US_POSIX")
             dateFormatter.dateFormat = "yyyy-MM-dd"
-            urlStr += "front?day=" + dateFormatter.string(from: date)
+            components.path = "/front"
+            queryItems.append(URLQueryItem(name: "day", value: dateFormatter.string(from: date)))
         case .CommentsForUsername(let username):
-            urlStr += "comments?id=" + username
+            components.path = "/comments"
+            queryItems.append(URLQueryItem(name: "id", value: username))
         case .SubmissionsForUsername(let username):
-            urlStr += "submitted?id=" + username
+            components.path = "/submitted"
+            queryItems.append(URLQueryItem(name: "id", value: username))
         case .FavoritesForUsername(let username):
-            urlStr += "favorites?id=" + username
+            components.path = "/favorites"
+            queryItems.append(URLQueryItem(name: "id", value: username))
         case .Upvoted(let username):
-            urlStr += "upvoted?id=" + username
+            components.path = "/upvoted"
+            queryItems.append(URLQueryItem(name: "id", value: username))
         case .Hidden(let username):
-            urlStr += "hidden?id=" + username
+            components.path = "/hidden"
+            queryItems.append(URLQueryItem(name: "id", value: username))
         }
 
-        return URL(string: urlStr)!
+        components.queryItems = queryItems
+
+        return components.url!
     }
 }

@@ -8,12 +8,10 @@
 
 import Foundation
 import RealmSwift
-import ObjectMapper
 import Kingfisher
 import OpenGraph
-import HNScraper
 
-class PostModel: HNItem {
+class PostModel: BaseHNItem {
 
     /// URL of the story.
     @objc dynamic var URLString: String?
@@ -54,27 +52,17 @@ class PostModel: HNItem {
     convenience init(_ post: HNPost) {
         self.init()
 
-        if let intID = Int(string: post.id) {
-            self.ID = intID
-        } else {
-            print("Unable to cast string ID to int", post.description)
-        }
+        self.ID = post.ID
 
-        // FIXME: Convert HNScraper post type to HNItem type.
+        // FIXME: Convert HNScraper post type to BaseHNItem type.
         // self.type = post.type
-        self.author = post.username
-        if let url = post.url {
+        self.author = post.Author?.Username
+        if let url = post.Link {
             self.URLString = url.absoluteString
         }
-        self.title = post.title
-        self.score.value = Int(post.points)
-        self.descendants = Int(post.commentCount)
-    }
-
-    override public func mapping(map: Map) {
-        super.mapping(map: map)
-
-        URLString         <- map["url"]
+        self.title = post.Title
+        self.score.value = post.Score
+        self.descendants = post.TotalChildren
     }
 
     override static func ignoredProperties() -> [String] {

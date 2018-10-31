@@ -9,7 +9,7 @@
 import Foundation
 import SwiftSoup
 
-open class HTMLHNUser: NewHNUser {
+public class HTMLHNUser: HNUser {
     public enum UserPageFields: String, CaseIterable {
         case About = "about"
         // case Created = "created"
@@ -102,7 +102,7 @@ open class HTMLHNUser: NewHNUser {
         }
     }
 
-    required public init(from decoder: Decoder) throws {
+    required init(from decoder: Decoder) throws {
         fatalError("init(from:) has not been implemented")
     }
 

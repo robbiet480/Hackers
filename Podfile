@@ -11,7 +11,6 @@ target 'Hackers' do
   pod 'Eureka'
   pod 'Firebase/Database'
   pod 'FontAwesome.swift'
-  pod 'HNScraper', :path => 'HNScraper'
   pod 'Kingfisher'
   pod 'ObjectMapper'
   pod 'ObjectMapperAdditions/Realm'
