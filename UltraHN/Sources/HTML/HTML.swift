@@ -52,7 +52,13 @@ public class HTMLDataSource: HNDataSource {
 
                 let html = try parsedHTML.select(selectingClass.htmlSelector).first()
 
-                return Promise.value(try HNPost(html!, rank: nil))
+                let post = try HNPost(html!, rank: nil)
+
+                let comments = HTMLHNComment().ParseHTMLForComments(parsedHTML)
+
+                post.Children = comments
+
+                return Promise.value(post)
         }
     }
 

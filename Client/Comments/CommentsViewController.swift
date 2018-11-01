@@ -19,8 +19,12 @@ import PromiseKit
 class CommentsViewController : UIViewController {
     var post: HNPost?
 
-    var comments: [HNItem]? {
-        didSet { commentsController.comments = comments! }
+    var comments: [HNComment]? {
+        didSet {
+            if let comments = comments {
+                commentsController.comments = comments
+            }
+        }
     }
     
     let commentsController = CommentsController()
@@ -91,8 +95,7 @@ class CommentsViewController : UIViewController {
     
     func loadComments() {
         HNScraper.shared.GetChildren(self.post!.ID).done {
-            print("Got comments", $0)
-            self.comments = $0
+            self.comments = $0 as? [HNComment]
 
             self.view.hideSkeleton()
             self.tableView.rowHeight = UITableView.automaticDimension
@@ -199,110 +202,31 @@ extension CommentsViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView,
                    leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
 
+        // Only logged in users can swipe to upvote/downvote
+        guard UserDefaults.standard.loggedInUser != nil else { return nil }
+
         let comment = commentsController.visibleComments[indexPath.row]
 
-        print("post?.ChildActions[comment.ID]?.Upvote", post?.AllActions)
+        let actions = comment.Actions != nil ? comment.Actions! : HNScraper.shared.ActionsCache[comment.ID]!
 
-        return self.runItemAction(indexPath, post?.AllActions[comment.ID]?.Upvote)
+        return actions.swipeActionsConfiguration(item: comment, trailing: false)
     }
 
     func tableView(_ tableView: UITableView,
                    trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-        let comment = commentsController.visibleComments[indexPath.row]
-
-        var action: HNItem.ActionType? = post?.AllActions[comment.ID]?.Downvote
-
-        if comment.Upvoted != nil && Date().isBeforeDate(comment.VotedAt!.addingTimeInterval(3600), granularity: .minute) {
-            action = post?.AllActions[comment.ID]?.Unvote
-        }
-
-        return self.runItemAction(indexPath, action)
-    }
-
-    func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
-        return .none
-    }
-
-    func runItemAction(_ indexPath: IndexPath, _ action: HNItem.ActionType?) -> UISwipeActionsConfiguration? {
-
-        guard let action = action else { return nil }
 
         // Only logged in users can swipe to upvote/downvote
         guard UserDefaults.standard.loggedInUser != nil else { return nil }
 
         let comment = commentsController.visibleComments[indexPath.row]
 
-        // comment was already voted on
-        // FIXME: Ensure that users can't double vote
-        // guard voteAction != .Unvote && comment.VotedAt == nil else { return nil }
+        let actions = comment.Actions != nil ? comment.Actions! : HNScraper.shared.ActionsCache[comment.ID]!
 
-        var title = ""
-        var color: UIColor = .clear
-        var faIcon: FontAwesome = .arrowUp
+        return actions.swipeActionsConfiguration(item: comment, trailing: true)
+    }
 
-        switch action {
-        case .Favorite:
-            title = "Favorite"
-            color = .yellow
-            faIcon = .star
-        case .Flag:
-            title = "flag"
-            color = .orange
-            faIcon = .flag
-        case .Unvote:
-            title = "Unvote"
-            color = .red
-            faIcon = .times
-        case .Vote(_, _, let direction):
-            switch direction {
-            case .Up:
-                title = "Upvote"
-                color = .orange
-                faIcon = .arrowUp
-            case .Down:
-                title = "Downvote"
-                color = .blue
-                faIcon = .arrowDown
-            }
-        default:
-            print("Not handling", action)
-        }
-
-        let tableAction = UIContextualAction(style: .normal, title: title, handler: { (action, view, completionHandler) in
-
-            let commentID = comment.ID
-
-            // FIXME: Actually vote
-
-//            DispatchQueue.global(qos: .userInitiated).async {
-//                _ = HNScraper.shared.voteItem(commentID, action: voteAction).done { authKey in
-//                    let realm = Realm.live()
-//
-//                    let comment = realm.object(ofType: CommentModel.self, forPrimaryKey: commentID)
-//
-//                    try! realm.write {
-//                        switch voteAction {
-//                        case .Upvote, .Downvote:
-//                            comment?.VotedAt = Date()
-//                            comment?.Upvoted.value = (voteAction == .Upvote)
-//                            comment?.VoteKey = authKey
-//                        case .Unvote:
-//                            comment?.VotedAt = nil
-//                            comment?.Upvoted.value = nil
-//                            comment?.VoteKey = authKey
-//                        }
-//                    }
-//                }
-//            }
-
-            completionHandler(false)
-        })
-
-        tableAction.backgroundColor = color
-        tableAction.image = UIImage.fontAwesomeIcon(name: faIcon, style: .solid, textColor: .white,
-                                                    size: CGSize(width: 36, height: 36))
-
-        return UISwipeActionsConfiguration(actions: [tableAction])
+    func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
+        return .none
     }
 }
 

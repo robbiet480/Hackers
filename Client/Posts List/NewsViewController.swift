@@ -190,25 +190,17 @@ extension NewsViewController: UITableViewDelegate {
                    leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
 
             // Only logged in users can swipe to upvote/downvote
-            guard UserDefaults.standard.loggedInUser != nil else { return nil }
+            guard UserDefaults.standard.loggedInUser != nil else { print("Not logged in!"); return nil }
 
             let post = posts![indexPath.row]
 
-            // Post was already voted on
-            guard let upvoteAction = post.Actions?.Upvote else { return nil }
+            let actions = post.Actions != nil ? post.Actions! : HNScraper.shared.ActionsCache[post.ID]!
 
-            let action = UIContextualAction(style: .normal, title: "Upvote", handler: { (action, view, completionHandler) in
+            let config = actions.swipeActionsConfiguration(item: post, trailing: false)
 
-                _ = post.FireAction(upvoteAction)
+            print("Leading actions for post", post.ID, actions, config)
 
-                completionHandler(false)
-            })
-
-            action.backgroundColor = .orange
-            action.image = UIImage.fontAwesomeIcon(name: .arrowUp, style: .solid,
-                                                   textColor: .white, size: CGSize(width: 36, height: 36))
-
-            return UISwipeActionsConfiguration(actions: [action])
+            return config
     }
 
     func tableView(_ tableView: UITableView,
@@ -219,21 +211,9 @@ extension NewsViewController: UITableViewDelegate {
 
         let post = posts![indexPath.row]
 
-        // Post was already voted on
-        guard let downvoteAction = post.Actions?.Downvote else { return nil }
+        let actions = post.Actions != nil ? post.Actions! : HNScraper.shared.ActionsCache[post.ID]!
 
-        let action = UIContextualAction(style: .normal, title: "Downvote", handler: { (action, view, completionHandler) in
-
-            _ = post.FireAction(downvoteAction)
-
-            completionHandler(false)
-        })
-
-        action.backgroundColor = .blue
-        action.image = UIImage.fontAwesomeIcon(name: .arrowDown, style: .solid,
-                                               textColor: .white, size: CGSize(width: 36, height: 36))
-
-        return UISwipeActionsConfiguration(actions: [action])
+        return actions.swipeActionsConfiguration(item: post, trailing: true)
     }
 
     func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {

@@ -128,8 +128,28 @@ public class HTMLHNUser: HNUser {
             let timestamp = timestampStr,
             let interval = TimeInterval(string: timestamp) {
 
-            print("Got timestamp")
             self.CreatedAt = Date(seconds: interval)
+        }
+    }
+
+    public enum UsernameColors: Int, CaseIterable {
+        case New = 0x3C963C
+        case YC = 0xCD6E00
+
+        var color: UIColor {
+            return UIColor(rgb: self.rawValue)
+        }
+
+        init?(_ str: String) {
+            switch str {
+            case "#cd6e00":
+                self = .YC
+            case "#3c963c":
+                self = .New
+            default:
+                print("Unknown username color", str)
+                return nil
+            }
         }
     }
 }

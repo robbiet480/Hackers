@@ -8,38 +8,40 @@
 
 import Foundation
 import UIKit
-import RealmSwift
 
 class CommentsController {
-    var comments: [HNItem]
+    var comments: [HNComment]
     
-    var visibleComments: [HNItem] {
+    var visibleComments: [HNComment] {
         get {
             return comments.filter { $0.Visibility != HNItem.ItemVisibilityType.Hidden }
         }
     }
-    
+
     convenience init() {
-        self.init(source: [HNItem]())
+        self.init(source: [HNComment]())
     }
     
-    init(source: [HNItem]) {
+    init(source: [HNComment]) {
         comments = source
     }
     
-    func toggleCommentChildrenVisibility(_ comment: HNItem) -> ([IndexPath], HNItem.ItemVisibilityType) {
+    func toggleCommentChildrenVisibility(_ comment: HNComment) -> ([IndexPath], HNItem.ItemVisibilityType) {
         let visible = comment.Visibility == HNItem.ItemVisibilityType.Visible
         let visibleIndex = indexOfComment(comment, source: visibleComments)!
         let commentIndex = indexOfComment(comment, source: comments)!
         let childrenCount = countChildren(comment)
         var modifiedIndexPaths = [IndexPath]()
 
-        let realm = Realm.live()
+        comment.Visibility = visible ? .Compact : .Visible
 
-        try! realm.write {
-            comment.Visibility = visible ? .Compact : .Visible
+        // Fire hide/show to HN.
+        if visible {
+            _ = comment.Hide()
+        } else {
+            _ = comment.Show()
         }
-        
+
         var currentIndex = visibleIndex + 1;
         
         if childrenCount > 0 {
@@ -48,9 +50,7 @@ class CommentsController {
                 
                 if visible && currentComment.Visibility == HNItem.ItemVisibilityType.Hidden { continue }
 
-                try! realm.write {
-                    currentComment.Visibility = visible ? HNItem.ItemVisibilityType.Hidden : HNItem.ItemVisibilityType.Visible
-                }
+                currentComment.Visibility = visible ? HNItem.ItemVisibilityType.Hidden : HNItem.ItemVisibilityType.Visible
 
                 modifiedIndexPaths.append(IndexPath(row: currentIndex, section: 0))
                 currentIndex += 1
@@ -60,14 +60,14 @@ class CommentsController {
         return (modifiedIndexPaths, visible ? .Hidden : .Visible)
     }
     
-    func indexOfComment(_ comment: HNItem, source: [HNItem]) -> Int? {
+    func indexOfComment(_ comment: HNComment, source: [HNComment]) -> Int? {
         for (index, value) in source.enumerated() {
             if comment.ID == value.ID { return index }
         }
         return nil
     }
     
-    func countChildren(_ comment: HNItem) -> Int {
+    func countChildren(_ comment: HNComment) -> Int {
         let startIndex = indexOfComment(comment, source: comments)! + 1
         var count = 0
         

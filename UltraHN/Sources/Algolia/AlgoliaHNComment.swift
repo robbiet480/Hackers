@@ -1,16 +1,13 @@
 //
-//  AlgoliaHNItem.swift
+//  AlgoliaHNComment.swift
 //  Hackers
 //
-//  Created by Robert Trencheny on 10/29/18.
+//  Created by Robert Trencheny on 10/31/18.
 //  Copyright © 2018 Glass Umbrella. All rights reserved.
 //
 
-import Foundation
-import Alamofire
-import PromiseKit
+public class AlgoliaHNComment: HNComment {
 
-public class AlgoliaHNItem: HNItem {
     private enum CodingKeys: String, CodingKey {
         case Author = "author"
         case Title = "title"

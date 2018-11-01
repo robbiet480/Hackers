@@ -8,7 +8,6 @@
 
 import Foundation
 import UIKit
-import SwiftDate
 
 class CommentTableViewCell : UITableViewCell {
     var delegate: CommentDelegate?
@@ -19,7 +18,7 @@ class CommentTableViewCell : UITableViewCell {
 
     var post: HNPost?
 
-    var comment: HNItem? {
+    var comment: HNComment? {
         didSet {
             guard let comment = comment else { return }
             guard comment.Text != nil else { return }
@@ -58,7 +57,7 @@ class CommentTableViewCell : UITableViewCell {
     
     func updateCommentContent(with comment: HNItem) {
         level = comment.Level
-        datePostedLabel.text = comment.CreatedAt?.toRelative(style: RelativeFormatter.twitterStyle())
+        datePostedLabel.text = comment.RelativeDate
         authorLabel.text = comment.Author?.Username
 
         if let commentTextView = commentTextView {

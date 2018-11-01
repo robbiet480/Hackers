@@ -72,7 +72,6 @@ class PostCell : UITableViewCell {
     }
 
     @objc func cellLongPress(_ sender: Any) {
-        print("cell long pressed!")
         delegate?.didLongPressCell(sender)
     }
 }

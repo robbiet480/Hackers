@@ -11,7 +11,6 @@ import Kingfisher
 import UserNotifications
 import MobileCoreServices.UTType
 import RealmSwift
-import SwiftDate
 
 final class Notifications {
 
@@ -106,7 +105,7 @@ final class Notifications {
             if let link = post.Link {
                 content.body = link.host!.replacingOccurrences(of: "www.", with: "")
             }
-            content.subtitle = post.Score!.description + " points, posted by " + post.Author!.Username + " " + post.CreatedAt!.toRelative(style: RelativeFormatter.twitterStyle())
+            content.subtitle = post.Score!.description + " points, posted by " + post.Author!.Username + " " + post.RelativeDate
             content.categoryIdentifier = "POST"
             content.userInfo = ["POST_ID": post.ID]
 

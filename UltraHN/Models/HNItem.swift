@@ -11,6 +11,8 @@ import Alamofire
 import PromiseKit
 import SwiftSoup
 import RealmSwift
+import SwiftDate
+import FontAwesome_swift
 
 public class HNItem: NSObject, Codable {
     public var Author: HNUser?
@@ -26,7 +28,7 @@ public class HNItem: NSObject, Codable {
 
     public var ParentID: Int?
     public var StoryID: Int?
-    public var Children: [HNItem]?
+    public var Children: [HNComment]?
     public var ChildrenIDs: [Int]?
     public var TotalChildren: Int = 0
     public var Level: Int = 0
@@ -119,6 +121,14 @@ public class HNItem: NSObject, Codable {
         return String(self.ID)
     }
 
+    var RelativeDate: String {
+        if let createdAt = self.CreatedAt {
+            return createdAt.toRelative(style: RelativeFormatter.twitterStyle())
+        }
+
+        return self.RelativeTime
+    }
+
     public func collectChildren(_ level: Int = 0) -> [HNItem] {
         var childArray: [HNItem] = [self]
 
@@ -161,7 +171,7 @@ public class HNItem: NSObject, Codable {
             guard let authToken = queryItems["auth"] else { return nil }
 
             // A boolean to determine if a action was already run by checking to see if the href has a un=t value
-            let isInitialAction = queryItems["un"] != nil
+            let isInitialAction = queryItems["un"] == nil
 
             switch components.path {
             case "flag":
@@ -249,6 +259,88 @@ public class HNItem: NSObject, Codable {
                 return authToken
             }
         }
+
+        func tableAction(item: HNItem, trailing: Bool = false) -> UIContextualAction? {
+            switch self {
+            case .Flag, .Vouch, .Unflag, .Unvouch:
+                return nil
+            case .Favorite, .Hide:
+                if trailing { return nil }
+            case .Unfavorite, .Unhide, .Unvote:
+                if !trailing { return nil }
+            case .Vote(_, _, let direction):
+                if trailing && direction == .Up { return nil }
+                if !trailing && direction == .Down { return nil }
+            }
+
+            var title = ""
+            var color: UIColor = .clear
+            var faIcon: FontAwesome = .arrowUp
+            var iconColor: UIColor = .white
+
+            switch self {
+            case .Favorite:
+                title = "Favorite"
+                color = .green
+                faIcon = .star
+            case .Flag:
+                title = "flag"
+                color = .red
+                faIcon = .flag
+            case .Unvote:
+                title = "Unvote"
+                color = .orange
+                faIcon = .times
+            case .Hide:
+                title = "Hide"
+                color = .yellow
+                faIcon = .eyeSlash
+            case .Unfavorite:
+                title = "Unfavorite"
+                color = .red
+                faIcon = .trashAlt
+            case .Unflag:
+                title = "Unflag"
+                color = .green
+                faIcon = .flag
+                iconColor = .red
+            case .Unhide:
+                title = "Unhide"
+                color = .green
+                faIcon = .eye
+            case .Unvouch:
+                title = "Unvouch"
+                color = .red
+                faIcon = .thumbsDown
+            case .Vouch:
+                title = "Vouch"
+                color = .red
+                faIcon = .thumbsUp
+            case .Vote(_, _, let direction):
+                switch direction {
+                case .Up:
+                    title = "Upvote"
+                    color = .orange
+                    faIcon = .arrowUp
+                case .Down:
+                    title = "Downvote"
+                    color = .blue
+                    faIcon = .arrowDown
+                }
+            }
+
+            let tableAction = UIContextualAction(style: .normal, title: title, handler: { (_, _, complete) in
+                _ = item.FireAction(self)
+                
+                complete(false)
+            })
+
+            tableAction.backgroundColor = color
+            tableAction.image = UIImage.fontAwesomeIcon(name: faIcon, style: .solid, textColor: iconColor,
+                                                        size: CGSize(width: 36, height: 36))
+
+            return tableAction
+        }
     }
 
     public struct Actions {
@@ -292,12 +384,32 @@ public class HNItem: NSObject, Codable {
                     self.Flag = action
                 case .Hide:
                     self.Hide = action
+                    // If we can hide, we can fave
+                    self.Favorite = HNItem.ActionType.Favorite(action.itemID, action.authToken)
                 case .Unhide:
                     self.Unhide = action
+                    self.Unfavorite = HNItem.ActionType.Unfavorite(action.itemID, action.authToken)
                 case .Unflag:
                     self.Unflag = action
                 }
             }
+        }
+
+        var AllActions: [HNItem.ActionType] {
+            return [self.Upvote, self.Downvote, self.Unvote, self.Vouch, self.Unvouch, self.Flag, self.Unflag,
+                    self.Hide, self.Unhide, self.Favorite, self.Unfavorite].compactMap { $0 }
+        }
+
+        func swipeActionsConfiguration(item: HNItem, trailing: Bool = false) -> UISwipeActionsConfiguration {
+            var allTableActions: [UIContextualAction?] = []
+
+            for action in self.AllActions {
+                allTableActions.append(action.tableAction(item: item, trailing: trailing))
+            }
+
+            print("Returning actions", allTableActions)
+
+            return UISwipeActionsConfiguration(actions: allTableActions.compactMap { $0 })
         }
     }
 
@@ -306,8 +418,10 @@ public class HNItem: NSObject, Codable {
         return Alamofire.request(action.url).responseString().done { (resp) in
             let html = try SwiftSoup.parse(resp.string)
 
+            HNScraper.shared.ActionsCache[self.ID] = nil
+
             // Okay, so we didn't get a bad server response, so lets re-extract actions so that we have latest auth keys
-            // as well as ensuring that the action we just run is no longer runnable.
+            // as well as ensuring that the action we just ran is no longer runnable.
             self.ExtractActions(html)
         }
     }
@@ -317,16 +431,27 @@ public class HNItem: NSObject, Codable {
         // href looks like
         // vote?id=<ID>&how=<DIR>&auth=<AUTH KEY>&goto=<REDIRECT>
 
+        print("Getting actions")
+
+        if HNScraper.shared.ActionsCache[self.ID] != nil { print("Item already in cache!", self.ID, HNScraper.shared.ActionsCache[self.ID]); return }
+
         // Action links are any links in the item details that have &auth=
         guard let linkElements = try? document.select("a[href*='&auth=']") else { return }
 
-        let allHrefs = linkElements.compactMap { try? $0.attr("href") }
+        // Only return active links
+        let activeHrefOnly = linkElements.filter { $0.hasClass("nosee") == false }
+
+        let allHrefs = activeHrefOnly.compactMap { try? $0.attr("href") }
 
         let itemHrefs = allHrefs.filter { $0.contains("id=" + self.IDString) }
 
         self.Actions = HNItem.Actions(itemHrefs.compactMap { HNItem.ActionType($0) })
 
+        HNScraper.shared.ActionsCache[self.ID] = self.Actions
+
         self.AllActions = self.makeChildActionsMap(allHrefs.filter { !$0.contains("id=" + self.IDString) })
+
+        print("Done getting actions", self.Actions)
 
         return
     }
@@ -351,9 +476,8 @@ public class HNItem: NSObject, Codable {
         for (id, groupHrefs) in groupedHrefs {
             let actions = HNItem.Actions(groupHrefs.compactMap { HNItem.ActionType($0) })
             actionsMap[id] = actions
+            HNScraper.shared.ActionsCache[id] = actions
         }
-
-        print("Returning", actionsMap)
 
         return actionsMap
     }
@@ -374,4 +498,22 @@ public class HNItem: NSObject, Codable {
     public static func ==(lhs: HNItem, rhs: HNItem) -> Bool {
         return lhs.ID == rhs.ID
     }
+
+    // Putting this here for later...
+    // URL is https://news.ycombinator.com/delete-confirm?id=<ID>&goto=<URL Encoded return>
+    // Extract the HMAC much like replying
+    // POST same params as replying to /xdelete
+    /* func Delete() -> Promise<Void> {
+
+
+    }*/
+
+    // Putting this here for later...
+    // URL is https://news.ycombinator.com/edit?id=<ID>
+    // Extract the HMAC much like replying
+    // POST same params as replying to /xedit
+    /* func Edit(_ newText: String) -> Promise<Void> {
+
+
+     }*/
 }

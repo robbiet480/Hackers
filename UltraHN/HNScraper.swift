@@ -29,9 +29,11 @@ public class HNScraper {
         return dataSource.GetUser(username)
     }
 
-    public func GetChildren(_ itemID: Int, dataSource: HNDataSource = AlgoliaDataSource()) -> Promise<[HNItem]?> {
+    public func GetChildren(_ itemID: Int, dataSource: HNDataSource = defaultDataSource) -> Promise<[HNItem]?> {
         return dataSource.GetItem(itemID).map({ $0?.Children as [HNItem]? })
     }
+
+    public var ActionsCache: [Int: HNItem.Actions] = [:]
 
     /// Errors thrown by the scraper
     public enum HNScraperError: Error {

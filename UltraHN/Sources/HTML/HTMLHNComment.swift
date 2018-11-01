@@ -23,19 +23,31 @@ public class HTMLHNComment: HNComment {
 
         // First, we get the comment ID
 
-        guard let commentID = Int(string: element.id()) else { return nil }
+        guard let commentID = Int(string: element.id()) else {
+            print("No ID on comment elm!")
+            return nil
+        }
 
         self.ID = commentID
 
         // Next, let's determine the depth/level.
 
-        guard let indentWidth = try? element.select("img[src='s.gif']").attr("width") else { return nil }
+        var shouldCollapse: Bool = element.hasClass("coll")
 
-        // Level 1 = 40px, Level 2 = 80px..., so we just need to divide the indentWidth by 40 to get the level number.
+        if let level = self.DetermineLevel(element) {
+            self.Level = level
 
-        guard let indentInt = Int(string: indentWidth) else { return nil }
+            if self.Level > 0 {
+                if let parentElm = self.FindParent(element), let parentID = Int(string: parentElm.id()) {
 
-        self.Level = (indentInt / 40)
+                    self.ParentID = parentID
+
+                    shouldCollapse = parentElm.hasClass("coll")
+                }
+            }
+        }
+
+        self.Visibility = shouldCollapse ? .Compact : .Visible
 
         // Here's a fun hack to get the story ID:
         // The reply link looks like this: /reply?id=18342697&goto=item%3Fid%3D18341572%2318342697
@@ -57,15 +69,73 @@ public class HTMLHNComment: HNComment {
             self.RelativeTime = time
         }
 
-        self.Text = try? element.select("commtext").text()
+        _ = try? element.select(".commtext .reply").remove()
 
-        if let fadeClasses = try? element.select("commtext").attr("class") {
+        self.Text = try? element.select(".commtext").text()
+
+        if let fadeClasses = try? element.select(".commtext").attr("class") {
             self.FadeLevel = self.MapFadeLevel(fadeClasses)
+        }
+
+        if let comHead = try? element.select(".comhead").text() {
+            self.Dead = comHead.contains("[dead]")
+            self.Flagged = comHead.contains("[flagged]")
         }
 
         self.ExtractActions(element.ownerDocument()!)
 
-        return nil
+        // print("Processed comment", self.ID)
+
+        return
+    }
+
+    func DetermineLevel(_ element: Element) -> Int? {
+        guard let indentWidth = try? element.select("img[src='s.gif']").attr("width") else {
+            print("No indent width on comment elm!")
+            return nil
+        }
+
+        // Level 1 = 40px, Level 2 = 80px..., so we just need to divide the indentWidth by 40 to get the level number.
+
+        guard let indentInt = Int(string: indentWidth) else {
+            print("Cant convert indent to int on comment elm!");
+            return nil
+        }
+
+        return (indentInt / 40)
+    }
+
+    // This function works except for path finding. Sometimes it will add an extra ID just before hitting level 0 (0-indexed).
+    /* func FindParent(_ currentLevel: Int, _ element: Element, _ checkedIDs: [Int] = []) -> (ParentID: Int, Path: [Int])? {
+        guard let aboveElm = try? element.previousElementSibling(),
+              let aboveUsSibling = aboveElm else { print("No previous sibling!!!"); return nil }
+
+        guard let aboveUsLevel = self.DetermineLevel(aboveUsSibling) else { print("Divined is nil"); return nil }
+
+        guard let aboveUsID = Int(string: aboveUsSibling.id()) else { print("Not a valid ID!!!"); return nil }
+
+        if aboveUsLevel != 0 {
+            let newIDs = aboveUsLevel < currentLevel ? checkedIDs + [aboveUsID] : checkedIDs
+
+            print("no good", currentLevel, "-", element.id(), aboveUsLevel, "-", aboveUsID, newIDs)
+
+            return self.FindParent(currentLevel, aboveUsSibling, newIDs)
+        }
+
+        return (aboveUsID, checkedIDs)
+    }*/
+
+    func FindParent(_ element: Element) -> Element? {
+        guard let aboveElm = try? element.previousElementSibling(),
+            let aboveUsSibling = aboveElm else { print("No previous sibling!!!"); return nil }
+
+        guard let aboveUsLevel = self.DetermineLevel(aboveUsSibling) else { print("Divined is nil"); return nil }
+
+        if aboveUsLevel != 0 {
+            return self.FindParent(aboveUsSibling)
+        }
+
+        return aboveUsSibling
     }
 
     public var FadeLevelClassMap: [String: Int] {
@@ -86,46 +156,5 @@ public class HTMLHNComment: HNComment {
 
         // No class in the map found...
         return 0
-    }
-
-    func GetReplyHMAC() -> Promise<String> {
-        return Alamofire.request("https://news.ycombinator.com/reply", method: .get, parameters: ["id": self.ID],
-                                 encoding: URLEncoding.queryString).responseString().then { html, _ -> Promise<String> in
-            let document = try SwiftSoup.parse(html)
-
-            return Promise.value(try document.select("input[name='hmac']").val())
-        }
-    }
-
-    func Reply(_ commentText: String) -> Promise<HNComment?> {
-        return firstly { () -> Promise<String> in
-            return self.GetReplyHMAC()
-            }.then { (replyHMAC) -> Promise<(string: String, response: PMKAlamofireDataResponse)> in
-                let parameters: Parameters = ["parent": self.ID, "goto": "item?id=" + self.IDString,
-                                              "hmac": replyHMAC, "text": commentText]
-                return Alamofire.request("https://news.ycombinator.com/comment", method: .post,
-                                         parameters: parameters, encoding: URLEncoding.httpBody).responseString()
-            }.then { resp -> Promise<HNComment?> in
-                // Look for a element like this to find our newly inserted comment:
-                // <td valign="top" class="votelinks">
-                //    <center>
-                //        <font color="#ff6600">*</font><br><img src="s.gif" height="1" width="14">
-                //    </center>
-                // </td>
-
-                let document = try SwiftSoup.parse(resp.string)
-
-                let newCommentHandle = try document.select(".votelinks [color='#ff6600']")
-
-                let newCommentElm = newCommentHandle.parents().first(where: { (elm) -> Bool in
-                    return elm.hasClass("comtr")
-                })
-
-                if let newComment = newCommentElm {
-                    return Promise.value(HTMLHNComment(newComment))
-                }
-
-                return Promise.value(nil)
-        }
     }
 }
