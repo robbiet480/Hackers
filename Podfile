@@ -17,6 +17,7 @@ target 'Hackers' do
   pod 'PromiseKit/Alamofire'
   pod 'RealmSwift'
   pod 'SkeletonView'
+  pod 'StatusAlert'
   pod 'SwiftSoup'
 end
 

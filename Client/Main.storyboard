@@ -181,20 +181,45 @@
                         <viewLayoutGuide key="safeArea" id="QiA-1a-N44"/>
                     </view>
                     <navigationItem key="navigationItem" title="Hacker News" id="On9-n6-9Yb">
-                        <barButtonItem key="rightBarButtonItem" title="fa-sort" id="NI1-nI-qqk" customClass="FontAwesomeBarButtonItem" customModule="FontAwesome_swift">
-                            <userDefinedRuntimeAttributes>
-                                <userDefinedRuntimeAttribute type="string" keyPath="styleName" value="solid"/>
-                            </userDefinedRuntimeAttributes>
-                        </barButtonItem>
+                        <rightBarButtonItems>
+                            <barButtonItem systemItem="compose" id="0TC-Cu-koi">
+                                <connections>
+                                    <action selector="composePressed:" destination="7mJ-zT-gNh" id="pKM-WG-Rhr"/>
+                                </connections>
+                            </barButtonItem>
+                            <barButtonItem title="fa-sort" id="NI1-nI-qqk" customClass="FontAwesomeBarButtonItem" customModule="FontAwesome_swift">
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="string" keyPath="styleName" value="solid"/>
+                                </userDefinedRuntimeAttributes>
+                            </barButtonItem>
+                        </rightBarButtonItems>
                     </navigationItem>
                     <connections>
+                        <outlet property="composeButton" destination="0TC-Cu-koi" id="BwL-EH-2Uz"/>
                         <outlet property="tableView" destination="sTU-Jc-dof" id="9Rr-YT-r8B"/>
                         <segue destination="sfd-t6-bG7" kind="show" identifier="ShowComments" id="rxv-oa-aIG"/>
+                        <segue destination="w4D-m9-tjN" kind="presentation" identifier="Compose" id="NXl-oX-nDd"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="cQy-Df-Rp9" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="2679" y="689"/>
+        </scene>
+        <!--Submit View Controller-->
+        <scene sceneID="FpM-XN-uuM">
+            <objects>
+                <viewController id="THN-nK-u38" customClass="SubmitViewController" customModule="Hackers" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="qI0-mH-pl9">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <viewLayoutGuide key="safeArea" id="EnU-tZ-Pa2"/>
+                    </view>
+                    <navigationItem key="navigationItem" id="hae-Ja-3Dh"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="GZu-f7-VX6" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="4268" y="688"/>
         </scene>
         <!--App Navigation Controller-->
         <scene sceneID="1am-tW-4v5">
@@ -595,7 +620,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="0nr-WJ-fqc" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3663.7681159420295" y="1435.7142857142856"/>
+            <point key="canvasLocation" x="3480" y="1434"/>
         </scene>
         <!--Settings-->
         <scene sceneID="Elr-K2-C7N">
@@ -606,6 +631,24 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="KhC-65-Tqy" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="922" y="1456"/>
+        </scene>
+        <!--App Navigation Controller-->
+        <scene sceneID="Oxg-Zn-2s8">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="w4D-m9-tjN" customClass="AppNavigationController" customModule="Hackers" customModuleProvider="target" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="6iZ-3Z-AVO">
+                        <rect key="frame" x="0.0" y="44" width="414" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="THN-nK-u38" kind="relationship" relationship="rootViewController" id="PNj-xd-ibS"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="FvL-KL-n6j" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="3480" y="688"/>
         </scene>
     </scenes>
     <resources>

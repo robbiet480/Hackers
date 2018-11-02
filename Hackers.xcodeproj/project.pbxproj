@@ -70,6 +70,7 @@
 		B69561C8218C251C00A6FD51 /* Date+Humanize.swift in Sources */ = {isa = PBXBuildFile; fileRef = B69561C7218C251C00A6FD51 /* Date+Humanize.swift */; };
 		B69561CA218C389B00A6FD51 /* ItemLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = B69561C9218C389B00A6FD51 /* ItemLog.swift */; };
 		B69561CC218CC72900A6FD51 /* ReplyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B69561CB218CC72900A6FD51 /* ReplyViewController.swift */; };
+		B69561CE218CD8C000A6FD51 /* SubmitViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B69561CD218CD8C000A6FD51 /* SubmitViewController.swift */; };
 		B6C86D002186A59B00FB18E8 /* HNPost.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6C86CFF2186A59B00FB18E8 /* HNPost.swift */; };
 		B6C86D022186A5A400FB18E8 /* HNComment.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6C86D012186A5A400FB18E8 /* HNComment.swift */; };
 		B6C86D042186A5AE00FB18E8 /* HNUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6C86D032186A5AE00FB18E8 /* HNUser.swift */; };
@@ -156,6 +157,7 @@
 		B69561C7218C251C00A6FD51 /* Date+Humanize.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+Humanize.swift"; sourceTree = "<group>"; };
 		B69561C9218C389B00A6FD51 /* ItemLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemLog.swift; sourceTree = "<group>"; };
 		B69561CB218CC72900A6FD51 /* ReplyViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReplyViewController.swift; sourceTree = "<group>"; };
+		B69561CD218CD8C000A6FD51 /* SubmitViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubmitViewController.swift; sourceTree = "<group>"; };
 		B6C86CFF2186A59B00FB18E8 /* HNPost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HNPost.swift; sourceTree = "<group>"; };
 		B6C86D012186A5A400FB18E8 /* HNComment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HNComment.swift; sourceTree = "<group>"; };
 		B6C86D032186A5AE00FB18E8 /* HNUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HNUser.swift; sourceTree = "<group>"; };
@@ -338,6 +340,7 @@
 				2464D209209DD8AE00C7F8FC /* Helpers */,
 				24CEAA9C1F8917D60050DEDF /* ReviewController.swift */,
 				B6CCFB00217EF2120085AC03 /* PushNotificationsDisclaimerViewController.swift */,
+				B69561CD218CD8C000A6FD51 /* SubmitViewController.swift */,
 			);
 			path = Client;
 			sourceTree = "<group>";
@@ -567,6 +570,7 @@
 				"${BUILT_PRODUCTS_DIR}/Realm/Realm.framework",
 				"${BUILT_PRODUCTS_DIR}/RealmSwift/RealmSwift.framework",
 				"${BUILT_PRODUCTS_DIR}/SkeletonView/SkeletonView.framework",
+				"${BUILT_PRODUCTS_DIR}/StatusAlert/StatusAlert.framework",
 				"${BUILT_PRODUCTS_DIR}/SwiftSoup/SwiftSoup.framework",
 				"${BUILT_PRODUCTS_DIR}/leveldb-library/leveldb.framework",
 			);
@@ -586,6 +590,7 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Realm.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RealmSwift.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SkeletonView.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/StatusAlert.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftSoup.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/leveldb.framework",
 			);
@@ -605,6 +610,7 @@
 				B683D6832189A6F50088C3D0 /* AlgoliaHNComment.swift in Sources */,
 				249A7E32194374550059C079 /* CommentTableViewCell.swift in Sources */,
 				B63E78C4217C1C6300750131 /* UIFont+Extensions.swift in Sources */,
+				B69561CE218CD8C000A6FD51 /* SubmitViewController.swift in Sources */,
 				2464D216209DFF6D00C7F8FC /* CommentsHeaderView.swift in Sources */,
 				24CE5FED19434BDC009D2677 /* AppDelegate.swift in Sources */,
 				B614BF4821870A4A00918E0F /* HNLeader.swift in Sources */,

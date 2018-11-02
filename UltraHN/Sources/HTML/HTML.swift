@@ -277,3 +277,40 @@ extension HNScraper.Page {
         return components.url!
     }
 }
+
+extension HNScraper {
+    fileprivate func GetFNID() -> Promise<String> {
+        return HTMLDataSource().Get("https://news.ycombinator.com/submit").then { resp -> Promise<String> in
+            guard let document = try? SwiftSoup.parse(resp.string) else { return Promise.init(error: NSError()) }
+
+            guard let fnid = try document.select("[name='fnid']").first()?.val() else { return Promise.init(error: NSError()) }
+
+            return Promise.value(fnid)
+        }
+    }
+
+    public func Submit(_ title: String, url: URL?, text: String?) -> Promise<HNPost?> {
+        return firstly { () -> Promise<String> in
+                return self.GetFNID()
+            }.then { (fnid) -> Promise<(string: String, response: PMKAlamofireDataResponse)> in
+                var parameters: Parameters = ["fnid": fnid, "fnop": "submit-page", "title": title]
+
+                if let url = url {
+                    parameters["url"] = url.absoluteString
+                } else if let text = text {
+                    parameters["text"] = text
+                }
+
+                print("Submitting post with params", parameters)
+
+                return Alamofire.request("https://news.ycombinator.com/r", method: .post,
+                                         parameters: parameters, encoding: URLEncoding.httpBody).responseString()
+            }.then { resp -> Promise<HNPost?> in
+                let document = try SwiftSoup.parse(resp.string)
+
+                guard let item = try document.select(".athing").first() else { return Promise.value(nil) }
+
+                return Promise.value(try HNPost(item))
+        }
+    }
+}

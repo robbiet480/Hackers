@@ -7,8 +7,6 @@
 //
 
 import Foundation
-import SwiftSoup
-import Alamofire
 import PromiseKit
 
 public class HNScraper {

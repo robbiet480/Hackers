@@ -7,6 +7,8 @@
 //
 
 import UIKit
+import FontAwesome_swift
+import StatusAlert
 
 class ReplyViewController: UIViewController {
 
@@ -25,26 +27,47 @@ class ReplyViewController: UIViewController {
         if let replyingTo = replyingTo, replyingTo.Type != .comment, let post = replyingTo as? HNPost {
             post.Reply(replyText.text).done { newComment in
                 print("Reply to post generated new comment", newComment)
-                }.ensure {
-                    self.dismiss(animated: true, completion: nil)
-                }.catch { error in
-                    print("Received error when attempting to reply to post", error)
+                self.success()
+            }.catch { error in
+                print("Received error when attempting to reply to post", error)
+
+                self.failed()
             }
         } else if let replyingTo = replyingTo, replyingTo.Type == .comment, let comment = replyingTo as? HNComment {
             comment.Reply(replyText.text).done { newComment in
                 print("Reply to comment generated new comment", newComment)
-            }.ensure {
-                self.dismiss(animated: true, completion: nil)
+                self.success()
             }.catch { error in
                 print("Received error when attempting to reply to comment", error)
+                self.failed()
             }
         }
     }
     @IBAction func cancelButton(_ sender: UIBarButtonItem) {
-        print("Closing window!")
         self.dismiss(animated: true, completion: nil)
     }
 
+    func success() {
+        self.dismiss(animated: true, completion: {
+            let statusAlert = StatusAlert()
+            statusAlert.image = UIImage.fontAwesomeIcon(name: .thumbsUp, style: .solid, textColor: .black,
+                                                        size: CGSize(width: 90, height: 90))
+            statusAlert.title = "Comment created"
+            statusAlert.canBePickedOrDismissed = true
+
+            statusAlert.showInKeyWindow()
+        })
+    }
+
+    func failed() {
+        let statusAlert = StatusAlert()
+        statusAlert.image = UIImage.fontAwesomeIcon(name: .timesCircle, style: .solid, textColor: .black,
+                                                    size: CGSize(width: 90, height: 90))
+        statusAlert.title = "Failed to create comment"
+        statusAlert.canBePickedOrDismissed = true
+
+        statusAlert.showInKeyWindow()
+    }
 
     /*
     // MARK: - Navigation

@@ -31,6 +31,7 @@ class NewsViewController : UIViewController {
     private var cancelFetch: (() -> Void)?
 
     private var notifiedPostID: Int?
+    @IBOutlet weak var composeButton: UIBarButtonItem!
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -44,7 +45,7 @@ class NewsViewController : UIViewController {
         tableView.refreshControl = refreshControl
         
         setupTheming()
-        
+
         view.showAnimatedSkeleton(usingColor: AppThemeProvider.shared.currentTheme.skeletonColor)
 
         NotificationCenter.default.addObserver(self, selector: #selector(NewsViewController.openPostNotification(_:)),
@@ -62,7 +63,18 @@ class NewsViewController : UIViewController {
             self.loadPosts()
         }
     }
-    
+
+    @IBAction func composePressed(_ sender: UIBarButtonItem) {
+        if UserDefaults.standard.loggedInUser == nil {
+            let alertController = UIAlertController(title: "Not logged in", message: "You must be logged in to do that", preferredStyle: .alert)
+            alertController.addAction(UIAlertAction(title: "OK", style: .cancel, handler: nil))
+            self.present(alertController, animated: true, completion: nil)
+            return
+        }
+
+        self.performSegue(withIdentifier: "Compose", sender: self)
+    }
+
     @IBAction func changeTheme(_ sender: Any) {
         AppThemeProvider.shared.nextTheme()
     }

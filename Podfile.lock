@@ -40,6 +40,7 @@ PODS:
   - RealmSwift (3.11.1):
     - Realm (= 3.11.1)
   - SkeletonView (1.1.1)
+  - StatusAlert (0.12.2)
   - SwiftSoup (1.7.4)
 
 DEPENDENCIES:
@@ -57,6 +58,7 @@ DEPENDENCIES:
   - PromiseKit/Alamofire
   - RealmSwift
   - SkeletonView
+  - StatusAlert
   - SwiftSoup
 
 SPEC REPOS:
@@ -78,6 +80,7 @@ SPEC REPOS:
     - Realm
     - RealmSwift
     - SkeletonView
+    - StatusAlert
     - SwiftSoup
 
 EXTERNAL SOURCES:
@@ -109,8 +112,9 @@ SPEC CHECKSUMS:
   Realm: 037c5919b9ceb59d6beed5d3b031096856b119b3
   RealmSwift: c9580133e73ef40ed340401af2dbc9a5790dfea7
   SkeletonView: 041053e904504e7d8db83df166e599be75659fe1
+  StatusAlert: c2935888a01e89efc0f4478d7c452140386559ea
   SwiftSoup: 92f5b348c131aed8af04f4326db1579ab19fa08c
 
-PODFILE CHECKSUM: 56c760d350ecad76bd955709b11036e294a6e556
+PODFILE CHECKSUM: b090221f9cac51f320b150de154cb74c9425dbec
 
 COCOAPODS: 1.6.0.beta.1
