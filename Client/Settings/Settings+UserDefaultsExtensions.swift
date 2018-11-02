@@ -95,15 +95,6 @@ extension UserDefaults {
         }
     }
 
-    public var animateUpdates: Bool {
-        set {
-            set(newValue, forKey: UserDefaultsKeys.AnimateUpdates.rawValue)
-        }
-        get {
-            return bool(forKey: UserDefaultsKeys.AnimateUpdates.rawValue)
-        }
-    }
-
     public var loggedInUser: HNUser? {
         set {
             if newValue == nil {

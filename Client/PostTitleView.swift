@@ -33,7 +33,7 @@ class PostTitleView: UIView, UIGestureRecognizerDelegate {
 
             self.metadataLabel.attributedText = self.metadataText(post)
 
-            if UserDefaults.standard.animateUpdates && oldValue != nil && (pointsChanged || commentsChanged) {
+            if oldValue != nil && (pointsChanged || commentsChanged) {
                 print("Post", self.post!.Title, "changed points: \(pointsChanged), comments: \(commentsChanged)")
 
                 cellDelegate?.didChangeMetadata()
@@ -50,12 +50,23 @@ class PostTitleView: UIView, UIGestureRecognizerDelegate {
         }
     }
 
+    @objc func handleRealtimeUpdate(_ notification: Notification) {
+        // print("Received update!", notification)
+        if let postUpdate = notification.object as? HNPost, self.post?.ID == postUpdate.ID {
+            print("Update is a post!", postUpdate.ID, postUpdate)
+            self.post = postUpdate as? HNPost
+        }
+    }
+
     override func layoutSubviews() {
         super.layoutSubviews()
         setupTheming()
         
         let titleTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.didPressTitleText(_:)))
         titleLabel.addGestureRecognizer(titleTapGestureRecognizer)
+
+        NotificationCenter.default.addObserver(self, selector: #selector(PostTitleView.handleRealtimeUpdate(_:)),
+                                               name: HNRealtime.shared.PostUpdatedNotificationName, object: nil)
     }
     
     @objc func didPressTitleText(_ sender: UITapGestureRecognizer) {
@@ -135,7 +146,8 @@ extension PostTitleView: Themed {
 
 // MARK: Extension util which generates NSAttributedString by text,font,color,backgroundColor
 extension NSAttributedString {
-    class func generate(from text: String, font: UIFont = UIFont.systemFont(ofSize: 14), color: UIColor = .black, backgroundColor: UIColor = .clear) -> NSAttributedString {
+    class func generate(from text: String, font: UIFont = UIFont.systemFont(ofSize: 14), color: UIColor = .black,
+                        backgroundColor: UIColor = .clear) -> NSAttributedString {
         let atts: [NSAttributedString.Key : Any] = [.foregroundColor: color, .font: font,
                                                     .backgroundColor: backgroundColor]
         return NSAttributedString(string: text, attributes: atts)

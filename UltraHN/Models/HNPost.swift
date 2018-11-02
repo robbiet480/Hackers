@@ -16,7 +16,6 @@ import Alamofire
 public class HNPost: HNItem {
     public var Rank: Int = 0
     public var Link: URL?
-    public var Site: String?
 
     public var ReplyHMAC: String?
 
@@ -24,6 +23,10 @@ public class HNPost: HNItem {
 
     override public var description: String {
         return "HNPost: rank: \(self.Rank), type: \(self.Type.description), ID: \(self.IDString) (dead: \(self.Dead)), author: \(self.Author), score: \(self.Score), comments: \(self.TotalChildren), title: \(self.Title), link: \(self.Link)"
+    }
+
+    var Site: String? {
+        return self.Link?.host
     }
 
     var LinkActivityViewController: UIActivityViewController {

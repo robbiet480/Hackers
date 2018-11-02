@@ -49,13 +49,6 @@ class SettingsViewController: FormViewController {
                     }
                 }.onExpandInlineRow(inlineStringPickerOnExpandInlineRow)
 
-            <<< SwitchRow("animateUpdates") {
-                    $0.title = "Animate realtime updates"
-                    $0.value = UserDefaults.standard.animateUpdates
-                }.onChange { row in
-                    UserDefaults.standard.animateUpdates = row.value!
-            }
-
             +++ Section(header: "Login",
                         footer: "Logging in allows you to upvote and downvote posts and comments as well as favorite posts. \r\n\r\nYour username and password is securely stored in Keychain and only ever sent to Hacker News/Y Combinator, never to the authors of Hackers.") {
                 $0.tag = "login"

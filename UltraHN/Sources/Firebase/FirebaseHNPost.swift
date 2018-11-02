@@ -1,14 +1,14 @@
 //
-//  FirebaseHNItem.swift
+//  FirebaseHNPost.swift
 //  Hackers
 //
-//  Created by Robert Trencheny on 10/29/18.
+//  Created by Robert Trencheny on 11/1/18.
 //  Copyright © 2018 Glass Umbrella. All rights reserved.
 //
 
 import Foundation
 
-public class FirebaseHNItem: HNItem {
+public class FirebaseHNPost: HNPost {
     enum CodingKeys: String, CodingKey {
         case Author = "by"
         case Title = "title"
@@ -19,6 +19,7 @@ public class FirebaseHNItem: HNItem {
         case `Type` = "type"
         case ChildrenIDs = "kids"
         case TotalChildren = "descendants"
+        case Link = "url"
     }
 
     required init(from decoder: Decoder) throws {
@@ -33,12 +34,10 @@ public class FirebaseHNItem: HNItem {
         self.ID = try container.decode(Int.self, forKey: .ID)
         self.CreatedAt = try? container.decode(Date.self, forKey: .CreatedAt)
         self.`Type` = try container.decode(HNItemType.self, forKey: .`Type`)
+        self.ChildrenIDs = try? container.decode([Int].self, forKey: .ChildrenIDs)
         self.TotalChildren = try container.decode(Int.self, forKey: .TotalChildren)
-        if let childIDs = try? container.decode([Int].self, forKey: .ChildrenIDs) {
-            self.ChildrenIDs = childIDs
-            if self.TotalChildren == 0 && childIDs.count > 0 {
-                self.TotalChildren = childIDs.count
-            }
+        if let linkStr = try? container.decode(String.self, forKey: .Link), let linkURL = URL(string: linkStr) {
+            self.Link = linkURL
         }
     }
 }

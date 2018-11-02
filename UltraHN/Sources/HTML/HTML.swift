@@ -176,8 +176,6 @@ extension HNPost {
                 self.Link = URL(string: linkStr)
             }
 
-            self.Site = try element.select(".sitestr").text()
-
             if let scoreStr = try metadataLine?.select(".score").text(),
                 let numStr = scoreStr.split(separator: .space).first, let intScore = Int(string: numStr.description) {
                 self.Score = intScore

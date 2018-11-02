@@ -34,9 +34,6 @@ class PostCell : UITableViewCell {
         super.layoutSubviews()
         setupTheming()
         setupThumbnailGesture()
-        if let titleView = self.postTitleView {
-            titleView.cellDelegate = self
-        }
     }
     
     private func setupThumbnailGesture() {
@@ -79,15 +76,5 @@ class PostCell : UITableViewCell {
 extension PostCell: Themed {
     func applyTheme(_ theme: AppTheme) {
         backgroundColor = theme.backgroundColor
-    }
-}
-
-extension PostCell: PostTitleViewCellDelegate {
-    func didChangeMetadata() {
-        self.setHighlighted(true, animated: true)
-
-        UIView.animate(withDuration: 1.5) {
-            self.setHighlighted(false, animated: true)
-        }
     }
 }

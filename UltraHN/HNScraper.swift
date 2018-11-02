@@ -14,23 +14,37 @@ import PromiseKit
 public class HNScraper {
     public static let shared: HNScraper = HNScraper()
 
+    /// Setting this to true will cause realtime updates to be sent to the NotificationCenter.
+    /// See HNRealtime for more information.
+    public var automaticallyMonitorItems: Bool = true
+
     public static var defaultDataSource = HTMLDataSource()
 
     public func GetPage(_ pageName: HNScraper.Page,
                         pageNumber: Int = 1, dataSource: HNDataSource = defaultDataSource) -> Promise<[HNItem]?> {
-        return dataSource.GetPage(pageName, pageNumber: pageNumber)
+        return dataSource.GetPage(pageName, pageNumber: pageNumber).then { items -> Promise<[HNItem]?> in
+            _ = HNRealtime.shared.Monitor(pageName)
+            items?.forEach { _ = HNRealtime.shared.Monitor($0.ID, $0.Type) }
+            return Promise.value(items)
+        }
     }
 
     public func GetItem(_ itemID: Int, dataSource: HNDataSource = defaultDataSource) -> Promise<HNItem?> {
-        return dataSource.GetItem(itemID)
+        return dataSource.GetItem(itemID).then { item -> Promise<HNItem?> in
+            if let item = item { _ = HNRealtime.shared.Monitor(item.ID, item.Type) }
+            return Promise.value(item)
+        }
     }
 
     public func GetUser(_ username: String, dataSource: HNDataSource = defaultDataSource) -> Promise<HNUser?> {
-        return dataSource.GetUser(username)
+        return dataSource.GetUser(username).then { user -> Promise<HNUser?> in
+            if let user = user { _ = HNRealtime.shared.Monitor(user.Username) }
+            return Promise.value(user)
+        }
     }
 
     public func GetChildren(_ itemID: Int, dataSource: HNDataSource = defaultDataSource) -> Promise<[HNItem]?> {
-        return dataSource.GetItem(itemID).map({ $0?.Children as [HNItem]? })
+        return self.GetItem(itemID, dataSource: dataSource).map({ $0?.Children as [HNItem]? })
     }
 
     public var ActionsCache: [Int: HNItem.Actions] = [:]

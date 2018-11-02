@@ -8,7 +8,6 @@
 
 import Foundation
 import RealmSwift
-import FirebaseDatabase
 
 // Originally from https://github.com/omaralbeik/HNClient/blob/master/Source/Model/HNItem.swift
 

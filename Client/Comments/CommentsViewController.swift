@@ -11,7 +11,6 @@ import UIKit
 import SafariServices
 import DZNEmptyDataSet
 import SkeletonView
-import FirebaseDatabase
 import RealmSwift
 import FontAwesome_swift
 import PromiseKit
@@ -47,7 +46,6 @@ class CommentsViewController : UIViewController {
 
         let activity = NSUserActivity(activityType: "com.weiranzhang.Hackers.comments")
         activity.isEligibleForHandoff = true
-        // FIXME: Needs the correct comment title
         activity.title = self.post!.ItemPageTitle
         activity.webpageURL = self.post!.ItemURL
         self.userActivity = activity
@@ -71,6 +69,8 @@ class CommentsViewController : UIViewController {
 
         self.userActivity?.resignCurrent()
         self.userActivity = nil
+
+        _ = HNRealtime.shared.Unmonitor(self.post!.ID)
     }
     
     deinit {

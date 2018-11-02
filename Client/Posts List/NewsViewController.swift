@@ -47,7 +47,8 @@ class NewsViewController : UIViewController {
         
         view.showAnimatedSkeleton(usingColor: AppThemeProvider.shared.currentTheme.skeletonColor)
 
-        NotificationCenter.default.addObserver(self, selector: #selector(NewsViewController.openPostNotification(_:)), name: NSNotification.Name(rawValue: "notificationOpenPost"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(NewsViewController.openPostNotification(_:)),
+                                               name: NSNotification.Name(rawValue: "notificationOpenPost"), object: nil)
     }
     
     @IBAction func changeTheme(_ sender: Any) {
@@ -221,6 +222,10 @@ extension NewsViewController: UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        let post = self.posts![indexPath.row]
+
+        _ = HNRealtime.shared.Unmonitor(post.ID)
+
         if let cell = cell as? PostCell {
             cell.thumbnailImageView.kf.cancelDownloadTask()
         }

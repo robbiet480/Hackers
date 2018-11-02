@@ -8,9 +8,12 @@
 
 import Foundation
 import FirebaseDatabase
+import CodableFirebase
 
 class HNRealtime {
+    public let PageUpdatedNotificationName = Notification.Name("UltraHN.PageUpdated")
     public let PostUpdatedNotificationName = Notification.Name("UltraHN.PostUpdated")
+    public let UserUpdatedNotificationName = Notification.Name("UltraHN.UserUpdated")
     public let CommentUpdatedNotificationName = Notification.Name("UltraHN.CommentUpdated")
 
     public static let shared: HNRealtime = HNRealtime()
@@ -28,18 +31,27 @@ class HNRealtime {
 
     public var handles: [DatabaseReference: DatabaseHandle] = [:]
 
-    public func Monitor(_ itemID: Int) -> DatabaseHandle {
-        return self.monitor(self.dbRef.child("item/" + itemID.description))
+    public enum MonitorType: Int, CaseIterable {
+        case Post
+        case Comment
+        case User
+        case Page
     }
 
-    public func Monitor(_ username: String) -> DatabaseHandle {
-        return self.monitor(self.dbRef.child("user/" + username))
+    public func Monitor(_ itemID: Int, _ itemType: HNItem.HNItemType) -> DatabaseHandle? {
+        let monitorType: MonitorType = itemType == .comment ? .Comment : .Post
+
+        return self.monitor(monitorType, self.dbRef.child("item/" + itemID.description))
+    }
+
+    public func Monitor(_ username: String) -> DatabaseHandle? {
+        return self.monitor(.User, self.dbRef.child("user/" + username))
     }
 
     public func Monitor(_ pageName: HNScraper.Page) -> DatabaseHandle? {
         guard let path = pageName.firebasePath else { return nil }
 
-        return self.monitor(self.dbRef.child(path))
+        return self.monitor(.Page, self.dbRef.child(path))
     }
 
     public func Unmonitor(_ itemID: Int) -> Bool {
@@ -56,10 +68,14 @@ class HNRealtime {
         return self.unmonitor(self.dbRef.child(path))
     }
 
-    private func monitor(_ itemRef: DatabaseReference) -> DatabaseHandle {
-        guard self.handles[itemRef] == nil else { return self.handles[itemRef]! }
+    private func monitor(_ monitorType: MonitorType, _ itemRef: DatabaseReference) -> DatabaseHandle? {
+        guard HNScraper.shared.automaticallyMonitorItems == true else { return nil }
 
-        let refHandle = itemRef.observe(.value, with: self.HandleUpdate, withCancel: self.HandleCancel)
+        guard self.handles[itemRef] == nil else { return self.handles[itemRef] }
+
+        print("Beginning to monitor", itemRef)
+
+        let refHandle = itemRef.observe(.value, with: self.HandleUpdate(monitorType), withCancel: self.HandleCancel)
 
         self.handles[itemRef] = refHandle
 
@@ -71,14 +87,47 @@ class HNRealtime {
 
         guard let handle = self.handles[itemRef] else { return false }
 
+        print("Ending monitoring of", itemRef)
+
         self.dbRef.removeObserver(withHandle: handle)
 
         return true
     }
 
-    public var HandleUpdate: ((DataSnapshot) -> Void) {
+    public func HandleUpdate(_ monitorType: MonitorType) -> ((DataSnapshot) -> Void) {
         return { snapshot in
-            print("Got snapshot", snapshot)
+            guard let value = snapshot.value else { print("Got an empty snapshot!"); return }
+
+            do {
+                switch monitorType {
+                case .Post:
+                    print("Got snapshot", snapshot.ref)
+                    let decoded = try FirebaseDecoder().decode(FirebaseHNPost.self, from: value)
+                    NotificationCenter.default.post(name: self.PostUpdatedNotificationName,
+                                                    object: decoded, userInfo: ["multiple": false,
+                                                                                "id": decoded.ID,
+                                                                                "type": decoded.Type])
+                    return
+                case .Comment:
+                    let decoded = try FirebaseDecoder().decode(FirebaseHNItem.self, from: value)
+                    NotificationCenter.default.post(name: self.CommentUpdatedNotificationName,
+                                                    object: decoded, userInfo: ["multiple": false,
+                                                                                "id": decoded.ID])
+                    return
+                case .User:
+                    let decoded = try FirebaseDecoder().decode(FirebaseHNUser.self, from: value)
+                    NotificationCenter.default.post(name: self.UserUpdatedNotificationName,
+                                                    object: decoded, userInfo: ["username": decoded.Username])
+                    return
+                case .Page:
+                    let decoded = try FirebaseDecoder().decode([Int].self, from: value)
+                    NotificationCenter.default.post(name: self.PageUpdatedNotificationName,
+                                                    object: decoded, userInfo: nil)
+                    return
+                }
+            } catch let error {
+                print("Got error while handling snapshot update!", error)
+            }
         }
     }
 
