@@ -69,6 +69,7 @@
 		B69561C6218BE0C300A6FD51 /* Dictionary+Subscript.swift in Sources */ = {isa = PBXBuildFile; fileRef = B69561C5218BE0C300A6FD51 /* Dictionary+Subscript.swift */; };
 		B69561C8218C251C00A6FD51 /* Date+Humanize.swift in Sources */ = {isa = PBXBuildFile; fileRef = B69561C7218C251C00A6FD51 /* Date+Humanize.swift */; };
 		B69561CA218C389B00A6FD51 /* ItemLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = B69561C9218C389B00A6FD51 /* ItemLog.swift */; };
+		B69561CC218CC72900A6FD51 /* ReplyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B69561CB218CC72900A6FD51 /* ReplyViewController.swift */; };
 		B6C86D002186A59B00FB18E8 /* HNPost.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6C86CFF2186A59B00FB18E8 /* HNPost.swift */; };
 		B6C86D022186A5A400FB18E8 /* HNComment.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6C86D012186A5A400FB18E8 /* HNComment.swift */; };
 		B6C86D042186A5AE00FB18E8 /* HNUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6C86D032186A5AE00FB18E8 /* HNUser.swift */; };
@@ -154,6 +155,7 @@
 		B69561C5218BE0C300A6FD51 /* Dictionary+Subscript.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Dictionary+Subscript.swift"; sourceTree = "<group>"; };
 		B69561C7218C251C00A6FD51 /* Date+Humanize.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+Humanize.swift"; sourceTree = "<group>"; };
 		B69561C9218C389B00A6FD51 /* ItemLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemLog.swift; sourceTree = "<group>"; };
+		B69561CB218CC72900A6FD51 /* ReplyViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReplyViewController.swift; sourceTree = "<group>"; };
 		B6C86CFF2186A59B00FB18E8 /* HNPost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HNPost.swift; sourceTree = "<group>"; };
 		B6C86D012186A5A400FB18E8 /* HNComment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HNComment.swift; sourceTree = "<group>"; };
 		B6C86D032186A5AE00FB18E8 /* HNUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HNUser.swift; sourceTree = "<group>"; };
@@ -262,6 +264,7 @@
 				2454B9031F655426005A98C7 /* EmptyViewController.swift */,
 				249B24741F659A5200028A92 /* CommentsHeader.xib */,
 				2464D215209DFF6D00C7F8FC /* CommentsHeaderView.swift */,
+				B69561CB218CC72900A6FD51 /* ReplyViewController.swift */,
 			);
 			path = Comments;
 			sourceTree = "<group>";
@@ -657,6 +660,7 @@
 				2464D21B209E1FA100C7F8FC /* SettingsViewController.swift in Sources */,
 				24DFD28C19436E51007F61E7 /* CommentsViewController.swift in Sources */,
 				24448F891FE7DFB800F85A28 /* ThumbnailFetcher.swift in Sources */,
+				B69561CC218CC72900A6FD51 /* ReplyViewController.swift in Sources */,
 				B6ECEB63217D64AE00755239 /* Realm+Initialization.swift in Sources */,
 				B614BF602187DC6F00918E0F /* HTMLHNUser.swift in Sources */,
 				2464D206209DD27A00C7F8FC /* Theming.swift in Sources */,

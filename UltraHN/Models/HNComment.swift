@@ -60,7 +60,11 @@ public class HNComment: HNItem {
                                  encoding: URLEncoding.queryString).responseString().then { html, _ -> Promise<String> in
                                     let document = try SwiftSoup.parse(html)
 
-                                    return Promise.value(try document.select("input[name='hmac']").val())
+                                    guard let hmacValue = try document.select("input[name='hmac']").first()?.val() else {
+                                        return Promise.init(error: NSError())
+                                    }
+
+                                    return Promise.value(hmacValue)
         }
     }
 

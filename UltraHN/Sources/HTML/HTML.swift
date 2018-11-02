@@ -204,7 +204,7 @@ extension HNPost {
                 self.Type = .askHN
             }
 
-            self.ReplyHMAC = try element.select("input[name='hmac']").val()
+            self.ReplyHMAC = try element.ownerDocument()?.select("input[name='hmac']").first()?.val()
 
             self.ExtractActions(element.ownerDocument()!)
         } catch let error as NSError {

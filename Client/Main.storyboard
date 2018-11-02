@@ -510,15 +510,26 @@
                                 <userDefinedRuntimeAttributes>
                                     <userDefinedRuntimeAttribute type="string" keyPath="styleName" value="solid"/>
                                 </userDefinedRuntimeAttributes>
+                                <connections>
+                                    <action selector="moreButton:" destination="sfd-t6-bG7" id="rfs-Zo-XR2"/>
+                                </connections>
                             </barButtonItem>
                             <barButtonItem title="fa-sort" id="DTP-uQ-ycz" customClass="FontAwesomeBarButtonItem" customModule="FontAwesome_swift">
                                 <userDefinedRuntimeAttributes>
                                     <userDefinedRuntimeAttribute type="string" keyPath="styleName" value="solid"/>
                                 </userDefinedRuntimeAttributes>
+                                <connections>
+                                    <action selector="sortButton:" destination="sfd-t6-bG7" id="K1g-yQ-9lY"/>
+                                </connections>
                             </barButtonItem>
                             <barButtonItem systemItem="action" id="jRl-bC-fZG">
                                 <connections>
                                     <action selector="shareTapped:" destination="sfd-t6-bG7" id="V6S-UC-iAf"/>
+                                </connections>
+                            </barButtonItem>
+                            <barButtonItem systemItem="reply" id="Dbk-Jq-oVm">
+                                <connections>
+                                    <action selector="replyButton:" destination="sfd-t6-bG7" id="CE7-KV-rFI"/>
                                 </connections>
                             </barButtonItem>
                         </rightBarButtonItems>
@@ -528,6 +539,7 @@
                         <outlet property="postTitleView" destination="3Eh-yp-NQt" id="dKO-u1-fmk"/>
                         <outlet property="tableView" destination="iN8-we-FRa" id="gnY-66-9vc"/>
                         <outlet property="thumbnailImageView" destination="OAG-fN-haY" id="mHu-tM-w1p"/>
+                        <segue destination="34Y-TC-otT" kind="presentation" identifier="Reply" id="x7C-7A-mTD"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="sVF-6q-fhE" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -538,6 +550,52 @@
                 </tapGestureRecognizer>
             </objects>
             <point key="canvasLocation" x="2678" y="1436"/>
+        </scene>
+        <!--Reply View Controller-->
+        <scene sceneID="VOx-nh-ekd">
+            <objects>
+                <viewController id="34Y-TC-otT" customClass="ReplyViewController" customModule="Hackers" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="pIL-ej-vvf">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="Xic-sC-VvZ">
+                                <rect key="frame" x="0.0" y="88" width="414" height="768"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                            </textView>
+                            <navigationBar contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="aPl-sU-lzi">
+                                <rect key="frame" x="0.0" y="44" width="414" height="44"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                                <items>
+                                    <navigationItem title="New Comment" id="Tu0-0v-Iyw">
+                                        <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="ff9-Oz-LgV">
+                                            <connections>
+                                                <action selector="cancelButton:" destination="34Y-TC-otT" id="RrP-TY-Sfd"/>
+                                            </connections>
+                                        </barButtonItem>
+                                        <barButtonItem key="rightBarButtonItem" title="Post" id="ZOh-2W-36s">
+                                            <connections>
+                                                <action selector="postButton:" destination="34Y-TC-otT" id="ymt-S1-7ez"/>
+                                            </connections>
+                                        </barButtonItem>
+                                    </navigationItem>
+                                </items>
+                            </navigationBar>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <viewLayoutGuide key="safeArea" id="Ce0-7L-Z3q"/>
+                    </view>
+                    <connections>
+                        <outlet property="navigationBar" destination="aPl-sU-lzi" id="7nN-Xo-JXL"/>
+                        <outlet property="replyText" destination="Xic-sC-VvZ" id="4ic-1c-fgV"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="0nr-WJ-fqc" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="3663.7681159420295" y="1435.7142857142856"/>
         </scene>
         <!--Settings-->
         <scene sceneID="Elr-K2-C7N">

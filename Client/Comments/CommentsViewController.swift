@@ -47,7 +47,9 @@ class CommentsViewController : UIViewController {
     @IBOutlet weak var postTitleContainerView: UIView!
     @IBOutlet weak var postTitleView: PostTitleView!
     @IBOutlet weak var thumbnailImageView: UIImageView!
-    
+
+    var replyToComment: HNComment?
+
     override func viewDidLoad() {
         super.viewDidLoad()
         setupTheming()
@@ -152,6 +154,29 @@ class CommentsViewController : UIViewController {
         self.present(alertController, animated: true, completion: nil)
 
         alertController.popoverPresentationController?.barButtonItem = sender
+    }
+
+    @IBAction func moreButton(_ sender: UIBarButtonItem) {
+
+    }
+
+    @IBAction func sortButton(_ sender: UIBarButtonItem) {
+
+    }
+
+    @IBAction func replyButton(_ sender: UIBarButtonItem) {
+        self.performSegue(withIdentifier: "Reply", sender: self)
+    }
+
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "Reply", let replyVC = segue.destination as? ReplyViewController {
+            if let comment = self.replyToComment {
+                replyVC.replyingTo = comment
+                self.replyToComment = nil
+            } else {
+                replyVC.replyingTo = self.post
+            }
+        }
     }
 
     @objc func handleShortcut(keyCommand: UIKeyCommand) -> Bool {
@@ -296,7 +321,15 @@ extension CommentsViewController: UITableViewDelegate {
 
         let actions = comment.Actions != nil ? comment.Actions! : HNScraper.shared.ActionsCache[comment.ID]!
 
-        return actions.swipeActionsConfiguration(item: comment, trailing: true)
+        let config = actions.swipeActionsConfiguration(item: comment, trailing: true)
+
+        let replyAction = UIContextualAction(style: UIContextualAction.Style.normal, title: "Reply") { (_, _, complete) in
+            self.replyToComment = comment
+            self.performSegue(withIdentifier: "Reply", sender: self)
+            complete(true)
+        }
+
+        return UISwipeActionsConfiguration(actions: config.actions + [replyAction])
     }
 
     func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {

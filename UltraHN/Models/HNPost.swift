@@ -116,7 +116,10 @@ public class HNPost: HNItem {
             return Promise.value(replyHMAC)
         }
 
-        return Promise.value("")
+        return HNScraper.shared.GetItem(self.ID, dataSource: HTMLDataSource()).then { item -> Promise<String> in
+            let post = item as! HNPost
+            return Promise.value(post.ReplyHMAC!)
+        }
     }
 
     func Reply(_ commentText: String) -> Promise<HNComment?> {
