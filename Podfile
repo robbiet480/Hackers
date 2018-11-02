@@ -12,14 +12,11 @@ target 'Hackers' do
   pod 'Firebase/Database'
   pod 'FontAwesome.swift'
   pod 'Kingfisher'
-  pod 'ObjectMapper'
-  pod 'ObjectMapperAdditions/Realm'
   pod 'OpenGraph', :git => 'https://github.com/robbiet480/OpenGraph', :branch => 'patch-1'
   pod 'PromiseKit'
   pod 'PromiseKit/Alamofire'
   pod 'RealmSwift'
   pod 'SkeletonView'
-  pod 'SwiftDate'
   pod 'SwiftSoup'
 end
 

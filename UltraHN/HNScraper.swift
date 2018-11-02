@@ -169,8 +169,10 @@ public class HNScraper {
             /// If date is nil, today is used.
             case .ForDate(let storedDate):
                 let date = storedDate != nil ? storedDate! : Date()
+                let formatter = DateFormatter()
+                formatter.dateFormat = "MM/dd/yyyy"
 
-                return "Home page for " + date.formatter().string(from: date)
+                return "Home page for " + formatter.string(from: date)
             case .SubmissionsForUsername(let username):
                 return username + "'s submitted stories"
             case .CommentsForUsername(let username):

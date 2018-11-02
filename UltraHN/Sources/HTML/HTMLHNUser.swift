@@ -128,7 +128,7 @@ public class HTMLHNUser: HNUser {
             let timestamp = timestampStr,
             let interval = TimeInterval(string: timestamp) {
 
-            self.CreatedAt = Date(seconds: interval)
+            self.CreatedAt = Date(timeIntervalSince1970: interval)
         }
     }
 

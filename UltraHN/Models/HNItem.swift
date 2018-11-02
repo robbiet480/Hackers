@@ -11,7 +11,6 @@ import Alamofire
 import PromiseKit
 import SwiftSoup
 import RealmSwift
-import SwiftDate
 import FontAwesome_swift
 
 public class HNItem: NSObject, Codable {
@@ -123,7 +122,7 @@ public class HNItem: NSObject, Codable {
 
     var RelativeDate: String {
         if let createdAt = self.CreatedAt {
-            return createdAt.toRelative(style: RelativeFormatter.twitterStyle())
+            return createdAt.timeAgo(numericDates: true)
         }
 
         return self.RelativeTime

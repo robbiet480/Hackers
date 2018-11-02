@@ -21,13 +21,6 @@ PODS:
     - GoogleUtilities/Environment
   - Kingfisher (4.8.1)
   - leveldb-library (1.20)
-  - ObjectMapper (3.3.0)
-  - ObjectMapperAdditions/Core (4.2.1):
-    - ObjectMapper
-  - ObjectMapperAdditions/Realm (4.2.1):
-    - ObjectMapper
-    - ObjectMapperAdditions/Core
-    - RealmSwift
   - OpenGraph (1.0.5)
   - PromiseKit (6.5.2):
     - PromiseKit/CorePromise (= 6.5.2)
@@ -47,7 +40,6 @@ PODS:
   - RealmSwift (3.11.1):
     - Realm (= 3.11.1)
   - SkeletonView (1.1.1)
-  - SwiftDate (5.0.10)
   - SwiftSoup (1.7.4)
 
 DEPENDENCIES:
@@ -60,14 +52,11 @@ DEPENDENCIES:
   - Firebase/Database
   - FontAwesome.swift
   - Kingfisher
-  - ObjectMapper
-  - ObjectMapperAdditions/Realm
   - OpenGraph (from `https://github.com/robbiet480/OpenGraph`, branch `patch-1`)
   - PromiseKit
   - PromiseKit/Alamofire
   - RealmSwift
   - SkeletonView
-  - SwiftDate
   - SwiftSoup
 
 SPEC REPOS:
@@ -85,13 +74,10 @@ SPEC REPOS:
     - GoogleUtilities
     - Kingfisher
     - leveldb-library
-    - ObjectMapper
-    - ObjectMapperAdditions
     - PromiseKit
     - Realm
     - RealmSwift
     - SkeletonView
-    - SwiftDate
     - SwiftSoup
 
 EXTERNAL SOURCES:
@@ -118,16 +104,13 @@ SPEC CHECKSUMS:
   GoogleUtilities: 8208aee3e97a1ae93d44c57e96c476a5a3b03f0a
   Kingfisher: 868c1149679a7ab6869be118faa9b5aed154aaf0
   leveldb-library: 08cba283675b7ed2d99629a4bc5fd052cd2bb6a5
-  ObjectMapper: b612bf8c8e99c4dc0bb6013a51f7c27966ed5da9
-  ObjectMapperAdditions: e11586bce98cf1090a36c24d4628ae5720a95d85
   OpenGraph: f3529e35045abd3b163f455278d4d866c0eb061b
   PromiseKit: 27c1601bfb73405871b805bcb8cf7e55c4dad3db
   Realm: 037c5919b9ceb59d6beed5d3b031096856b119b3
   RealmSwift: c9580133e73ef40ed340401af2dbc9a5790dfea7
   SkeletonView: 041053e904504e7d8db83df166e599be75659fe1
-  SwiftDate: fcdaa7ca22a903faf6d7ed231239a88d174dcae3
   SwiftSoup: 92f5b348c131aed8af04f4326db1579ab19fa08c
 
-PODFILE CHECKSUM: 9c82b23e8bfa3039b03a5b52e293c9418c9646b7
+PODFILE CHECKSUM: 56c760d350ecad76bd955709b11036e294a6e556
 
 COCOAPODS: 1.6.0.beta.1

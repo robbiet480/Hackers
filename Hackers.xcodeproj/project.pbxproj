@@ -67,6 +67,7 @@
 		B683D6832189A6F50088C3D0 /* AlgoliaHNComment.swift in Sources */ = {isa = PBXBuildFile; fileRef = B683D6822189A6F40088C3D0 /* AlgoliaHNComment.swift */; };
 		B69561C4218BD37200A6FD51 /* FirebaseHNPost.swift in Sources */ = {isa = PBXBuildFile; fileRef = B69561C3218BD37200A6FD51 /* FirebaseHNPost.swift */; };
 		B69561C6218BE0C300A6FD51 /* Dictionary+Subscript.swift in Sources */ = {isa = PBXBuildFile; fileRef = B69561C5218BE0C300A6FD51 /* Dictionary+Subscript.swift */; };
+		B69561C8218C251C00A6FD51 /* Date+Humanize.swift in Sources */ = {isa = PBXBuildFile; fileRef = B69561C7218C251C00A6FD51 /* Date+Humanize.swift */; };
 		B6B90AC3218808640043AD70 /* UltraHN+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6B90AC2218808640043AD70 /* UltraHN+Extensions.swift */; };
 		B6C86D002186A59B00FB18E8 /* HNPost.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6C86CFF2186A59B00FB18E8 /* HNPost.swift */; };
 		B6C86D022186A5A400FB18E8 /* HNComment.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6C86D012186A5A400FB18E8 /* HNComment.swift */; };
@@ -151,6 +152,7 @@
 		B683D6822189A6F40088C3D0 /* AlgoliaHNComment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlgoliaHNComment.swift; sourceTree = "<group>"; };
 		B69561C3218BD37200A6FD51 /* FirebaseHNPost.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FirebaseHNPost.swift; sourceTree = "<group>"; };
 		B69561C5218BE0C300A6FD51 /* Dictionary+Subscript.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Dictionary+Subscript.swift"; sourceTree = "<group>"; };
+		B69561C7218C251C00A6FD51 /* Date+Humanize.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+Humanize.swift"; sourceTree = "<group>"; };
 		B6B90AC2218808640043AD70 /* UltraHN+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UltraHN+Extensions.swift"; sourceTree = "<group>"; };
 		B6C86CFF2186A59B00FB18E8 /* HNPost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HNPost.swift; sourceTree = "<group>"; };
 		B6C86D012186A5A400FB18E8 /* HNComment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HNComment.swift; sourceTree = "<group>"; };
@@ -221,6 +223,7 @@
 				B6B90AC2218808640043AD70 /* UltraHN+Extensions.swift */,
 				B683D67E218923570088C3D0 /* URLComponents+QueryDictionary.swift */,
 				B69561C5218BE0C300A6FD51 /* Dictionary+Subscript.swift */,
+				B69561C7218C251C00A6FD51 /* Date+Humanize.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -556,14 +559,11 @@
 				"${BUILT_PRODUCTS_DIR}/FontAwesome.swift/FontAwesome_swift.framework",
 				"${BUILT_PRODUCTS_DIR}/GoogleUtilities/GoogleUtilities.framework",
 				"${BUILT_PRODUCTS_DIR}/Kingfisher/Kingfisher.framework",
-				"${BUILT_PRODUCTS_DIR}/ObjectMapper/ObjectMapper.framework",
-				"${BUILT_PRODUCTS_DIR}/ObjectMapperAdditions/ObjectMapperAdditions.framework",
 				"${BUILT_PRODUCTS_DIR}/OpenGraph/OpenGraph.framework",
 				"${BUILT_PRODUCTS_DIR}/PromiseKit/PromiseKit.framework",
 				"${BUILT_PRODUCTS_DIR}/Realm/Realm.framework",
 				"${BUILT_PRODUCTS_DIR}/RealmSwift/RealmSwift.framework",
 				"${BUILT_PRODUCTS_DIR}/SkeletonView/SkeletonView.framework",
-				"${BUILT_PRODUCTS_DIR}/SwiftDate/SwiftDate.framework",
 				"${BUILT_PRODUCTS_DIR}/SwiftSoup/SwiftSoup.framework",
 				"${BUILT_PRODUCTS_DIR}/leveldb-library/leveldb.framework",
 			);
@@ -578,14 +578,11 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FontAwesome_swift.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleUtilities.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Kingfisher.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ObjectMapper.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ObjectMapperAdditions.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/OpenGraph.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/PromiseKit.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Realm.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RealmSwift.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SkeletonView.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftDate.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftSoup.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/leveldb.framework",
 			);
@@ -631,6 +628,7 @@
 				B6C86D002186A59B00FB18E8 /* HNPost.swift in Sources */,
 				24D6B8CA1C1EDBFC00618422 /* AppTheme.swift in Sources */,
 				B614BF672187E80500918E0F /* HNLogin.swift in Sources */,
+				B69561C8218C251C00A6FD51 /* Date+Humanize.swift in Sources */,
 				B614BF5A2187C78E00918E0F /* FirebaseHNUser.swift in Sources */,
 				245DCAB01CD4DA2A00152AA3 /* SFSafariViewController+PreviewActionItems.swift in Sources */,
 				B6CCFB01217EF2120085AC03 /* PushNotificationsDisclaimerViewController.swift in Sources */,
