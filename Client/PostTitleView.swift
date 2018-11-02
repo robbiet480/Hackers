@@ -34,7 +34,7 @@ class PostTitleView: UIView, UIGestureRecognizerDelegate {
             self.metadataLabel.attributedText = self.metadataText(post)
 
             if oldValue != nil && (pointsChanged || commentsChanged) {
-                print("Post", self.post!.Title, "changed points: \(pointsChanged), comments: \(commentsChanged)")
+                // print("Post", self.post!.Title, "changed points: \(pointsChanged), comments: \(commentsChanged)")
 
                 cellDelegate?.didChangeMetadata()
 
@@ -53,8 +53,7 @@ class PostTitleView: UIView, UIGestureRecognizerDelegate {
     @objc func handleRealtimeUpdate(_ notification: Notification) {
         // print("Received update!", notification)
         if let postUpdate = notification.object as? HNPost, self.post?.ID == postUpdate.ID {
-            print("Update is a post!", postUpdate.ID, postUpdate)
-            self.post = postUpdate as? HNPost
+            self.post = postUpdate
         }
     }
 

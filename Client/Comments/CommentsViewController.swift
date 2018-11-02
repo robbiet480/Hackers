@@ -16,7 +16,21 @@ import FontAwesome_swift
 import PromiseKit
 
 class CommentsViewController : UIViewController {
-    var post: HNPost?
+    var post: HNPost? {
+        didSet {
+            setupPostTitleView()
+            loadComments()
+
+            // FIXME: Mark as read
+            //self.post?.MarkAsRead()
+
+            let activity = NSUserActivity(activityType: "com.weiranzhang.Hackers.comments")
+            activity.isEligibleForHandoff = true
+            activity.title = self.post?.ItemPageTitle
+            activity.webpageURL = self.post?.ItemURL
+            self.userActivity = activity
+        }
+    }
 
     var comments: [HNComment]? {
         didSet {
@@ -39,16 +53,6 @@ class CommentsViewController : UIViewController {
         setupTheming()
         setupPostTitleView()
         view.showAnimatedSkeleton(usingColor: AppThemeProvider.shared.currentTheme.skeletonColor)
-        loadComments()
-
-        // FIXME: Mark as read
-        //self.post?.MarkAsRead()
-
-        let activity = NSUserActivity(activityType: "com.weiranzhang.Hackers.comments")
-        activity.isEligibleForHandoff = true
-        activity.title = self.post!.ItemPageTitle
-        activity.webpageURL = self.post!.ItemURL
-        self.userActivity = activity
     }
     
     override func awakeFromNib() {
@@ -70,7 +74,8 @@ class CommentsViewController : UIViewController {
         self.userActivity?.resignCurrent()
         self.userActivity = nil
 
-        _ = HNRealtime.shared.Unmonitor(self.post!.ID)
+        guard let post = self.post else { return }
+        _ = HNRealtime.shared.Unmonitor(post.ID)
     }
     
     deinit {
@@ -94,7 +99,8 @@ class CommentsViewController : UIViewController {
     }
     
     func loadComments() {
-        HNScraper.shared.GetChildren(self.post!.ID).done {
+        guard let post = self.post else { return }
+        HNScraper.shared.GetChildren(post.ID).done {
             self.comments = $0 as? [HNComment]
 
             self.view.hideSkeleton()
@@ -107,11 +113,14 @@ class CommentsViewController : UIViewController {
     }
     
     func setupPostTitleView() {
+        guard let postTitleView = postTitleView else { return }
+
+        postTitleView.delegate = self
+        postTitleView.isTitleTapEnabled = true
+
         guard let post = post else { return }
         
         postTitleView.post = post
-        postTitleView.delegate = self
-        postTitleView.isTitleTapEnabled = true
         thumbnailImageView.setImage(post)
     }
     
@@ -120,6 +129,8 @@ class CommentsViewController : UIViewController {
     }
     
     @IBAction func shareTapped(_ sender: UIBarButtonItem) {
+        print("share tapped", self, self.navigationController, self.navigationController?.topViewController)
+
         let alertController = UIAlertController(title: "Share...", message: nil, preferredStyle: .actionSheet)
         let postURLAction = UIAlertAction(title: "Content Link", style: .default) { action in
             let linkVC = self.post!.LinkActivityViewController
@@ -138,6 +149,66 @@ class CommentsViewController : UIViewController {
         self.present(alertController, animated: true, completion: nil)
 
         alertController.popoverPresentationController?.barButtonItem = sender
+    }
+
+    @objc func handleShortcut(keyCommand: UIKeyCommand) -> Bool {
+        // Why j/k? https://www.labnol.org/internet/j-k-keyboard-shortcuts/20779/
+        if keyCommand.input == "j" {
+            selectPrev(sender: keyCommand)
+            return true
+        } else if keyCommand.input == "k" {
+            selectNext(sender: keyCommand)
+            return true
+        } else if keyCommand.input == "\r" {
+            selectCurrent(sender: keyCommand)
+            return true
+        }
+
+        return false
+    }
+
+    // UITableView keyboard shortcuts found at
+    // https://stablekernel.com/creating-a-delightful-user-experience-with-ios-keyboard-shortcuts/
+
+    override var keyCommands: [UIKeyCommand] {
+        let previousObjectCommand = UIKeyCommand(input: "j", modifierFlags: [],
+                                                 action: #selector(handleShortcut(keyCommand:)), discoverabilityTitle: "Previous Comment")
+        let nextObjectCommand = UIKeyCommand(input: "k", modifierFlags: [],
+                                             action: #selector(handleShortcut(keyCommand:)), discoverabilityTitle: "Next Comment")
+        let selectObjectCommand = UIKeyCommand(input: "\r", modifierFlags: [],
+                                               action: #selector(handleShortcut(keyCommand:)), discoverabilityTitle: "Toggle Comment Visibility")
+
+        var shortcuts: [UIKeyCommand] = []
+        if let selectedRow = self.tableView?.indexPathForSelectedRow?.row {
+            if selectedRow < self.comments!.count - 1 {
+                shortcuts.append(nextObjectCommand)
+            }
+            if selectedRow > 0 {
+                shortcuts.append(previousObjectCommand)
+            }
+            shortcuts.append(selectObjectCommand)
+        } else {
+            shortcuts.append(nextObjectCommand)
+        }
+        return shortcuts
+    }
+
+    @objc func selectNext(sender: UIKeyCommand) {
+        if let selectedIP = self.tableView?.indexPathForSelectedRow {
+            self.tableView.selectRow(at: NSIndexPath(row: selectedIP.row + 1, section: selectedIP.section) as IndexPath, animated: true, scrollPosition: .middle)
+        } else {
+            self.tableView.selectRow(at: NSIndexPath(row: 0, section: 0) as IndexPath, animated: true, scrollPosition: .top)
+        }
+    }
+
+    @objc func selectPrev(sender: UIKeyCommand) {
+        if let selectedIP = self.tableView?.indexPathForSelectedRow {
+            self.tableView.selectRow(at: NSIndexPath(row: selectedIP.row - 1, section: selectedIP.section) as IndexPath, animated: true, scrollPosition: .middle)
+        }
+    }
+
+    @objc func selectCurrent(sender: UIKeyCommand) {
+        toggleCellVisibilityForCell(self.tableView.indexPathForSelectedRow)
     }
 }
 
@@ -308,67 +379,5 @@ extension CommentsViewController: DZNEmptyDataSetSource, DZNEmptyDataSetDelegate
 extension CommentsViewController: SkeletonTableViewDataSource {
     func collectionSkeletonView(_ skeletonView: UITableView, cellIdenfierForRowAt indexPath: IndexPath) -> ReusableCellIdentifier {
         return "SkeletonCell"
-    }
-}
-
-extension CommentsViewController: KeyCommandProvider {
-    @objc func handleShortcut(keyCommand: UIKeyCommand) -> Bool {
-        // Why j/k? https://www.labnol.org/internet/j-k-keyboard-shortcuts/20779/
-        if keyCommand.input == "j" {
-            selectPrev(sender: keyCommand)
-            return true
-        } else if keyCommand.input == "k" {
-            selectNext(sender: keyCommand)
-            return true
-        } else if keyCommand.input == "\r" {
-            selectCurrent(sender: keyCommand)
-            return true
-        }
-
-        return false
-    }
-
-    // UITableView keyboard shortcuts found at
-    // https://stablekernel.com/creating-a-delightful-user-experience-with-ios-keyboard-shortcuts/
-
-    var shortcutKeys: [UIKeyCommand] {
-        let previousObjectCommand = UIKeyCommand(input: "j", modifierFlags: [],
-                                                 action: #selector(handleShortcut(keyCommand:)), discoverabilityTitle: "Previous Comment")
-        let nextObjectCommand = UIKeyCommand(input: "k", modifierFlags: [],
-                                             action: #selector(handleShortcut(keyCommand:)), discoverabilityTitle: "Next Comment")
-        let selectObjectCommand = UIKeyCommand(input: "\r", modifierFlags: [],
-                                               action: #selector(handleShortcut(keyCommand:)), discoverabilityTitle: "Toggle Comment Visibility")
-
-        var shortcuts: [UIKeyCommand] = []
-        if let selectedRow = self.tableView?.indexPathForSelectedRow?.row {
-            if selectedRow < self.comments!.count - 1 {
-                shortcuts.append(nextObjectCommand)
-            }
-            if selectedRow > 0 {
-                shortcuts.append(previousObjectCommand)
-            }
-            shortcuts.append(selectObjectCommand)
-        } else {
-            shortcuts.append(nextObjectCommand)
-        }
-        return shortcuts
-    }
-
-    @objc func selectNext(sender: UIKeyCommand) {
-        if let selectedIP = self.tableView?.indexPathForSelectedRow {
-            self.tableView.selectRow(at: NSIndexPath(row: selectedIP.row + 1, section: selectedIP.section) as IndexPath, animated: true, scrollPosition: .middle)
-        } else {
-            self.tableView.selectRow(at: NSIndexPath(row: 0, section: 0) as IndexPath, animated: true, scrollPosition: .top)
-        }
-    }
-
-    @objc func selectPrev(sender: UIKeyCommand) {
-        if let selectedIP = self.tableView?.indexPathForSelectedRow {
-            self.tableView.selectRow(at: NSIndexPath(row: selectedIP.row - 1, section: selectedIP.section) as IndexPath, animated: true, scrollPosition: .middle)
-        }
-    }
-
-    @objc func selectCurrent(sender: UIKeyCommand) {
-        toggleCellVisibilityForCell(self.tableView.indexPathForSelectedRow)
     }
 }

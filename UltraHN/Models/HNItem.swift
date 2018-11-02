@@ -431,9 +431,7 @@ public class HNItem: NSObject, Codable {
         // href looks like
         // vote?id=<ID>&how=<DIR>&auth=<AUTH KEY>&goto=<REDIRECT>
 
-        print("Getting actions")
-
-        if HNScraper.shared.ActionsCache[self.ID] != nil { print("Item already in cache!", self.ID, HNScraper.shared.ActionsCache[self.ID]); return }
+        if HNScraper.shared.ActionsCache[self.ID] != nil { /*print("Item already in cache!", self.ID, HNScraper.shared.ActionsCache[self.ID]);*/ return }
 
         // Action links are any links in the item details that have &auth=
         guard let linkElements = try? document.select("a[href*='&auth=']") else { return }
@@ -450,8 +448,6 @@ public class HNItem: NSObject, Codable {
         HNScraper.shared.ActionsCache[self.ID] = self.Actions
 
         self.AllActions = self.makeChildActionsMap(allHrefs.filter { !$0.contains("id=" + self.IDString) })
-
-        print("Done getting actions", self.Actions)
 
         return
     }

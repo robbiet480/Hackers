@@ -68,13 +68,14 @@ class NewsViewController : UIViewController {
         }
     }
 
-    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+    /*override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         DispatchQueue.global().async(execute: {
             DispatchQueue.main.sync {
+                print("viewDidRotate being called!")
                 self.viewDidRotate()
             }
         })
-    }
+    }*/
 
     public func viewDidRotate() {
         guard let tableView = self.tableView, let indexPaths = tableView.indexPathsForVisibleRows else { return }
@@ -96,6 +97,7 @@ class NewsViewController : UIViewController {
     }
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        print("Prepare for segue", segue.identifier)
         if segue.identifier == "ShowComments" {
             if let notifiedPostID = self.notifiedPostID, let segueNavigationController = segue.destination as? UINavigationController,
                 let commentsViewController = segueNavigationController.topViewController as? CommentsViewController {
@@ -106,9 +108,9 @@ class NewsViewController : UIViewController {
                     commentsViewController.post = $0 as? HNPost
                 }
             } else if let indexPath = tableView.indexPathForSelectedRow,
-                let segueNavigationController = segue.destination as? UINavigationController,
-                let commentsViewController = segueNavigationController.topViewController as? CommentsViewController {
-        
+                let commentsViewController = segue.destination as? CommentsViewController {
+
+                print("Setting comments VC post!")
                 let post = posts![indexPath.row]
                 commentsViewController.post = post
             }
@@ -222,9 +224,9 @@ extension NewsViewController: UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        let post = self.posts![indexPath.row]
-
-        _ = HNRealtime.shared.Unmonitor(post.ID)
+        if let post = self.posts?[indexPath.row] {
+            _ = HNRealtime.shared.Unmonitor(post.ID)
+        }
 
         if let cell = cell as? PostCell {
             cell.thumbnailImageView.kf.cancelDownloadTask()
@@ -346,9 +348,7 @@ extension NewsViewController: PostCellDelegate {
             alertController.popoverPresentationController?.sourceRect = self.tableView.cellForRow(at: indexPath)!.frame
         }
     }
-}
 
-extension NewsViewController: KeyCommandProvider {
     @objc func handleShortcut(keyCommand: UIKeyCommand) -> Bool {
         // Why j/k? https://www.labnol.org/internet/j-k-keyboard-shortcuts/20779/
         if keyCommand.input == "j" {
@@ -378,7 +378,7 @@ extension NewsViewController: KeyCommandProvider {
     // UITableView keyboard shortcuts found at
     // https://stablekernel.com/creating-a-delightful-user-experience-with-ios-keyboard-shortcuts/
 
-    var shortcutKeys: [UIKeyCommand] {
+    override var keyCommands: [UIKeyCommand] {
         let reloadCommand = UIKeyCommand(input: "r", modifierFlags: .command,
                                          action: #selector(handleShortcut(keyCommand:)), discoverabilityTitle: "Reload")
         let previousObjectCommand = UIKeyCommand(input: "j", modifierFlags: .shift,

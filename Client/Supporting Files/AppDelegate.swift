@@ -16,6 +16,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
     
     func applicationDidFinishLaunching(_ application: UIApplication) {
+        setAppTheme()
         UIFont.overrideInitialize()
         UNUserNotificationCenter.current().delegate = self
 
@@ -29,7 +30,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         ReviewController.incrementLaunchCounter()
         ReviewController.requestReview()
-        setAppTheme()
 
         // FIXME: Need to debounce smooth updates of brightness values
 //        NotificationCenter.default.addObserver(self, selector: #selector(brightnessChanged),

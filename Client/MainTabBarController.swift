@@ -20,31 +20,44 @@ class MainTabBarController: UITabBarController {
         let realm = Realm.live()
 
         if realm.objects(TabBarItem.self).count == 0 {
+            print("Setting default tab order")
             setDefaultTabOrder()
         }
 
         let orderObjs = realm.objects(TabBarItem.self).sorted(byKeyPath: "index")
 
-        guard let viewControllers = self.viewControllers else { return }
+        var contentViews: [UIViewController] = []
 
-        for (index, viewController) in viewControllers.enumerated() {
-            guard let splitViewController = viewController as? UISplitViewController,
-                let navigationController = splitViewController.viewControllers.first as? UINavigationController,
-                let newsViewController = navigationController.viewControllers.first as? NewsViewController
-                else {
-                    return
-            }
+        for tbi in orderObjs {
+            let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "NewsNav")
+            guard let newsVCNav = vc as? AppNavigationController else { fatalError() }
+            guard let newsVC = newsVCNav.topViewController as? NewsViewController else { fatalError() }
 
-            let config = orderObjs[index]
+            newsVC.title = tbi.view.description
 
-            newsViewController.postType = config.view.scraperPage
-
-            splitViewController.tabBarItem = config.view.barItem(index)
+            newsVC.postType = tbi.view.scraperPage
+            newsVC.tabBarItem = tbi.view.barItem(tbi.index)
+            contentViews.append(newsVCNav)
         }
 
-        self.customizableViewControllers = viewControllers
+        self.setViewControllers(contentViews + [self.settingsVC], animated: true)
+
+        self.customizableViewControllers = contentViews
 
         tabBar.clipsToBounds = true
+    }
+
+    var settingsVC: UIViewController {
+        let settingsVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "SettingsView")
+        settingsVC.title = "Settings"
+
+        let icon = UIImage.fontAwesomeIcon(name: .cogs, style: .solid,
+                                           textColor: AppThemeProvider.shared.currentTheme.barForegroundColor,
+                                           size: CGSize(width: 30, height: 30))
+
+        settingsVC.tabBarItem = UITabBarItem(title: settingsVC.title, image: icon, selectedImage: icon)
+
+        return settingsVC
     }
 
     override func tabBar(_ tabBar: UITabBar, didSelect item: UITabBarItem) {
@@ -120,12 +133,7 @@ class MainTabBarController: UITabBarController {
     }
 
     override var keyCommands: [UIKeyCommand]? {
-        let allCommands = self.getTabBarKeyCommands()
-
-        guard let splitVC = self.selectedViewController as? MainSplitViewController,
-            let splitVCkeyCommands = splitVC.keyCommands else { return allCommands }
-
-        return allCommands + splitVCkeyCommands
+        return self.getTabBarKeyCommands()
     }
 
     @objc func selectTab(sender: UIKeyCommand) {
@@ -187,16 +195,20 @@ extension MainTabBarController: UITabBarControllerDelegate {
             var newVCOrder: [TabBarItem] = []
 
             for (index, viewController) in viewControllers.enumerated() {
-                guard let splitViewController = viewController as? UISplitViewController,
-                    let navigationController = splitViewController.viewControllers.first as? UINavigationController,
-                    let newsViewController = navigationController.viewControllers.first as? NewsViewController,
+                print("viewController", (viewController as? UINavigationController)?.topViewController)
+                guard let navigationController = viewController as? UINavigationController,
+                    let newsViewController = navigationController.topViewController as? NewsViewController,
                     let tbi = TabBarItem.View(newsViewController.postType)
                     else {
-                        return
+                        continue
                 }
+
+                print("appending", tbi)
 
                 newVCOrder.append(TabBarItem(index, tbi))
             }
+
+            print("final layout", newVCOrder)
 
             try! realm.write {
                 realm.add(newVCOrder)
@@ -210,9 +222,12 @@ extension MainTabBarController: Themed {
         tabBar.barTintColor = theme.barBackgroundColor
         tabBar.tintColor = theme.barForegroundColor
 
-        let application = UIApplication.shared.delegate as! AppDelegate
-        let tabbarController = application.window?.rootViewController as! UITabBarController
-        let selectedIndex = tabbarController.selectedIndex
-        self.setButtonStates(selectedIndex)
+        if let application = UIApplication.shared.delegate as? AppDelegate,
+            let splitViewController = application.window?.rootViewController as? UISplitViewController,
+            let tabBarController = splitViewController.viewControllers[0] as? UITabBarController {
+
+            let selectedIndex = tabBarController.selectedIndex
+            self.setButtonStates(selectedIndex)
+        }
     }
 }

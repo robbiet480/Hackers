@@ -73,7 +73,7 @@ class HNRealtime {
 
         guard self.handles[itemRef] == nil else { return self.handles[itemRef] }
 
-        print("Beginning to monitor", itemRef)
+        // print("Beginning to monitor", itemRef)
 
         let refHandle = itemRef.observe(.value, with: self.HandleUpdate(monitorType), withCancel: self.HandleCancel)
 
@@ -101,7 +101,7 @@ class HNRealtime {
             do {
                 switch monitorType {
                 case .Post:
-                    print("Got snapshot", snapshot.ref)
+                    // print("Got snapshot", snapshot.ref)
                     let decoded = try FirebaseDecoder().decode(FirebaseHNPost.self, from: value)
                     NotificationCenter.default.post(name: self.PostUpdatedNotificationName,
                                                     object: decoded, userInfo: ["multiple": false,

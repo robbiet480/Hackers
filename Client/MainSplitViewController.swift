@@ -20,11 +20,92 @@ class MainSplitViewController: UISplitViewController, UISplitViewControllerDeleg
         super.viewDidLoad()
         preferredDisplayMode = .allVisible
     }
-    
-    func splitViewController(_ splitViewController: UISplitViewController, collapseSecondary secondaryViewController: UIViewController, onto primaryViewController: UIViewController) -> Bool {
-        // only collapse the secondary onto the primary when it's the placeholder view
-        return secondaryViewController is EmptyViewController
+    // From https://gist.github.com/max-potapov/aba3bb026e9911d091f0c70af4cc13e6
+//    private var master: UITabBarController {
+//        return viewControllers.first as! UITabBarController
+//    }
+//
+//    private var detail: UINavigationController {
+//        return viewControllers.last as! UINavigationController
+//    }
+//
+//    func splitViewController(_ splitViewController: UISplitViewController, showDetail vc: UIViewController, sender: Any?) -> Bool {
+//        guard splitViewController.isCollapsed else { return false }
+//        guard let selected = master.selectedViewController as? UINavigationController else { return false }
+//        let controller: UIViewController
+//        if let navigation = vc as? UINavigationController {
+//            controller = navigation.topViewController!
+//        } else {
+//            controller = vc
+//        }
+//        controller.hidesBottomBarWhenPushed = true
+//        selected.pushViewController(controller, animated: true)
+//        return true
+//    }
+//
+//    func splitViewController(_ splitViewController: UISplitViewController, collapseSecondary secondaryViewController: UIViewController, onto primaryViewController: UIViewController) -> Bool {
+//        guard let secondaryAsNavController = secondaryViewController as? UINavigationController else { return false }
+//        guard let topAsDetailController = secondaryAsNavController.topViewController, topAsDetailController is CommentsViewController else { return false }
+//        guard let tabBar = primaryViewController as? UITabBarController else { return false }
+//        for controller in tabBar.viewControllers! {
+//            guard let navigation = controller as? UINavigationController else { continue }
+//            guard let master = navigation.topViewController as? NewsViewController, master.collapseDetailViewController == false else { continue }
+//            topAsDetailController.hidesBottomBarWhenPushed = true
+//            navigation.pushViewController(topAsDetailController, animated: false)
+//            return true
+//        }
+//        return false
+//    }
+//
+//    func splitViewController(_ splitViewController: UISplitViewController, separateSecondaryFrom primaryViewController: UIViewController) -> UIViewController? {
+//        guard let selected = master.selectedViewController as? UINavigationController else { return nil }
+//        guard selected.topViewController is CommentsViewController else { return nil }
+//        guard let details = selected.popViewController(animated: false) else { return nil }
+//        return UINavigationController(rootViewController: details)
+//    }
+
+    // From https://stackoverflow.com/a/46012353/486182
+    /* func splitViewController(_ splitViewController: UISplitViewController,
+                             collapseSecondary secondaryViewController: UIViewController,
+                             onto primaryViewController: UIViewController) -> Bool {
+        print("Returning true")
+        return true
     }
+
+    // From https://stackoverflow.com/a/46012353/486182
+    func splitViewController(_ splitViewController: UISplitViewController,
+                             showDetail vc: UIViewController,
+                             sender: Any?) -> Bool {
+
+        if splitViewController.isCollapsed {
+            guard let tabBarController = splitViewController.viewControllers.first as? UITabBarController else { fatalError() }
+            guard let selectedNavigationViewController = tabBarController.selectedViewController as? UINavigationController else { fatalError() }
+
+            // Push view controller
+            var detailViewController = vc
+            if let navController = vc as? UINavigationController, let topViewController = navController.topViewController {
+                detailViewController = topViewController
+            }
+            selectedNavigationViewController.pushViewController(detailViewController, animated: true)
+            return true
+        }
+
+        return false
+    }*/
+
+    // From https://stackoverflow.com/a/31370084/486182
+    /*override func showDetailViewController(_ vc: UIViewController, sender: Any?) {
+        if (self.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClass.compact) {
+            if let tabBarController = self.viewControllers[0] as? UITabBarController {
+                if let navigationController = tabBarController.selectedViewController as? UINavigationController {
+                    navigationController.show(vc, sender: sender)
+                    return
+                }
+            }
+        }
+
+        super.showDetailViewController(vc, sender: sender)
+    }*/
 
     // Excellent UISplitViewController keyboard shortcuts tutorial/code from
     // https://chariotsolutions.com/blog/post/handling-keyboard-shortcuts-ios/

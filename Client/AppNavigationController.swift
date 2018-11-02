@@ -14,6 +14,12 @@ class AppNavigationController: UINavigationController {
         setupTheming()
         navigationBar.setValue(true, forKey: "hidesShadow")
     }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+
+        print("AppNav did appear!")
+    }
 }
 
 extension AppNavigationController: Themed {
