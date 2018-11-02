@@ -82,30 +82,57 @@ final class Notifications {
     func fetch(application: UIApplication, handler: @escaping (UIBackgroundFetchResult) -> Void) {
         let isLocalNotificationEnabled = Notifications.isLocalNotificationEnabled
         guard isLocalNotificationEnabled else {
+            print("Notifications are disabled")
             handler(.noData)
             return
         }
 
-        // FIXME: During the fetch we should be caching posts for faster startup times.
-//        _ = HNFirebaseClient.shared.getStoriesForPage(.Home).done { _ in
-//            let allPosts = Realm.live().objects(HNPost.self).filter("NotifiedAt == nil AND Points >= \(UserDefaults.standard.minimumPointsForNotification)")
-//            if isLocalNotificationEnabled {
-//                self.sendLocalPush(for: allPosts)
-//
-//                handler(allPosts.count > 0 ? .newData : .noData)
-//            }
-//        }
+        HNScraper.shared.GetPage(HNScraper.Page.Home).done { items in
+            guard let items = items else { handler(.noData); return }
+            var itemsMeetingCriteria: [HNPost] = []
+
+            for item in items {
+                if item.Score ?? 0 >= UserDefaults.standard.minimumPointsForNotification, let post = item as? HNPost {
+                    itemsMeetingCriteria.append(post)
+                }
+            }
+
+            print("Got", itemsMeetingCriteria.count, "possible notifies")
+
+            let previousIDs = Realm.live().objects(ItemLog.self).filter("NotifiedAt != nil").map { $0.ID }
+
+            print("Got", previousIDs.count, "previously stored IDs")
+
+            let filtered = itemsMeetingCriteria.filter({ post -> Bool in
+                return !previousIDs.contains(post.ID)
+            })
+
+            print("Got", filtered.count, "filtered notifies")
+
+            self.sendLocalPush(for: filtered)
+
+            handler(filtered.count > 0 ? .newData : .noData)
+
+        }.catch { error in
+            print("Hit an error during background fetch to grab stories", error)
+            handler(.failed)
+            return
+        }
     }
 
     private func sendLocalPush(for notifications: [HNPost]) {
         let center = UNUserNotificationCenter.current()
         notifications.forEach { post in
+            print("Building notification for", post)
             let content = UNMutableNotificationContent()
             content.title = post.Title!
             if let link = post.Link {
                 content.body = link.host!.replacingOccurrences(of: "www.", with: "")
             }
-            content.subtitle = post.Score!.description + " points, posted by " + post.Author!.Username + " " + post.RelativeDate
+            content.subtitle = "Posted " + post.RelativeDate
+            if let score = post.Score, let author = post.Author {
+                content.subtitle = score.description + " points, posted by " + author.Username + " " + post.RelativeDate
+            }
             content.categoryIdentifier = "POST"
             content.userInfo = ["POST_ID": post.ID]
 
@@ -120,6 +147,11 @@ final class Notifications {
                     trigger: UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
                 )
                 center.add(request)
+
+                let realm = Realm.live()
+                try! realm.write {
+                    realm.add(ItemLog(post.ID), update: true)
+                }
             })
         }
     }
