@@ -162,7 +162,7 @@ public class HNScraper {
                 return "Best"
             /// More recent, only by new users
             case .Noob:
-                return "Noob"
+                return "Noob Stories"
             case .Over(let points):
                 return "Submissions with over " + points.description + " points"
             /// Front page submissions for a given day ordered by time spent there.

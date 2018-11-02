@@ -71,7 +71,7 @@ public class HTMLHNComment: HNComment {
 
         _ = try? element.select(".commtext .reply").remove()
 
-        self.Text = try? element.select(".commtext").text()
+        self.Text = try? element.select(".commtext").html()
 
         if let fadeClasses = try? element.select(".commtext").attr("class") {
             self.FadeLevel = self.MapFadeLevel(fadeClasses)
