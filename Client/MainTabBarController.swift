@@ -58,7 +58,7 @@ class MainTabBarController: UITabBarController {
 
             newsVC.title = tbi.view.description
 
-            newsVC.postType = tbi.view.scraperPage
+            newsVC.postType = tbi.view.scraperPage(tbi.associatedValue)
             newsVC.tabBarItem = tbi.view.barItem(tbi.index)
             contentViews.append(newsVCNav)
         }
@@ -94,15 +94,26 @@ class MainTabBarController: UITabBarController {
 
         guard realm.objects(TabBarItem.self).count == 0 else { return }
 
-        let defaultOrder: [TabBarItem.View] = [.Home, .AskHN, .Jobs, .New, .ShowHN, .Active, .Best, .Noob]
+        var order: [TabBarItem] = [
+            TabBarItem(0, HNScraper.Page.Home),
+            TabBarItem(1, HNScraper.Page.AskHN),
+            TabBarItem(2, HNScraper.Page.Jobs),
+            TabBarItem(3, HNScraper.Page.New),
+            TabBarItem(4, HNScraper.Page.ShowHN),
+            TabBarItem(5, HNScraper.Page.Active),
+            TabBarItem(6, HNScraper.Page.Best),
+            TabBarItem(7, HNScraper.Page.Noob),
+            TabBarItem(8, HNScraper.Page.ForDate(date: nil)),
+        ]
 
-        let orderObjs: [TabBarItem] = defaultOrder.enumerated().map { (arg) -> TabBarItem in
-            let (i, e) = arg
-            return TabBarItem(i, e)
+        if let user = UserDefaults.standard.loggedInUser {
+            order.append(TabBarItem(9, HNScraper.Page.SubmissionsForUsername(username: user.Username)))
+            order.append(TabBarItem(10, HNScraper.Page.FavoritesForUsername(username: user.Username)))
+            order.append(TabBarItem(11, HNScraper.Page.Upvoted(username: user.Username)))
         }
 
         try! realm.write {
-            realm.add(orderObjs)
+            realm.add(order)
         }
     }
 

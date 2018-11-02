@@ -170,7 +170,7 @@ public class HNScraper {
             case .ForDate(let storedDate):
                 let date = storedDate != nil ? storedDate! : Date()
                 let formatter = DateFormatter()
-                formatter.dateFormat = "MM/dd/yyyy"
+                formatter.dateFormat = "EEEE, MMM d, yyyy"
 
                 return "Home page for " + formatter.string(from: date)
             case .SubmissionsForUsername(let username):

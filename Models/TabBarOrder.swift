@@ -13,6 +13,7 @@ import FontAwesome_swift
 class TabBarItem: Object {
     @objc dynamic var view: View = .Home
     @objc dynamic var index: Int = 0
+    @objc dynamic var associatedValue: String = ""
 
     @objc public enum View: Int, CaseIterable {
         /// Home page
@@ -33,6 +34,22 @@ class TabBarItem: Object {
         case Best
         /// Most recent stories submitted by new users
         case Noob
+        /// Submissions with more than the given point value
+        case Over
+        /// Homepage for a specific date
+        case ForDate
+        /// Posts submitted by the given username
+        case SubmissionsForUsername
+        /// Comments submitted by the given username
+        case CommentsForUsername
+        /// Posts favorited by the given username
+        case FavoritesForUsername
+        /// Posts upvoted by the given username - private, only available if user is logged in and only for themselves
+        case Upvoted
+        /// Posts hidden by the given username - private, only available if user is logged in and only for themselves
+        case Hidden
+        /// Posts from the provided domainName
+        case Site
 
         var description: String {
             switch self {
@@ -63,6 +80,22 @@ class TabBarItem: Object {
             /// More recent, only by new users
             case .Noob:
                 return "Noob"
+            case .Over:
+                return "Most Points"
+            case .ForDate:
+                return "Time Machine"
+            case .SubmissionsForUsername:
+                return "My Stories"
+            case .CommentsForUsername:
+                return "My Comments"
+            case .FavoritesForUsername:
+                return "My Favorites"
+            case .Upvoted:
+                return "My Upvoted Stories"
+            case .Hidden:
+                return "My Hidden Stories"
+            case .Site:
+                return "Site posts"
             }
         }
 
@@ -95,12 +128,28 @@ class TabBarItem: Object {
             /// More recent, only by new users
             case .Noob:
                 self = .Noob
+            case .Over:
+                self = .Over
+            case .ForDate:
+                self = .ForDate
+            case .SubmissionsForUsername:
+                self = .SubmissionsForUsername
+            case .CommentsForUsername:
+                self = .CommentsForUsername
+            case .FavoritesForUsername:
+                self = .FavoritesForUsername
+            case .Upvoted:
+                self = .Upvoted
+            case .Hidden:
+                self = .Hidden
+            case .Site:
+                self = .Site
             default:
                 return nil
             }
         }
 
-        var scraperPage: HNScraper.Page {
+        func scraperPage(_ associatedValue: String) -> HNScraper.Page {
             switch self {
             /// Home page
             case .Home:
@@ -129,6 +178,25 @@ class TabBarItem: Object {
             /// More recent, only by new users
             case .Noob:
                 return .Noob
+            case .Over:
+                return .Over(points: Int(string: associatedValue)!)
+            case .ForDate:
+                if associatedValue != "" {
+                    return .ForDate(date: Date(timeIntervalSince1970: TimeInterval(string: associatedValue)!))
+                }
+                return .ForDate(date: nil)
+            case .SubmissionsForUsername:
+                return .SubmissionsForUsername(username: associatedValue)
+            case .CommentsForUsername:
+                return .CommentsForUsername(username: associatedValue)
+            case .FavoritesForUsername:
+                return .FavoritesForUsername(username: associatedValue)
+            case .Upvoted:
+                return .Upvoted(username: associatedValue)
+            case .Hidden:
+                return .Hidden(username: associatedValue)
+            case .Site:
+                return .Site(domainName: associatedValue)
             }
         }
 
@@ -167,8 +235,24 @@ class TabBarItem: Object {
                 iconName = .star
             case .Noob:
                 iconName = .child
-            default:
-                print("No icon set for", self.description)
+            case .Over:
+                iconName = .thermometer
+            case .ForDate:
+                iconName = .history
+            case .SubmissionsForUsername:
+                iconName = .userPlus
+            case .CommentsForUsername:
+                iconName = .comments
+            case .FavoritesForUsername:
+                iconName = .grinStars
+            case .Upvoted:
+                iconName = .arrowUp
+            case .Hidden:
+                iconName = .eyeSlash
+            case .Site:
+                iconName = .globe
+            case .Classic:
+                iconName = .codeBranch
             }
 
             return UIImage.fontAwesomeIcon(name: iconName, style: .solid,
@@ -187,5 +271,66 @@ class TabBarItem: Object {
 
         self.index = index
         self.view = view
+    }
+
+    convenience init(_ index: Int, _ scraperPage: HNScraper.Page) {
+        self.init()
+
+        self.index = index
+        switch scraperPage {
+            /// Home page
+            case .Home:
+                self.view = .Home
+            /// Classic algorithm home page
+            case .Classic:
+                self.view = .Classic
+            /// Latest submissions
+            case .New:
+                self.view = .New
+            /// Jobs
+            case .Jobs:
+                self.view = .Jobs
+            /// Ask HN
+            case .AskHN:
+                self.view = .AskHN
+            /// Show HN
+            case .ShowHN, .ShowHNNew:
+                self.view = .ShowHN
+            /// All news with most active discussion thread first
+            case .Active:
+                self.view = .Active
+            /// Highest (recent) score
+            case .Best:
+                self.view = .Best
+            /// More recent, only by new users
+            case .Noob:
+                self.view = .Noob
+            case .Over(let points):
+                self.view = .Over
+                self.associatedValue = String(points)
+            case .ForDate(let date):
+                self.view = .ForDate
+                if let date = date {
+                    self.associatedValue = String(date.timeIntervalSince1970)
+                }
+            case .SubmissionsForUsername(let username):
+                self.view = .SubmissionsForUsername
+                self.associatedValue = username
+            case .CommentsForUsername(let username):
+                self.view = .CommentsForUsername
+                self.associatedValue = username
+            case .FavoritesForUsername(let username):
+                self.view = .FavoritesForUsername
+                self.associatedValue = username
+            case .Upvoted(let username):
+                self.view = .Upvoted
+            self.associatedValue = username
+            case .Hidden(let username):
+                self.view = .Hidden
+                self.associatedValue = username
+            case .Site(let domainName):
+                self.view = .Site
+                self.associatedValue = domainName
+        }
     }
 }

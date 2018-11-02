@@ -180,7 +180,13 @@
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="QiA-1a-N44"/>
                     </view>
-                    <navigationItem key="navigationItem" title="Hacker News" id="On9-n6-9Yb"/>
+                    <navigationItem key="navigationItem" title="Hacker News" id="On9-n6-9Yb">
+                        <barButtonItem key="rightBarButtonItem" title="fa-sort" id="NI1-nI-qqk" customClass="FontAwesomeBarButtonItem" customModule="FontAwesome_swift">
+                            <userDefinedRuntimeAttributes>
+                                <userDefinedRuntimeAttribute type="string" keyPath="styleName" value="solid"/>
+                            </userDefinedRuntimeAttributes>
+                        </barButtonItem>
+                    </navigationItem>
                     <connections>
                         <outlet property="tableView" destination="sTU-Jc-dof" id="9Rr-YT-r8B"/>
                         <segue destination="sfd-t6-bG7" kind="show" identifier="ShowComments" id="rxv-oa-aIG"/>
@@ -499,11 +505,23 @@
                         <viewLayoutGuide key="safeArea" id="X5f-lA-ZG1"/>
                     </view>
                     <navigationItem key="navigationItem" largeTitleDisplayMode="never" id="01k-mx-Gzk">
-                        <barButtonItem key="rightBarButtonItem" systemItem="action" id="jRl-bC-fZG">
-                            <connections>
-                                <action selector="shareTapped:" destination="sfd-t6-bG7" id="V6S-UC-iAf"/>
-                            </connections>
-                        </barButtonItem>
+                        <rightBarButtonItems>
+                            <barButtonItem title="fa-ellipsis-h" id="YKy-Lm-D50" customClass="FontAwesomeBarButtonItem" customModule="FontAwesome_swift">
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="string" keyPath="styleName" value="solid"/>
+                                </userDefinedRuntimeAttributes>
+                            </barButtonItem>
+                            <barButtonItem title="fa-sort" id="DTP-uQ-ycz" customClass="FontAwesomeBarButtonItem" customModule="FontAwesome_swift">
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="string" keyPath="styleName" value="solid"/>
+                                </userDefinedRuntimeAttributes>
+                            </barButtonItem>
+                            <barButtonItem systemItem="action" id="jRl-bC-fZG">
+                                <connections>
+                                    <action selector="shareTapped:" destination="sfd-t6-bG7" id="V6S-UC-iAf"/>
+                                </connections>
+                            </barButtonItem>
+                        </rightBarButtonItems>
                     </navigationItem>
                     <connections>
                         <outlet property="postTitleContainerView" destination="oQf-bd-JX5" id="evZ-gr-kOZ"/>

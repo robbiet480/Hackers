@@ -49,6 +49,18 @@ class NewsViewController : UIViewController {
 
         NotificationCenter.default.addObserver(self, selector: #selector(NewsViewController.openPostNotification(_:)),
                                                name: NSNotification.Name(rawValue: "notificationOpenPost"), object: nil)
+
+        if case .ForDate(let date) = self.postType {
+            let fakIcon = UIImage.fontAwesomeIcon(name: FontAwesome.calendarAlt, style: FontAwesomeStyle.regular,
+                                                  textColor: AppThemeProvider.shared.currentTheme.appTintColor, size: CGSize(width: 30, height: 30))
+            self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: fakIcon, style: .plain, target: self, action: nil)
+
+            self.postType = .ForDate(date: Date(timeIntervalSince1970: 1465171200))
+
+            self.navigationItem.title = self.postType.description
+
+            self.loadPosts()
+        }
     }
     
     @IBAction func changeTheme(_ sender: Any) {
@@ -97,7 +109,6 @@ class NewsViewController : UIViewController {
     }
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        print("Prepare for segue", segue.identifier)
         if segue.identifier == "ShowComments" {
             if let notifiedPostID = self.notifiedPostID, let segueNavigationController = segue.destination as? UINavigationController,
                 let commentsViewController = segueNavigationController.topViewController as? CommentsViewController {
@@ -110,7 +121,6 @@ class NewsViewController : UIViewController {
             } else if let indexPath = tableView.indexPathForSelectedRow,
                 let commentsViewController = segue.destination as? CommentsViewController {
 
-                print("Setting comments VC post!")
                 let post = posts![indexPath.row]
                 commentsViewController.post = post
             }
@@ -224,7 +234,8 @@ extension NewsViewController: UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        if let post = self.posts?[indexPath.row] {
+        if let posts = self.posts, posts.count > indexPath.row {
+            let post = posts[indexPath.row]
             _ = HNRealtime.shared.Unmonitor(post.ID)
         }
 

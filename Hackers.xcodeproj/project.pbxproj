@@ -68,7 +68,6 @@
 		B69561C4218BD37200A6FD51 /* FirebaseHNPost.swift in Sources */ = {isa = PBXBuildFile; fileRef = B69561C3218BD37200A6FD51 /* FirebaseHNPost.swift */; };
 		B69561C6218BE0C300A6FD51 /* Dictionary+Subscript.swift in Sources */ = {isa = PBXBuildFile; fileRef = B69561C5218BE0C300A6FD51 /* Dictionary+Subscript.swift */; };
 		B69561C8218C251C00A6FD51 /* Date+Humanize.swift in Sources */ = {isa = PBXBuildFile; fileRef = B69561C7218C251C00A6FD51 /* Date+Humanize.swift */; };
-		B6B90AC3218808640043AD70 /* UltraHN+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6B90AC2218808640043AD70 /* UltraHN+Extensions.swift */; };
 		B6C86D002186A59B00FB18E8 /* HNPost.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6C86CFF2186A59B00FB18E8 /* HNPost.swift */; };
 		B6C86D022186A5A400FB18E8 /* HNComment.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6C86D012186A5A400FB18E8 /* HNComment.swift */; };
 		B6C86D042186A5AE00FB18E8 /* HNUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6C86D032186A5AE00FB18E8 /* HNUser.swift */; };
@@ -153,7 +152,6 @@
 		B69561C3218BD37200A6FD51 /* FirebaseHNPost.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FirebaseHNPost.swift; sourceTree = "<group>"; };
 		B69561C5218BE0C300A6FD51 /* Dictionary+Subscript.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Dictionary+Subscript.swift"; sourceTree = "<group>"; };
 		B69561C7218C251C00A6FD51 /* Date+Humanize.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+Humanize.swift"; sourceTree = "<group>"; };
-		B6B90AC2218808640043AD70 /* UltraHN+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UltraHN+Extensions.swift"; sourceTree = "<group>"; };
 		B6C86CFF2186A59B00FB18E8 /* HNPost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HNPost.swift; sourceTree = "<group>"; };
 		B6C86D012186A5A400FB18E8 /* HNComment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HNComment.swift; sourceTree = "<group>"; };
 		B6C86D032186A5AE00FB18E8 /* HNUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HNUser.swift; sourceTree = "<group>"; };
@@ -220,7 +218,6 @@
 				B614BF432186F01400918E0F /* DateFormatter+ISO8601Full.swift */,
 				B614BF452186F09000918E0F /* Codable+Alamofire.swift */,
 				B614BF612187DF0B00918E0F /* CustomStringConvertible+Description.swift */,
-				B6B90AC2218808640043AD70 /* UltraHN+Extensions.swift */,
 				B683D67E218923570088C3D0 /* URLComponents+QueryDictionary.swift */,
 				B69561C5218BE0C300A6FD51 /* Dictionary+Subscript.swift */,
 				B69561C7218C251C00A6FD51 /* Date+Humanize.swift */,
@@ -647,7 +644,6 @@
 				2464D20E209DD8F400C7F8FC /* SubscribableValue.swift in Sources */,
 				B6C8E8522181353D0093112A /* OpenInFirefoxController.swift in Sources */,
 				B614BF5E2187CCF200918E0F /* AlgoliaSearch.swift in Sources */,
-				B6B90AC3218808640043AD70 /* UltraHN+Extensions.swift in Sources */,
 				B6C86D062186A62300FB18E8 /* HNScraper.swift in Sources */,
 				24C20D391A7E42D5005B759B /* MainSplitViewController.swift in Sources */,
 				2464D21F209E27FE00C7F8FC /* Settings+UserDefaultsExtensions.swift in Sources */,

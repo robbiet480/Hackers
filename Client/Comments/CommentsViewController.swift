@@ -100,15 +100,18 @@ class CommentsViewController : UIViewController {
     
     func loadComments() {
         guard let post = self.post else { return }
-        HNScraper.shared.GetChildren(post.ID).done {
-            self.comments = $0 as? [HNComment]
 
-            self.view.hideSkeleton()
-            self.tableView.rowHeight = UITableView.automaticDimension
-            self.tableView.reloadData()
+        DispatchQueue.global(qos: .userInitiated).async {
+            HNScraper.shared.GetChildren(post.ID).done {
+                self.comments = $0 as? [HNComment]
 
-        }.catch { error in
-            print("Got error while loading comments!", error)
+                self.view.hideSkeleton()
+                self.tableView.rowHeight = UITableView.automaticDimension
+                self.tableView.reloadData()
+
+                }.catch { error in
+                    print("Got error while loading comments!", error)
+            }
         }
     }
     
