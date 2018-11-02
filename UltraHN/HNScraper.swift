@@ -124,6 +124,8 @@ public class HNScraper {
         case Upvoted(username: String)
         /// Posts hidden by the given username - private, only available if user is logged in and only for themselves
         case Hidden(username: String)
+        /// Posts from the provided domainName
+        case Site(domainName: String)
 
         public static var allCases: [Page] {
             return [.Home, .Classic, .New, .Jobs, .AskHN, .ShowHN, .ShowHNNew, .Active, .Best, .Noob, .ForDate(date: Date())]
@@ -179,6 +181,8 @@ public class HNScraper {
                 return username + "'s upvoted stories"
             case .Hidden(let username):
                 return username + "'s hidden stories"
+            case .Site(let domainName):
+                return "Submissions from " + domainName
             }
         }
     }

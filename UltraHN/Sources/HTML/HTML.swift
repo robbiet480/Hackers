@@ -244,7 +244,6 @@ extension HNScraper.Page {
             components.path = "/noobstories"
         case .Over(let points):
             components.path = "/over"
-
             queryItems.append(URLQueryItem(name: "points", value: String(points)))
         case .ForDate(let storedDate):
             let date = storedDate != nil ? storedDate! : Date()
@@ -268,6 +267,9 @@ extension HNScraper.Page {
         case .Hidden(let username):
             components.path = "/hidden"
             queryItems.append(URLQueryItem(name: "id", value: username))
+        case .Site(let domainName):
+            components.path = "/from"
+            queryItems.append(URLQueryItem(name: "site", value: domainName))
         }
 
         components.queryItems = queryItems

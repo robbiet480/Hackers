@@ -17,6 +17,29 @@ class MainTabBarController: UITabBarController {
 
         setupTheming()
 
+        setTabBarOrder()
+
+        tabBar.clipsToBounds = true
+    }
+
+    var settingsVC: UIViewController {
+        let settingsVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "SettingsView")
+        settingsVC.title = "Settings"
+
+        let icon = UIImage.fontAwesomeIcon(name: .cogs, style: .solid,
+                                           textColor: AppThemeProvider.shared.currentTheme.barForegroundColor,
+                                           size: CGSize(width: 30, height: 30))
+
+        settingsVC.tabBarItem = UITabBarItem(title: settingsVC.title, image: icon, selectedImage: icon)
+
+        return settingsVC
+    }
+
+    override func tabBar(_ tabBar: UITabBar, didSelect item: UITabBarItem) {
+        setButtonStates(item.tag)
+    }
+
+    func setTabBarOrder() {
         let realm = Realm.live()
 
         if realm.objects(TabBarItem.self).count == 0 {
@@ -43,25 +66,6 @@ class MainTabBarController: UITabBarController {
         self.setViewControllers(contentViews + [self.settingsVC], animated: true)
 
         self.customizableViewControllers = contentViews
-
-        tabBar.clipsToBounds = true
-    }
-
-    var settingsVC: UIViewController {
-        let settingsVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "SettingsView")
-        settingsVC.title = "Settings"
-
-        let icon = UIImage.fontAwesomeIcon(name: .cogs, style: .solid,
-                                           textColor: AppThemeProvider.shared.currentTheme.barForegroundColor,
-                                           size: CGSize(width: 30, height: 30))
-
-        settingsVC.tabBarItem = UITabBarItem(title: settingsVC.title, image: icon, selectedImage: icon)
-
-        return settingsVC
-    }
-
-    override func tabBar(_ tabBar: UITabBar, didSelect item: UITabBarItem) {
-        setButtonStates(item.tag)
     }
 
     func setButtonStates(_ itemTag: Int) {
@@ -150,6 +154,11 @@ extension MainTabBarController: UITabBarControllerDelegate {
 
             let moreNavController = viewController as! UINavigationController
 
+            let resetButton = UIBarButtonItem(title: "Reset", style: .plain, target: self,
+                                              action: #selector(MainTabBarController.handleMoreReset(_:)))
+
+            tabBarController.moreNavigationController.topViewController?.navigationItem.leftBarButtonItem = resetButton
+
             moreNavController.navigationBar.barTintColor = AppThemeProvider.shared.currentTheme.barBackgroundColor
             moreNavController.navigationBar.tintColor = AppThemeProvider.shared.currentTheme.barForegroundColor
             moreNavController.navigationBar.prefersLargeTitles = true
@@ -195,7 +204,6 @@ extension MainTabBarController: UITabBarControllerDelegate {
             var newVCOrder: [TabBarItem] = []
 
             for (index, viewController) in viewControllers.enumerated() {
-                print("viewController", (viewController as? UINavigationController)?.topViewController)
                 guard let navigationController = viewController as? UINavigationController,
                     let newsViewController = navigationController.topViewController as? NewsViewController,
                     let tbi = TabBarItem.View(newsViewController.postType)
@@ -203,17 +211,25 @@ extension MainTabBarController: UITabBarControllerDelegate {
                         continue
                 }
 
-                print("appending", tbi)
-
                 newVCOrder.append(TabBarItem(index, tbi))
             }
-
-            print("final layout", newVCOrder)
 
             try! realm.write {
                 realm.add(newVCOrder)
             }
         }
+    }
+
+    @objc func handleMoreReset(_ sender: Any) {
+        let realm = Realm.live()
+
+        let existingTabBarItems = realm.objects(TabBarItem.self)
+
+        try! realm.write {
+            realm.delete(existingTabBarItems)
+        }
+
+        self.setTabBarOrder()
     }
 }
 

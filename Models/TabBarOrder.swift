@@ -152,7 +152,7 @@ class TabBarItem: Object {
 
             switch self {
             case .Home:
-                iconName = .globe
+                iconName = .home
             case .New:
                 iconName = .clock
             case .Jobs:

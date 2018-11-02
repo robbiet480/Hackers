@@ -127,7 +127,9 @@ class MainSplitViewController: UISplitViewController, UISplitViewControllerDeleg
         if allCommands.count > 0 {
             var returnCommands = [UIKeyCommand]()
             for command in allCommands {
-                returnCommands.append(UIKeyCommand(input: command.input ?? "", modifierFlags: command.modifierFlags, action: #selector(handleKeyCommand(_:)), discoverabilityTitle: command.discoverabilityTitle ?? ""))
+                returnCommands.append(UIKeyCommand(input: command.input ?? "", modifierFlags: command.modifierFlags,
+                                                   action: #selector(handleKeyCommand(_:)),
+                                                   discoverabilityTitle: command.discoverabilityTitle ?? ""))
             }
             return returnCommands
         } else {
