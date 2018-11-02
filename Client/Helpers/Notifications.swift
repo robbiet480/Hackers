@@ -133,6 +133,9 @@ final class Notifications {
             if let score = post.Score, let author = post.Author {
                 content.subtitle = score.description + " points, posted by " + author.Username + " " + post.RelativeDate
             }
+            if post.Rank > 0 {
+                content.subtitle = "#" + String(post.Rank) + content.subtitle
+            }
             content.categoryIdentifier = "POST"
             content.userInfo = ["POST_ID": post.ID]
 
