@@ -45,7 +45,6 @@
 		24F39F8B18AFB1150055F8DC /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 24F39F8A18AFB1150055F8DC /* CoreGraphics.framework */; };
 		24F39F8D18AFB1150055F8DC /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 24F39F8C18AFB1150055F8DC /* UIKit.framework */; };
 		24F39F9B18AFB1150055F8DC /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 24F39F9A18AFB1150055F8DC /* Images.xcassets */; };
-		B60881D1217FD3EA009C6CFA /* BaseHNItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = B60881D0217FD3EA009C6CFA /* BaseHNItem.swift */; };
 		B614BF442186F01400918E0F /* DateFormatter+ISO8601Full.swift in Sources */ = {isa = PBXBuildFile; fileRef = B614BF432186F01400918E0F /* DateFormatter+ISO8601Full.swift */; };
 		B614BF462186F09000918E0F /* Codable+Alamofire.swift in Sources */ = {isa = PBXBuildFile; fileRef = B614BF452186F09000918E0F /* Codable+Alamofire.swift */; };
 		B614BF4821870A4A00918E0F /* HNLeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = B614BF4721870A4A00918E0F /* HNLeader.swift */; };
@@ -63,11 +62,11 @@
 		B614BF652187E30A00918E0F /* HNRealtime.swift in Sources */ = {isa = PBXBuildFile; fileRef = B614BF642187E30A00918E0F /* HNRealtime.swift */; };
 		B614BF672187E80500918E0F /* HNLogin.swift in Sources */ = {isa = PBXBuildFile; fileRef = B614BF662187E80500918E0F /* HNLogin.swift */; };
 		B63E78C4217C1C6300750131 /* UIFont+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B63E78C3217C1C6300750131 /* UIFont+Extensions.swift */; };
-		B663E309217E43810062F6D9 /* Comment.swift in Sources */ = {isa = PBXBuildFile; fileRef = B663E308217E43810062F6D9 /* Comment.swift */; };
 		B683D67F218923570088C3D0 /* URLComponents+QueryDictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = B683D67E218923570088C3D0 /* URLComponents+QueryDictionary.swift */; };
 		B683D681218959070088C3D0 /* HTMLHNComment.swift in Sources */ = {isa = PBXBuildFile; fileRef = B683D680218959070088C3D0 /* HTMLHNComment.swift */; };
 		B683D6832189A6F50088C3D0 /* AlgoliaHNComment.swift in Sources */ = {isa = PBXBuildFile; fileRef = B683D6822189A6F40088C3D0 /* AlgoliaHNComment.swift */; };
 		B69561C4218BD37200A6FD51 /* FirebaseHNPost.swift in Sources */ = {isa = PBXBuildFile; fileRef = B69561C3218BD37200A6FD51 /* FirebaseHNPost.swift */; };
+		B69561C6218BE0C300A6FD51 /* Dictionary+Subscript.swift in Sources */ = {isa = PBXBuildFile; fileRef = B69561C5218BE0C300A6FD51 /* Dictionary+Subscript.swift */; };
 		B6B90AC3218808640043AD70 /* UltraHN+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6B90AC2218808640043AD70 /* UltraHN+Extensions.swift */; };
 		B6C86D002186A59B00FB18E8 /* HNPost.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6C86CFF2186A59B00FB18E8 /* HNPost.swift */; };
 		B6C86D022186A5A400FB18E8 /* HNComment.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6C86D012186A5A400FB18E8 /* HNComment.swift */; };
@@ -81,7 +80,6 @@
 		B6D3744B2181007700C872F6 /* UIViewController+Spinner.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6D3744A2181007700C872F6 /* UIViewController+Spinner.swift */; };
 		B6ECEB59217CC4EA00755239 /* OpenInChromeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6ECEB58217CC4EA00755239 /* OpenInChromeController.swift */; };
 		B6ECEB5D217D16CF00755239 /* Notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6ECEB5C217D16CF00755239 /* Notifications.swift */; };
-		B6ECEB61217D54DD00755239 /* Post.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6ECEB60217D54DD00755239 /* Post.swift */; };
 		B6ECEB63217D64AE00755239 /* Realm+Initialization.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6ECEB62217D64AE00755239 /* Realm+Initialization.swift */; };
 		DF68752992A90A126C292CD9 /* Pods_Hackers.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0376FCAAF4C3EBA38572A82 /* Pods_Hackers.framework */; };
 /* End PBXBuildFile section */
@@ -131,7 +129,6 @@
 		24F39F9A18AFB1150055F8DC /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		5B9C6ECB6751D2AF6D93515D /* Pods-Hackers.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Hackers.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Hackers/Pods-Hackers.debug.xcconfig"; sourceTree = "<group>"; };
 		9D41F6A856DA1B6671301AAD /* Pods-Hackers.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Hackers.release.xcconfig"; path = "Pods/Target Support Files/Pods-Hackers/Pods-Hackers.release.xcconfig"; sourceTree = "<group>"; };
-		B60881D0217FD3EA009C6CFA /* BaseHNItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseHNItem.swift; sourceTree = "<group>"; };
 		B614BF432186F01400918E0F /* DateFormatter+ISO8601Full.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DateFormatter+ISO8601Full.swift"; sourceTree = "<group>"; };
 		B614BF452186F09000918E0F /* Codable+Alamofire.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Codable+Alamofire.swift"; sourceTree = "<group>"; };
 		B614BF4721870A4A00918E0F /* HNLeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HNLeader.swift; sourceTree = "<group>"; };
@@ -149,11 +146,11 @@
 		B614BF642187E30A00918E0F /* HNRealtime.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HNRealtime.swift; sourceTree = "<group>"; };
 		B614BF662187E80500918E0F /* HNLogin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HNLogin.swift; sourceTree = "<group>"; };
 		B63E78C3217C1C6300750131 /* UIFont+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIFont+Extensions.swift"; sourceTree = "<group>"; };
-		B663E308217E43810062F6D9 /* Comment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Comment.swift; sourceTree = "<group>"; };
 		B683D67E218923570088C3D0 /* URLComponents+QueryDictionary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URLComponents+QueryDictionary.swift"; sourceTree = "<group>"; };
 		B683D680218959070088C3D0 /* HTMLHNComment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTMLHNComment.swift; sourceTree = "<group>"; };
 		B683D6822189A6F40088C3D0 /* AlgoliaHNComment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlgoliaHNComment.swift; sourceTree = "<group>"; };
 		B69561C3218BD37200A6FD51 /* FirebaseHNPost.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FirebaseHNPost.swift; sourceTree = "<group>"; };
+		B69561C5218BE0C300A6FD51 /* Dictionary+Subscript.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Dictionary+Subscript.swift"; sourceTree = "<group>"; };
 		B6B90AC2218808640043AD70 /* UltraHN+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UltraHN+Extensions.swift"; sourceTree = "<group>"; };
 		B6C86CFF2186A59B00FB18E8 /* HNPost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HNPost.swift; sourceTree = "<group>"; };
 		B6C86D012186A5A400FB18E8 /* HNComment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HNComment.swift; sourceTree = "<group>"; };
@@ -167,7 +164,6 @@
 		B6D3744A2181007700C872F6 /* UIViewController+Spinner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Spinner.swift"; sourceTree = "<group>"; };
 		B6ECEB58217CC4EA00755239 /* OpenInChromeController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenInChromeController.swift; sourceTree = "<group>"; };
 		B6ECEB5C217D16CF00755239 /* Notifications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Notifications.swift; sourceTree = "<group>"; };
-		B6ECEB60217D54DD00755239 /* Post.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Post.swift; sourceTree = "<group>"; };
 		B6ECEB62217D64AE00755239 /* Realm+Initialization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Realm+Initialization.swift"; sourceTree = "<group>"; };
 		B6ECEB64217D65BE00755239 /* Hackers.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Hackers.entitlements; sourceTree = "<group>"; };
 		F0376FCAAF4C3EBA38572A82 /* Pods_Hackers.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Hackers.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -224,6 +220,7 @@
 				B614BF612187DF0B00918E0F /* CustomStringConvertible+Description.swift */,
 				B6B90AC2218808640043AD70 /* UltraHN+Extensions.swift */,
 				B683D67E218923570088C3D0 /* URLComponents+QueryDictionary.swift */,
+				B69561C5218BE0C300A6FD51 /* Dictionary+Subscript.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -280,10 +277,7 @@
 			isa = PBXGroup;
 			children = (
 				24191F8C1944C991003C0D98 /* CommentsController.swift */,
-				B6ECEB60217D54DD00755239 /* Post.swift */,
-				B663E308217E43810062F6D9 /* Comment.swift */,
 				B6CCFAFD217E9F610085AC03 /* TabBarOrder.swift */,
-				B60881D0217FD3EA009C6CFA /* BaseHNItem.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -635,7 +629,6 @@
 				B614BF562187C66900918E0F /* AlgoliaHNUser.swift in Sources */,
 				B6ECEB5D217D16CF00755239 /* Notifications.swift in Sources */,
 				B6C86D002186A59B00FB18E8 /* HNPost.swift in Sources */,
-				B60881D1217FD3EA009C6CFA /* BaseHNItem.swift in Sources */,
 				24D6B8CA1C1EDBFC00618422 /* AppTheme.swift in Sources */,
 				B614BF672187E80500918E0F /* HNLogin.swift in Sources */,
 				B614BF5A2187C78E00918E0F /* FirebaseHNUser.swift in Sources */,
@@ -649,6 +642,7 @@
 				B614BF622187DF0B00918E0F /* CustomStringConvertible+Description.swift in Sources */,
 				B683D67F218923570088C3D0 /* URLComponents+QueryDictionary.swift in Sources */,
 				2464D208209DD7B100C7F8FC /* AppThemeProvider.swift in Sources */,
+				B69561C6218BE0C300A6FD51 /* Dictionary+Subscript.swift in Sources */,
 				24191F8D1944C991003C0D98 /* CommentsController.swift in Sources */,
 				24CEAA9D1F8917D60050DEDF /* ReviewController.swift in Sources */,
 				2464D213209DEFB100C7F8FC /* AppNavigationController.swift in Sources */,
@@ -667,13 +661,11 @@
 				24448F891FE7DFB800F85A28 /* ThumbnailFetcher.swift in Sources */,
 				B6ECEB63217D64AE00755239 /* Realm+Initialization.swift in Sources */,
 				B614BF602187DC6F00918E0F /* HTMLHNUser.swift in Sources */,
-				B663E309217E43810062F6D9 /* Comment.swift in Sources */,
 				2464D206209DD27A00C7F8FC /* Theming.swift in Sources */,
 				2454B9021F654DB2005A98C7 /* MainTabBarController.swift in Sources */,
 				B6C86D042186A5AE00FB18E8 /* HNUser.swift in Sources */,
 				243271951F95EDA9008196DB /* StringExtensions.swift in Sources */,
 				B614BF582187C70D00918E0F /* AlgoliaHNItem.swift in Sources */,
-				B6ECEB61217D54DD00755239 /* Post.swift in Sources */,
 				B6C86D022186A5A400FB18E8 /* HNComment.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
