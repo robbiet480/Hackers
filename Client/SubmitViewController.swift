@@ -64,15 +64,15 @@ class SubmitViewController: FormViewController {
             HNScraper.shared.Submit(title, url: url, text: text).done { newPost in
                 print("newPost", newPost)
 
-                self.dismiss(animated: true, completion: nil)
+                self.dismiss(animated: true, completion: {
+                    let statusAlert = StatusAlert()
+                    statusAlert.image = UIImage.fontAwesomeIcon(name: .thumbsUp, style: .solid, textColor: .black,
+                                                                size: CGSize(width: 90, height: 90))
+                    statusAlert.title = "Post created"
+                    statusAlert.canBePickedOrDismissed = true
 
-                let statusAlert = StatusAlert()
-                statusAlert.image = UIImage.fontAwesomeIcon(name: .thumbsUp, style: .solid, textColor: .black,
-                                                            size: CGSize(width: 90, height: 90))
-                statusAlert.title = "Post created"
-                statusAlert.canBePickedOrDismissed = true
-
-                statusAlert.showInKeyWindow()
+                    statusAlert.showInKeyWindow()
+                })
             }.catch { error in
                 print("Error when creating post", error)
 
