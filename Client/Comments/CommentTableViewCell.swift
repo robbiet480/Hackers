@@ -54,16 +54,23 @@ class CommentTableViewCell : UITableViewCell {
         let padding = CGFloat(levelIndent * (level + 1))
         leftPaddingConstraint.constant = padding
     }
-    
-    func updateCommentContent(with comment: HNItem) {
+
+    func updateCommentContent(with comment: HNComment) {
         level = comment.Level
         datePostedLabel.text = comment.RelativeDate
-        authorLabel.text = comment.Author?.Username
+
+        if let author = comment.Author {
+            self.authorLabel.text = author.Username
+
+            if let color = author.Color {
+                self.authorLabel.textColor = color
+            }
+        }
 
         if let commentTextView = commentTextView {
             // only for expanded comments
             let commentFont = UIFont.systemFont(ofSize: 15)
-            let commentTextColor = AppThemeProvider.shared.currentTheme.textColor
+            let commentTextColor = AppThemeProvider.shared.currentTheme.textColor.withAlphaComponent(comment.FadeAlpha)
             let lineSpacing = 4 as CGFloat
             
             let commentAttributedString = NSMutableAttributedString(string: comment.Text!.htmlDecoded)

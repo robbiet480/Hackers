@@ -47,6 +47,32 @@ public class HNComment: HNItem {
         }
     }
 
+    // FadeAlpha is the text color you should use when displaying the comment to match Hacker News stylings.
+    public var FadeAlpha: CGFloat {
+        switch self.FadeLevel {
+        case 0:
+            return 1.0
+        case 1:
+            return 0.888888889
+        case 2:
+            return 0.777777778
+        case 3:
+            return 0.666666667
+        case 4:
+            return 0.555555556
+        case 5:
+            return 0.444444445
+        case 6:
+            return 0.333333334
+        case 7:
+            return 0.222222223
+        case 8:
+            return 0.111111112
+        default: // We use level 9 as the default since that color is basically unreadable on light backgrounds.
+            return 0.05
+        }
+    }
+
     func Hide() -> Promise<Void> {
         return Alamofire.request("https://news.ycombinator.com/collapse?id=" + self.IDString).responseData().asVoid()
     }

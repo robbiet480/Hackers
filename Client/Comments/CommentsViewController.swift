@@ -45,7 +45,7 @@ class CommentsViewController : UIViewController {
     @IBOutlet var tableView: UITableView!
     
     @IBOutlet weak var postTitleContainerView: UIView!
-    @IBOutlet weak var postTitleView: PostTitleView!
+    @IBOutlet weak var postTitleView: NewPostTitleView!
     @IBOutlet weak var thumbnailImageView: UIImageView!
 
     var replyToComment: HNComment?
@@ -241,7 +241,7 @@ class CommentsViewController : UIViewController {
     }
 }
 
-extension CommentsViewController: PostTitleViewDelegate {
+extension CommentsViewController: NewPostTitleViewDelegate {
     func didPressLinkButton(_ post: HNPost) {
         // animate background colour for tap
         self.tableView.tableHeaderView?.backgroundColor = AppThemeProvider.shared.currentTheme.cellHighlightColor

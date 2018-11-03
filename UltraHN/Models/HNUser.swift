@@ -65,4 +65,15 @@ public class HNUser: NSObject, Codable {
     override public var description: String {
         return "HNUser: \(self.Username), karma: \(self.Karma)"
     }
+
+    var Color: UIColor? {
+        if self.IsYC {
+            return UIColor(rgb: 0xCD6E00)
+        }
+        if self.IsNew {
+            return UIColor(rgb: 0x3C963C)
+        }
+
+        return nil
+    }
 }
