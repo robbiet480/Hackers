@@ -301,8 +301,6 @@ extension HNScraper {
                     parameters["text"] = text
                 }
 
-                print("Submitting post with params", parameters)
-
                 return Alamofire.request("https://news.ycombinator.com/r", method: .post,
                                          parameters: parameters, encoding: URLEncoding.httpBody).responseString()
             }.then { resp -> Promise<HNPost?> in
