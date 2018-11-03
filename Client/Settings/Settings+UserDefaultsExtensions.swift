@@ -109,6 +109,15 @@ extension UserDefaults {
             return user
         }
     }
+
+    public var syncCommentVisibility: Bool {
+        set {
+            set(newValue, forKey: UserDefaultsKeys.SyncCommentVisibility.rawValue)
+        }
+        get {
+            return bool(forKey: UserDefaultsKeys.SyncCommentVisibility.rawValue)
+        }
+    }
 }
 
 enum UserDefaultsKeys: String {
@@ -118,8 +127,6 @@ enum UserDefaultsKeys: String {
     case AutomaticThemeSwitch
     case OpenInBrowser
     case NotificationPointsThreshold
-    case AnimateUpdates
-    case Username
-    case Password
     case LoggedInUser
+    case SyncCommentVisibility
 }

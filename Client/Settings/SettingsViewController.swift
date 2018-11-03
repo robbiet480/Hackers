@@ -89,6 +89,14 @@ class SettingsViewController: FormViewController {
                     $0.hidden = "$loggedInUser != nil"
             }.onCellSelection(handleLogin)
 
+            <<< SwitchRow("syncCommentVisibility") {
+                    $0.title = "Sync comment visibility"
+                    $0.value = UserDefaults.standard.syncCommentVisibility
+                    $0.hidden = "$loggedInUser == nil"
+                }.onChange { row in
+                    UserDefaults.standard.syncCommentVisibility = row.value!
+                }
+
             <<< ButtonRow("logout") {
                 $0.title = "Log out"
                 $0.hidden = "$loggedInUser == nil"
