@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import RealmSwift
+import FontAwesome_swift
 
 protocol PostTitleViewDelegate {
     func didPressLinkButton(_ post: HNPost)
@@ -26,27 +26,9 @@ class PostTitleView: UIView, UIGestureRecognizerDelegate {
         didSet {
             guard let post = post else { return }
 
-            let pointsChanged = oldValue?.Score != post.Score
-            let commentsChanged = oldValue?.TotalChildren != post.TotalChildren
-
-            titleLabel.text = post.Title
+            self.titleLabel.text = post.Title
 
             self.metadataLabel.attributedText = self.metadataText(post)
-
-            if oldValue != nil && (pointsChanged || commentsChanged) {
-                // print("Post", self.post!.Title, "changed points: \(pointsChanged), comments: \(commentsChanged)")
-
-                cellDelegate?.didChangeMetadata()
-
-//                UIView.transition(with: self.metadataLabel,
-//                                  duration: 10,
-//                                  options: [],
-//                                  animations: {
-//                                    self.metadataLabel.attributedText = self.metadataText(post, pointsChanged,
-//                                                                                          commentsChanged)
-//                                    self.metadataLabel.attributedText = self.metadataText(post)
-//                }, completion: nil)
-            }
         }
     }
 
@@ -88,49 +70,48 @@ class PostTitleView: UIView, UIGestureRecognizerDelegate {
         
         return host
     }
-    
-    private func metadataText(_ post: HNPost, _ pointsChanged: Bool = false,
-                              _ commentsChanged: Bool = false) -> NSAttributedString {
+
+    private func metadataText(_ post: HNPost) -> NSAttributedString {
 
         let string = NSMutableAttributedString()
-        
-        let pointsIconAttachment = textAttachment(for: "PointsIcon")
-        let pointsIconAttributedString = NSAttributedString(attachment: pointsIconAttachment)
-        
-        let commentsIconAttachment = textAttachment(for: "CommentsIcon")
-        let commentsIconAttributedString = NSAttributedString(attachment: commentsIconAttachment)
 
-        let trueColor = AppThemeProvider.shared.currentTheme.barForegroundColor
-        let falseColor = AppThemeProvider.shared.currentTheme.textColor
+        let textColor = AppThemeProvider.shared.currentTheme.textColor
 
-        let pointsColor = pointsChanged ? trueColor : falseColor
-
-        let commentsColor = commentsChanged ? trueColor : falseColor
-
-        string.append(NSAttributedString.generate(from: String(post.Score ?? 0), color: pointsColor))
-        string.append(pointsIconAttributedString)
-        string.append(NSAttributedString(string: "• "))
-        string.append(NSAttributedString.generate(from: String(post.TotalChildren), color: commentsColor))
-        string.append(commentsIconAttributedString)
-        if let domainText = domainLabelText(for: post), domainText != "news.ycombinator.com" {
-            string.append(NSAttributedString(string: " • \(domainText)"))
+        string.append(fakAttachment(for: .arrowUp, style: .solid))
+        string.append(NSAttributedString.generate(from: String(post.Score ?? 0), color: textColor))
+        string.append(NSAttributedString(string: " "))
+        string.append(fakAttachment(for: .comment, style: .regular))
+        string.append(NSAttributedString(string: " "))
+        string.append(NSAttributedString.generate(from: String(post.TotalChildren), color: textColor))
+        string.append(NSAttributedString(string: " "))
+        string.append(fakAttachment(for: .clock, style: .regular))
+        string.append(NSAttributedString(string: " "))
+        string.append(NSAttributedString.generate(from: String(post.RelativeDate), color: textColor))
+        if let author = post.Author {
+            string.append(NSAttributedString(string: " "))
+            string.append(fakAttachment(for: .userAlt, style: .solid))
+            string.append(NSAttributedString(string: " "))
+            string.append(NSAttributedString.generate(from: author.Username, color: author.Color))
         }
-        
+        if let domainText = domainLabelText(for: post), domainText != "news.ycombinator.com" {
+            string.append(NSAttributedString(string: "\n"))
+            string.append(fakAttachment(for: .globeAmericas, style: .solid))
+            string.append(NSAttributedString(string: " "))
+            string.append(NSAttributedString(string: domainText))
+        }
+
         return string
     }
-    
-    private func templateImage(named: String) -> UIImage? {
-        let image = UIImage.init(named: named)
-        let templateImage = image?.withRenderingMode(.alwaysTemplate)
-        return templateImage
-    }
-    
-    private func textAttachment(for imageNamed: String) -> NSTextAttachment {
+
+    private func fakAttachment(for fakIcon: FontAwesome, style: FontAwesomeStyle) -> NSAttributedString {
         let attachment = NSTextAttachment()
-        guard let image = templateImage(named: imageNamed) else { return attachment }
+        let image = UIImage.fontAwesomeIcon(name: fakIcon, style: style,
+                                            textColor: AppThemeProvider.shared.currentTheme.textColor,
+                                            size: CGSize(width: 16, height: 16))
+
         attachment.image = image
         attachment.bounds = CGRect(x: 0, y: -2, width: image.size.width, height: image.size.height)
-        return attachment
+        return NSAttributedString(attachment: attachment)
     }
 }
 
@@ -138,6 +119,9 @@ extension PostTitleView: Themed {
     func applyTheme(_ theme: AppTheme) {
         titleLabel.textColor = theme.titleTextColor
         titleLabel.font = UIFont.mySystemFont(ofSize: 18.0)
+        if let post = post {
+            self.metadataLabel.attributedText = self.metadataText(post)
+        }
 //        metadataLabel.textColor = theme.textColor
 //        metadataLabel.font = UIFont.mySystemFont(ofSize: 14.0)
     }

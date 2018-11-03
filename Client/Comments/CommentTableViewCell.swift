@@ -62,9 +62,7 @@ class CommentTableViewCell : UITableViewCell {
         if let author = comment.Author {
             self.authorLabel.text = author.Username
 
-            if let color = author.Color {
-                self.authorLabel.textColor = color
-            }
+            self.authorLabel.textColor = author.Color
         }
 
         if let commentTextView = commentTextView {
@@ -126,7 +124,11 @@ extension CommentTableViewCell: Themed {
             commentTextView.font = UIFont.mySystemFont(ofSize: 15.0)
         }
         if authorLabel != nil {
-            authorLabel.textColor = theme.lightTextColor
+            if let author = self.comment?.Author {
+                self.authorLabel.textColor = author.Color
+            } else {
+                self.authorLabel.textColor = theme.lightTextColor
+            }
             authorLabel.font = UIFont.mySystemFont(ofSize: 15.0)
         }
         if datePostedLabel != nil {

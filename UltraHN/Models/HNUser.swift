@@ -66,7 +66,7 @@ public class HNUser: NSObject, Codable {
         return "HNUser: \(self.Username), karma: \(self.Karma)"
     }
 
-    var Color: UIColor? {
+    var Color: UIColor {
         if self.IsYC {
             return UIColor(rgb: 0xCD6E00)
         }
@@ -74,6 +74,6 @@ public class HNUser: NSObject, Codable {
             return UIColor(rgb: 0x3C963C)
         }
 
-        return nil
+        return AppThemeProvider.shared.currentTheme.textColor
     }
 }

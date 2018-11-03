@@ -80,7 +80,6 @@ public class HTMLDataSource: HNDataSource {
                     return try? HNPost(item.element, rank: item.offset + 1)
                 }
 
-                // return Promise.value((posts: posts, user: try HNUser(documentWithHeader: parsedHTML)))
                 return Promise.value(posts)
 
         }

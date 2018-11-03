@@ -62,10 +62,7 @@ class NewPostTitleView: UIView, UIGestureRecognizerDelegate {
 
             if let author = post.Author {
                 self.authorLabel.text = author.Username
-
-                if let color = author.Color {
-                    self.authorLabel.textColor = color
-                }
+                self.authorLabel.textColor = author.Color
             }
 
             self.titleLabel.text = post.Title
@@ -101,25 +98,9 @@ class NewPostTitleView: UIView, UIGestureRecognizerDelegate {
     }
 
     @objc func didPressTitleText(_ sender: UITapGestureRecognizer) {
-        print("Tap", sender.view)
         if isTitleTapEnabled, let delegate = delegate {
             delegate.didPressLinkButton(post!)
         }
-    }
-
-    private func domainLabelText(for post: HNPost) -> String? {
-        guard let link = post.Link else { return nil }
-
-        guard let urlComponents = URLComponents(url: link, resolvingAgainstBaseURL: true),
-            var host = urlComponents.host else {
-            return nil
-        }
-
-        if host.starts(with: "www.") {
-            host = String(host[4...])
-        }
-
-        return host
     }
 
     private func metadataText(_ post: HNPost) -> NSAttributedString {
@@ -129,34 +110,31 @@ class NewPostTitleView: UIView, UIGestureRecognizerDelegate {
         let textColor = AppThemeProvider.shared.currentTheme.textColor
 
         let pointsIconAttachment = fakAttachment(for: .arrowUp, style: .solid, color: textColor)
-        let pointsIconAttributedString = NSAttributedString(attachment: pointsIconAttachment)
-
+        
         let commentsIconAttachment = fakAttachment(for: .comment, style: .regular, color: textColor)
-        let commentsIconAttributedString = NSAttributedString(attachment: commentsIconAttachment)
-
+        
         let timeIconAttachment = fakAttachment(for: .clock, style: .regular, color: textColor)
-        let timeIconAttributedString = NSAttributedString(attachment: timeIconAttachment)
-
-        string.append(pointsIconAttributedString)
+        
+        string.append(pointsIconAttachment)
         string.append(NSAttributedString.generate(from: String(post.Score ?? 0), color: textColor))
         string.append(NSAttributedString(string: " "))
-        string.append(commentsIconAttributedString)
+        string.append(commentsIconAttachment)
         string.append(NSAttributedString.generate(from: String(post.TotalChildren), color: textColor))
         string.append(NSAttributedString(string: " "))
-        string.append(timeIconAttributedString)
+        string.append(timeIconAttachment)
         string.append(NSAttributedString.generate(from: String(post.RelativeDate), color: textColor))
 
         return string
     }
 
-    private func fakAttachment(for fakIcon: FontAwesome, style: FontAwesomeStyle, color: UIColor) -> NSTextAttachment {
+    private func fakAttachment(for fakIcon: FontAwesome, style: FontAwesomeStyle, color: UIColor) -> NSAttributedString {
         let attachment = NSTextAttachment()
         let image = UIImage.fontAwesomeIcon(name: fakIcon, style: style, textColor: color,
                                             size: CGSize(width: 16, height: 16))
 
         attachment.image = image
         attachment.bounds = CGRect(x: 0, y: -2, width: image.size.width, height: image.size.height)
-        return attachment
+        return NSAttributedString(attachment: attachment)
     }
 }
 
