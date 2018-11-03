@@ -104,8 +104,9 @@ class CommentsViewController : UIViewController {
         guard let post = self.post else { return }
 
         DispatchQueue.global(qos: .userInitiated).async {
-            HNScraper.shared.GetChildren(post.ID).done {
-                self.comments = $0 as? [HNComment]
+            HNScraper.shared.GetItem(post.ID).done { item in
+                print("Got item", item)
+                self.comments = item?.Children
 
                 self.view.hideSkeleton()
                 self.tableView.rowHeight = UITableView.automaticDimension

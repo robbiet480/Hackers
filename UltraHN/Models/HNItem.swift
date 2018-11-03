@@ -478,7 +478,12 @@ public class HNItem: NSObject, Codable {
     }
 
     var ItemPageTitle: String {
-        return self.Title! + " | Hacker News"
+        print("Type is", self.Type)
+        if self.Type != .comment {
+            return self.Title! + " | Hacker News"
+        } else {
+            return self.Author!.Username + "'s comment | Hacker News"
+        }
     }
 
     var ItemURL: URL {

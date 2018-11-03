@@ -206,6 +206,11 @@ extension HNPost {
 
             self.ReplyHMAC = try element.ownerDocument()?.select("input[name='hmac']").first()?.val()
 
+            // Attempt to extract post text from Ask HN, jobs, etc
+            if let tds = try element.ownerDocument()?.select(".fatitem tr td").array(), tds.count >= 6 {
+                self.Text = try tds[6].html()
+            }
+
             self.ExtractActions(element.ownerDocument()!)
         } catch let error as NSError {
             throw error

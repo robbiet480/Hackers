@@ -22,7 +22,7 @@ public class HNPost: HNItem {
     var OpenGraph: [OpenGraphMetadata.RawValue: String] = [:]
 
     override public var description: String {
-        return "HNPost: rank: \(self.Rank), type: \(self.Type.description), ID: \(self.IDString) (dead: \(self.Dead)), author: \(self.Author), score: \(self.Score), comments: \(self.TotalChildren), title: \(self.Title), link: \(self.Link)"
+        return "HNPost: rank: \(self.Rank), type: \(self.Type.description), ID: \(self.IDString) (dead: \(self.Dead)), author: \(self.Author), score: \(self.Score), comments: \(self.TotalChildren), title: \(self.Title), link: \(self.Link), text: \(self.Text)"
     }
 
     var Site: String? {

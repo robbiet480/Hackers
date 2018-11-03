@@ -21,6 +21,8 @@ public class HTMLHNComment: HNComment {
     public convenience init?(_ element: Element) {
         self.init()
 
+        self.Type = .comment
+
         // First, we get the comment ID
 
         guard let commentID = Int(string: element.id()) else {
