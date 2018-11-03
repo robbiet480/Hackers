@@ -32,7 +32,7 @@ final class PushNotificationsDisclaimerViewController: UIViewController {
         textView.isEditable = false
 
         textView.textColor = .black
-        textView.text = NSLocalizedString("Hackers uses iOS background fetch to periodically check (about every 10-15 minutes) for new Hacker News stories. When there is a new story that meets your minimum points threshold available, Hacker News sends alerts with local notifications.\n\nThis setup requires Background App Refresh to be enabled to work. Enable this feature in Settings > General > Background App Refresh.\n\nHackers is a open source project with no financial backing and real-time push notifications would incur significant server costs.", comment: "")
+        textView.text = NSLocalizedString("Hackers uses iOS background fetch to periodically check (about every 10-15 minutes) for new Hacker News stories. When there is a new story that meets your minimum points threshold available, Hackers sends alerts with local notifications.\n\nThis setup requires Background App Refresh to be enabled to work. Enable this feature in Settings > General > Background App Refresh.\n\nHackers is a open source project with no financial backing and real-time push notifications would incur significant server costs.", comment: "")
         view.addSubview(textView)
 
         preferredContentSize = textView.sizeThatFits(CGSize(
