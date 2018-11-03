@@ -387,20 +387,20 @@ extension CommentsViewController: CommentDelegate {
         guard commentsController.visibleComments.count > indexPath.row else { return }
         let comment = commentsController.visibleComments[indexPath.row]
         let (modifiedIndexPaths, visibility) = commentsController.toggleCommentChildrenVisibility(comment)
-        
-        tableView.beginUpdates()
-        tableView.reloadRows(at: [indexPath], with: .fade)
-        if visibility == HNItem.ItemVisibilityType.Hidden {
-            tableView.deleteRows(at: modifiedIndexPaths, with: .top)
-        } else {
-            tableView.insertRows(at: modifiedIndexPaths, with: .top)
-        }
-        tableView.endUpdates()
-        
-        let cellRectInTableView = tableView.rectForRow(at: indexPath)
-        let cellRectInSuperview = tableView.convert(cellRectInTableView, to: tableView.superview)
-        if cellRectInSuperview.origin.y < 0 {
-            tableView.scrollToRow(at: indexPath, at: .top, animated: true)
+
+        tableView.performBatchUpdates({
+            self.tableView.reloadRows(at: [indexPath], with: .fade)
+            if visibility == HNItem.ItemVisibilityType.Hidden {
+                self.tableView.deleteRows(at: modifiedIndexPaths, with: .top)
+            } else {
+                self.tableView.insertRows(at: modifiedIndexPaths, with: .top)
+            }
+        }) { (finished) in
+            let cellRectInTableView = self.tableView.rectForRow(at: indexPath)
+            let cellRectInSuperview = self.tableView.convert(cellRectInTableView, to: self.tableView.superview)
+            if cellRectInSuperview.origin.y < 0 {
+                self.tableView.scrollToRow(at: indexPath, at: .top, animated: true)
+            }
         }
     }
 }

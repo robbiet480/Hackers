@@ -35,11 +35,13 @@ class CommentsController {
 
         comment.Visibility = visible ? .Compact : .Visible
 
-        // Fire hide/show to HN.
-        if visible {
-            _ = comment.Hide()
-        } else {
-            _ = comment.Show()
+        if UserDefaults.standard.syncCommentVisibility {
+            // Fire hide/show to HN.
+            if visible {
+                _ = comment.Hide()
+            } else {
+                _ = comment.Show()
+            }
         }
 
         var currentIndex = visibleIndex + 1;

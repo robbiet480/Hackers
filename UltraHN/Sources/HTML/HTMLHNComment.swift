@@ -47,7 +47,12 @@ public class HTMLHNComment: HNComment {
             }
         }
 
-        self.Visibility = shouldCollapse ? .Compact : .Visible
+        // Parent comments should be compact, Child comments should be hidden
+        if shouldCollapse && self.ParentID != nil {
+            self.Visibility = .Hidden
+        } else if shouldCollapse {
+            self.Visibility = .Compact
+        }
 
         // Here's a fun hack to get the story ID:
         // The reply link looks like this: /reply?id=18342697&goto=item%3Fid%3D18341572%2318342697
