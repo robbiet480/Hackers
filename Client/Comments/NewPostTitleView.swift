@@ -19,6 +19,8 @@ class NewPostTitleView: UIView, UIGestureRecognizerDelegate {
     @IBOutlet var authorLabel: UILabel!
     @IBOutlet var metadataLabel: UILabel!
     @IBOutlet var titleLabel: UILabel!
+    @IBOutlet var postTextView: UITextView!
+    @IBOutlet var thumbnailImageView: UIImageView!
 
     var isTitleTapEnabled = false
     
@@ -28,12 +30,38 @@ class NewPostTitleView: UIView, UIGestureRecognizerDelegate {
         didSet {
             guard let post = post else { return }
 
-            if let link = post.Link {
-                self.urlLabel.text = link.host!.replacingOccurrences(of: "www.", with: "") + link.path
+            if let postText = post.Text {
+                let postTextFont = UIFont.systemFont(ofSize: 15)
+                let postTextColor = AppThemeProvider.shared.currentTheme.textColor
+                let lineSpacing = 4 as CGFloat
+
+                let postTextAttributedString = NSMutableAttributedString(string: postText.htmlDecoded)
+                let paragraphStyle = NSMutableParagraphStyle.default.mutableCopy() as! NSMutableParagraphStyle
+                paragraphStyle.lineSpacing = lineSpacing
+
+                let postTextRange = NSMakeRange(0, postTextAttributedString.length)
+
+                postTextAttributedString.addAttribute(NSAttributedString.Key.font, value: postTextFont, range: postTextRange)
+                postTextAttributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: postTextColor, range: postTextRange)
+                postTextAttributedString.addAttribute(NSAttributedString.Key.paragraphStyle, value: paragraphStyle, range: postTextRange)
+
+                postTextView.attributedText = postTextAttributedString
+
+                postTextView.isHidden = false
+                thumbnailImageView.isHidden = true
+                urlLabel.isHidden = true
+            } else {
+                postTextView.isHidden = true
+                thumbnailImageView.isHidden = false
+                urlLabel.isHidden = false
+                thumbnailImageView.setImage(post)
+                if let link = post.Link {
+                    self.urlLabel.text = link.host!.replacingOccurrences(of: "www.", with: "") + link.path
+                }
             }
 
             if let author = post.Author {
-                self.authorLabel.text = "by " + author.Username
+                self.authorLabel.text = author.Username
 
                 if let color = author.Color {
                     self.authorLabel.textColor = color
@@ -53,18 +81,27 @@ class NewPostTitleView: UIView, UIGestureRecognizerDelegate {
         }
     }
 
+    override func awakeFromNib() {
+        super.awakeFromNib()
+        postTextView.isHidden = true
+        thumbnailImageView.isHidden = true
+        urlLabel.isHidden = true
+    }
+
     override func layoutSubviews() {
         super.layoutSubviews()
         setupTheming()
 
         let titleTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.didPressTitleText(_:)))
-        titleLabel.addGestureRecognizer(titleTapGestureRecognizer)
+        urlLabel.addGestureRecognizer(titleTapGestureRecognizer)
+        thumbnailImageView.addGestureRecognizer(titleTapGestureRecognizer)
 
         NotificationCenter.default.addObserver(self, selector: #selector(PostTitleView.handleRealtimeUpdate(_:)),
                                                name: HNRealtime.shared.PostUpdatedNotificationName, object: nil)
     }
 
     @objc func didPressTitleText(_ sender: UITapGestureRecognizer) {
+        print("Tap", sender.view)
         if isTitleTapEnabled, let delegate = delegate {
             delegate.didPressLinkButton(post!)
         }

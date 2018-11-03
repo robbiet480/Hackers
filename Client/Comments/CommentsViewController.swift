@@ -46,7 +46,6 @@ class CommentsViewController : UIViewController {
     
     @IBOutlet weak var postTitleContainerView: UIView!
     @IBOutlet weak var postTitleView: NewPostTitleView!
-    @IBOutlet weak var thumbnailImageView: UIImageView!
 
     var replyToComment: HNComment?
 
@@ -127,11 +126,6 @@ class CommentsViewController : UIViewController {
         guard let post = post else { return }
         
         postTitleView.post = post
-        thumbnailImageView.setImage(post)
-    }
-    
-    @IBAction func didTapThumbnail(_ sender: Any) {
-        didPressLinkButton(post!)
     }
     
     @IBAction func shareTapped(_ sender: UIBarButtonItem) {
