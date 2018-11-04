@@ -50,6 +50,14 @@ class SubmitViewController: FormViewController {
                 }
     }
 
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+
+        if let row = self.form.rowBy(tag: "title") as? TextRow {
+            row.cell.textField.becomeFirstResponder()
+        }
+    }
+
     @objc func cancel(_ sender: UIBarButtonItem) {
         self.dismiss(animated: true, completion: nil)
     }

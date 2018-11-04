@@ -21,6 +21,13 @@ class ReplyViewController: UIViewController {
         setupTheming()
         navigationBar.setValue(true, forKey: "hidesShadow")
     }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+
+        self.replyText.becomeFirstResponder()
+    }
+
     @IBAction func postButton(_ sender: UIBarButtonItem) {
         print("Post comment with text", replyingTo?.ID, replyText.text)
 
