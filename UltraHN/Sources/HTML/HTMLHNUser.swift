@@ -80,7 +80,8 @@ public class HTMLHNUser: HNUser {
                         }
                     case .About:
                         if isEditing {
-                            self.About = try next.select("textarea[name=about]").val()
+                            // We replace \n with <br> so that the text displays the same as in the HTML <textarea>
+                            self.About = try next.select("textarea[name=about]").val().replacingOccurrences(of: "\n", with: "<br>")
                         } else {
                             self.About = try next.html()
                         }
@@ -130,7 +131,11 @@ public class HTMLHNUser: HNUser {
             let timestamp = timestampStr,
             let interval = TimeInterval(string: timestamp) {
 
-            self.CreatedAt = Date(timeIntervalSince1970: interval)
+            let date = Date(timeIntervalSince1970: interval)
+
+            self.CreatedAt = date
+
+            self.IsNew = !self.isPassedMoreThan(days: 14, fromDate: date, toDate: Date())
         }
     }
 
@@ -153,5 +158,12 @@ public class HTMLHNUser: HNUser {
                 return nil
             }
         }
+    }
+
+    // https://stackoverflow.com/a/31190315/486182
+    func isPassedMoreThan(days: Int, fromDate date : Date, toDate date2 : Date) -> Bool {
+        let unitFlags: Set<Calendar.Component> = [.day]
+        let deltaD = Calendar.current.dateComponents( unitFlags, from: date, to: date2).day
+        return (deltaD ?? 0 > days)
     }
 }
