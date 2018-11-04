@@ -82,7 +82,7 @@ public class HTMLHNUser: HNUser {
                         if isEditing {
                             self.About = try next.select("textarea[name=about]").val()
                         } else {
-                            self.About = value
+                            self.About = try next.html()
                         }
                     case .Bio:
                         self.Bio = value

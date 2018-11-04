@@ -103,17 +103,24 @@ class ProfileViewController: FormViewController {
             }
 
             if let about = user.About, !about.isEmpty {
+                let attrText = NSAttributedString(string: about.htmlDecoded,
+                                                  attributes: [.font: UIFont.mySystemFont(ofSize: 14.0)])
+
                 self.form
                     +++ Section(header: "About", footer: "")
                     <<< TextAreaRow("about") {
                         $0.title = "About"
+                        $0.placeholder = "N/A"
                         $0.textAreaHeight = .dynamic(initialTextViewHeight: 30)
                         $0.disabled = true
-                        $0.value = about
+                        $0.value = about.htmlDecoded
                         $0.cell.textView.isEditable = false
                         $0.cell.textView.dataDetectorTypes = [.link]
                         $0.cell.textView.delegate = self
-                }
+                    }.cellUpdate { cell, row in
+                        cell.textView.text = nil
+                        cell.textView.attributedText = attrText
+                    }
             }
 
             self.form
