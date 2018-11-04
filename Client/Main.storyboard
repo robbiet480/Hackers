@@ -35,7 +35,7 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <stackView opaque="NO" contentMode="scaleToFill" alignment="center" spacing="12" translatesAutoresizingMaskIntoConstraints="NO" id="ykC-xf-BNO">
-                                                    <rect key="frame" x="15" y="8" width="778" height="60"/>
+                                                    <rect key="frame" x="15" y="8" width="384" height="60"/>
                                                     <subviews>
                                                         <imageView contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="ThumbnailPlaceholderIcon" translatesAutoresizingMaskIntoConstraints="NO" id="nll-fe-bGd">
                                                             <rect key="frame" x="0.0" y="0.0" width="60" height="60"/>
@@ -53,19 +53,19 @@
                                                             </userDefinedRuntimeAttributes>
                                                         </imageView>
                                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="FIH-FV-HqO" customClass="PostTitleView" customModule="Hackers" customModuleProvider="target">
-                                                            <rect key="frame" x="72" y="9.5" width="706" height="41"/>
+                                                            <rect key="frame" x="72" y="9.5" width="312" height="41"/>
                                                             <subviews>
                                                                 <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillProportionally" spacing="5" translatesAutoresizingMaskIntoConstraints="NO" id="AjF-9G-O07">
-                                                                    <rect key="frame" x="0.0" y="0.0" width="706" height="41"/>
+                                                                    <rect key="frame" x="0.0" y="0.0" width="312" height="41"/>
                                                                     <subviews>
                                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" text="Title Text" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Hh7-EL-SMI">
-                                                                            <rect key="frame" x="0.0" y="0.0" width="706" height="21.5"/>
+                                                                            <rect key="frame" x="0.0" y="0.0" width="312" height="21.5"/>
                                                                             <fontDescription key="fontDescription" type="system" weight="medium" pointSize="18"/>
                                                                             <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                                             <nil key="highlightedColor"/>
                                                                         </label>
                                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" text="1 point" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="mfd-le-5lC">
-                                                                            <rect key="frame" x="0.0" y="26.5" width="706" height="14.5"/>
+                                                                            <rect key="frame" x="0.0" y="26.5" width="312" height="14.5"/>
                                                                             <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                                                             <color key="textColor" red="0.33333333329999998" green="0.33333333329999998" blue="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                                             <nil key="highlightedColor"/>
@@ -127,7 +127,7 @@
                                                     </userDefinedRuntimeAttributes>
                                                 </imageView>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pEN-w1-yp7">
-                                                    <rect key="frame" x="87" y="11" width="701" height="68"/>
+                                                    <rect key="frame" x="87" y="11" width="307" height="68"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
@@ -199,6 +199,7 @@
                         <outlet property="tableView" destination="sTU-Jc-dof" id="9Rr-YT-r8B"/>
                         <segue destination="sfd-t6-bG7" kind="show" identifier="ShowComments" id="rxv-oa-aIG"/>
                         <segue destination="w4D-m9-tjN" kind="presentation" identifier="Compose" id="NXl-oX-nDd"/>
+                        <segue destination="vMZ-Uo-Xlj" kind="show" identifier="Profile" id="TLg-HL-anB"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="cQy-Df-Rp9" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -262,7 +263,7 @@
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="none" rowHeight="115" estimatedRowHeight="100" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="60" sectionFooterHeight="10" translatesAutoresizingMaskIntoConstraints="NO" id="iN8-we-FRa">
-                                <rect key="frame" x="0.0" y="88" width="414" height="808"/>
+                                <rect key="frame" x="0.0" y="44" width="414" height="852"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <view key="tableHeaderView" contentMode="scaleToFill" id="oQf-bd-JX5" customClass="NewPostTitleView" customModule="Hackers" customModuleProvider="target">
                                     <rect key="frame" x="0.0" y="0.0" width="414" height="175"/>
@@ -424,7 +425,7 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" editable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="VKY-Ue-Nin" customClass="TouchableTextView" customModule="Hackers" customModuleProvider="target">
-                                                    <rect key="frame" x="5" y="33" width="793" height="102"/>
+                                                    <rect key="frame" x="5" y="33" width="399" height="102"/>
                                                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                     <gestureRecognizers/>
                                                     <string key="text">Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</string>
@@ -436,7 +437,7 @@
                                                     </connections>
                                                 </textView>
                                                 <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="bB8-hK-Ppo" userLabel="Seperator View">
-                                                    <rect key="frame" x="10" y="143.5" width="798" height="0.5"/>
+                                                    <rect key="frame" x="10" y="143.5" width="404" height="0.5"/>
                                                     <color key="backgroundColor" red="0.785933514" green="0.785933514" blue="0.785933514" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="0.5" id="zGd-NY-aeW"/>
@@ -453,7 +454,7 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="2h ago" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="XII-Xj-vK5">
-                                                    <rect key="frame" x="653" y="10" width="145" height="21"/>
+                                                    <rect key="frame" x="259" y="10" width="145" height="21"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="21" id="VIb-nL-GGj"/>
                                                     </constraints>
@@ -496,7 +497,7 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="mSf-dk-3Dt" userLabel="Seperator View">
-                                                    <rect key="frame" x="10" y="43" width="798" height="0.5"/>
+                                                    <rect key="frame" x="10" y="43.5" width="404" height="0.5"/>
                                                     <color key="backgroundColor" red="0.785933514" green="0.785933514" blue="0.785933514" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="0.5" id="KjS-bu-Aa3"/>
@@ -513,7 +514,7 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="2h ago" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jhO-xY-HGw">
-                                                    <rect key="frame" x="653" y="10" width="145" height="21"/>
+                                                    <rect key="frame" x="259" y="10" width="145" height="21"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="21" id="wk8-nq-Jk4"/>
                                                     </constraints>
@@ -551,7 +552,7 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" editable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dvM-Za-txm">
-                                                    <rect key="frame" x="8" y="13" width="792" height="101"/>
+                                                    <rect key="frame" x="20" y="16" width="374" height="98.5"/>
                                                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                     <gestureRecognizers/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="15"/>
@@ -565,7 +566,7 @@
                                                     </connections>
                                                 </textView>
                                                 <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="5Mf-Yk-sXk" userLabel="Seperator View">
-                                                    <rect key="frame" x="15" y="114" width="793" height="0.5"/>
+                                                    <rect key="frame" x="15" y="114.5" width="399" height="0.5"/>
                                                     <color key="backgroundColor" red="0.785933514" green="0.785933514" blue="0.785933514" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="0.5" id="6yW-KL-63G"/>
@@ -635,6 +636,7 @@
                         <outlet property="postTitleView" destination="oQf-bd-JX5" id="awb-Pd-1tq"/>
                         <outlet property="tableView" destination="iN8-we-FRa" id="gnY-66-9vc"/>
                         <segue destination="34Y-TC-otT" kind="presentation" identifier="Reply" id="x7C-7A-mTD"/>
+                        <segue destination="vMZ-Uo-Xlj" kind="show" identifier="Profile" id="sND-ZO-5nv"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="sVF-6q-fhE" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -687,6 +689,24 @@
             </objects>
             <point key="canvasLocation" x="3480" y="1434"/>
         </scene>
+        <!--Profile View Controller-->
+        <scene sceneID="bmI-7t-dgT">
+            <objects>
+                <viewController storyboardIdentifier="ProfileView" id="vMZ-Uo-Xlj" userLabel="Profile View Controller" customClass="ProfileViewController" customModule="Hackers" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="DYu-b0-8nB">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <viewLayoutGuide key="safeArea" id="mpX-dJ-oCs"/>
+                    </view>
+                    <connections>
+                        <segue destination="7mJ-zT-gNh" kind="show" identifier="UserNews" id="agm-R5-cu8"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Bu5-EE-lQa" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="4266.666666666667" y="1433.7053571428571"/>
+        </scene>
         <!--Settings-->
         <scene sceneID="Elr-K2-C7N">
             <objects>
@@ -723,4 +743,8 @@
         <image name="exit-up" width="20" height="20"/>
         <image name="flag" width="20" height="20"/>
     </resources>
+    <inferredMetricsTieBreakers>
+        <segue reference="sND-ZO-5nv"/>
+        <segue reference="agm-R5-cu8"/>
+    </inferredMetricsTieBreakers>
 </document>

@@ -50,6 +50,8 @@ class TabBarItem: Object {
         case Hidden
         /// Posts from the provided domainName
         case Site
+        /// Users profile
+        case Profile
 
         var description: String {
             switch self {
@@ -96,6 +98,8 @@ class TabBarItem: Object {
                 return "My Hidden Stories"
             case .Site:
                 return "Site posts"
+            case .Profile:
+                return "Profile"
             }
         }
 
@@ -197,6 +201,8 @@ class TabBarItem: Object {
                 return .Hidden(username: associatedValue)
             case .Site:
                 return .Site(domainName: associatedValue)
+            case .Profile: // Not actually home...
+                return .Home
             }
         }
 
@@ -253,6 +259,8 @@ class TabBarItem: Object {
                 iconName = .globe
             case .Classic:
                 iconName = .codeBranch
+            case .Profile:
+                iconName = .userCircle
             }
 
             return UIImage.fontAwesomeIcon(name: iconName, style: .solid,

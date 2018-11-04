@@ -62,6 +62,8 @@
 		B614BF652187E30A00918E0F /* HNRealtime.swift in Sources */ = {isa = PBXBuildFile; fileRef = B614BF642187E30A00918E0F /* HNRealtime.swift */; };
 		B614BF672187E80500918E0F /* HNLogin.swift in Sources */ = {isa = PBXBuildFile; fileRef = B614BF662187E80500918E0F /* HNLogin.swift */; };
 		B63E78C4217C1C6300750131 /* UIFont+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B63E78C3217C1C6300750131 /* UIFont+Extensions.swift */; };
+		B6563FFB218EFE7200004A96 /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6563FFA218EFE7200004A96 /* ProfileViewController.swift */; };
+		B6563FFD218F107700004A96 /* Int+Pretty.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6563FFC218F107700004A96 /* Int+Pretty.swift */; };
 		B683D67F218923570088C3D0 /* URLComponents+QueryDictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = B683D67E218923570088C3D0 /* URLComponents+QueryDictionary.swift */; };
 		B683D681218959070088C3D0 /* HTMLHNComment.swift in Sources */ = {isa = PBXBuildFile; fileRef = B683D680218959070088C3D0 /* HTMLHNComment.swift */; };
 		B683D6832189A6F50088C3D0 /* AlgoliaHNComment.swift in Sources */ = {isa = PBXBuildFile; fileRef = B683D6822189A6F40088C3D0 /* AlgoliaHNComment.swift */; };
@@ -150,6 +152,8 @@
 		B614BF642187E30A00918E0F /* HNRealtime.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HNRealtime.swift; sourceTree = "<group>"; };
 		B614BF662187E80500918E0F /* HNLogin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HNLogin.swift; sourceTree = "<group>"; };
 		B63E78C3217C1C6300750131 /* UIFont+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIFont+Extensions.swift"; sourceTree = "<group>"; };
+		B6563FFA218EFE7200004A96 /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
+		B6563FFC218F107700004A96 /* Int+Pretty.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Int+Pretty.swift"; sourceTree = "<group>"; };
 		B683D67E218923570088C3D0 /* URLComponents+QueryDictionary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URLComponents+QueryDictionary.swift"; sourceTree = "<group>"; };
 		B683D680218959070088C3D0 /* HTMLHNComment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTMLHNComment.swift; sourceTree = "<group>"; };
 		B683D6822189A6F40088C3D0 /* AlgoliaHNComment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlgoliaHNComment.swift; sourceTree = "<group>"; };
@@ -229,6 +233,7 @@
 				B683D67E218923570088C3D0 /* URLComponents+QueryDictionary.swift */,
 				B69561C5218BE0C300A6FD51 /* Dictionary+Subscript.swift */,
 				B69561C7218C251C00A6FD51 /* Date+Humanize.swift */,
+				B6563FFC218F107700004A96 /* Int+Pretty.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -344,6 +349,7 @@
 				24CEAA9C1F8917D60050DEDF /* ReviewController.swift */,
 				B6CCFB00217EF2120085AC03 /* PushNotificationsDisclaimerViewController.swift */,
 				B69561CD218CD8C000A6FD51 /* SubmitViewController.swift */,
+				B6563FFA218EFE7200004A96 /* ProfileViewController.swift */,
 			);
 			path = Client;
 			sourceTree = "<group>";
@@ -626,6 +632,7 @@
 				2464D211209DE7B100C7F8FC /* UIColor+Extensions.swift in Sources */,
 				24E4F26119B4DA9900574B52 /* CommentDelegate.swift in Sources */,
 				2464D20D209DD8F400C7F8FC /* ArrayExtensions.swift in Sources */,
+				B6563FFD218F107700004A96 /* Int+Pretty.swift in Sources */,
 				2454B9041F655426005A98C7 /* EmptyViewController.swift in Sources */,
 				24D811A51FF90A58000951C3 /* TouchableTextView.swift in Sources */,
 				2464D20F209DD8F400C7F8FC /* Weak.swift in Sources */,
@@ -652,6 +659,7 @@
 				24B5BFEF1B52CE8900328C62 /* PostTitleView.swift in Sources */,
 				B614BF622187DF0B00918E0F /* CustomStringConvertible+Description.swift in Sources */,
 				B683D67F218923570088C3D0 /* URLComponents+QueryDictionary.swift in Sources */,
+				B6563FFB218EFE7200004A96 /* ProfileViewController.swift in Sources */,
 				2464D208209DD7B100C7F8FC /* AppThemeProvider.swift in Sources */,
 				B69561C6218BE0C300A6FD51 /* Dictionary+Subscript.swift in Sources */,
 				24191F8D1944C991003C0D98 /* CommentsController.swift in Sources */,

@@ -52,15 +52,28 @@ class MainTabBarController: UITabBarController {
         var contentViews: [UIViewController] = []
 
         for tbi in orderObjs {
-            let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "NewsNav")
-            guard let newsVCNav = vc as? AppNavigationController else { fatalError() }
-            guard let newsVC = newsVCNav.topViewController as? NewsViewController else { fatalError() }
+            if tbi.view == .Profile {
+                let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "ProfileView")
+                guard let profileVC = vc as? ProfileViewController else { fatalError() }
 
-            newsVC.title = tbi.view.description
+                profileVC.title = UserDefaults.standard.loggedInUser?.Username
 
-            newsVC.postType = tbi.view.scraperPage(tbi.associatedValue)
-            newsVC.tabBarItem = tbi.view.barItem(tbi.index)
-            contentViews.append(newsVCNav)
+                profileVC.user = UserDefaults.standard.loggedInUser
+                let barItem = tbi.view.barItem(tbi.index)
+                barItem.title = UserDefaults.standard.loggedInUser?.Username
+                profileVC.tabBarItem = barItem
+                contentViews.append(AppNavigationController(rootViewController: profileVC))
+            } else {
+                let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "NewsNav")
+                guard let newsVCNav = vc as? AppNavigationController else { fatalError() }
+                guard let newsVC = newsVCNav.topViewController as? NewsViewController else { fatalError() }
+
+                newsVC.title = tbi.view.description
+
+                newsVC.postType = tbi.view.scraperPage(tbi.associatedValue)
+                newsVC.tabBarItem = tbi.view.barItem(tbi.index)
+                contentViews.append(newsVCNav)
+            }
         }
 
         self.setViewControllers(contentViews + [self.settingsVC], animated: true)
@@ -107,9 +120,22 @@ class MainTabBarController: UITabBarController {
         ]
 
         if let user = UserDefaults.standard.loggedInUser {
-            order.append(TabBarItem(9, HNScraper.Page.SubmissionsForUsername(username: user.Username)))
-            order.append(TabBarItem(10, HNScraper.Page.FavoritesForUsername(username: user.Username)))
-            order.append(TabBarItem(11, HNScraper.Page.Upvoted(username: user.Username)))
+
+            order = [
+                TabBarItem(0, HNScraper.Page.Home),
+                TabBarItem(1, HNScraper.Page.AskHN),
+                TabBarItem(2, .Profile),
+                TabBarItem(3, HNScraper.Page.Jobs),
+                TabBarItem(4, HNScraper.Page.New),
+                TabBarItem(5, HNScraper.Page.ShowHN),
+                TabBarItem(6, HNScraper.Page.Active),
+                TabBarItem(7, HNScraper.Page.Best),
+                TabBarItem(8, HNScraper.Page.Noob),
+                TabBarItem(9, HNScraper.Page.ForDate(date: nil)),
+                TabBarItem(10, HNScraper.Page.SubmissionsForUsername(username: user.Username)),
+                TabBarItem(11, HNScraper.Page.FavoritesForUsername(username: user.Username)),
+                TabBarItem(12, HNScraper.Page.Upvoted(username: user.Username))
+            ]
         }
 
         try! realm.write {

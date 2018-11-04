@@ -67,7 +67,7 @@ public class HNUser: NSObject, Codable {
     }
 
     var Color: UIColor {
-        if self.IsYC {
+        if self.IsYC || self.Bio != nil {
             return UIColor(rgb: 0xCD6E00)
         }
         if self.IsNew {

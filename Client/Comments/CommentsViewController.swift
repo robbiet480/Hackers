@@ -86,17 +86,17 @@ class CommentsViewController : UIViewController {
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
 
-//        if let headerView = tableView.tableHeaderView {
-//            let height = headerView.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize).height
-//            var headerFrame = headerView.frame
-//
-//            // If we don't have this check, viewDidLayoutSubviews() will get called infinitely
-//            if height != headerFrame.size.height {
-//                headerFrame.size.height = height
-//                headerView.frame = headerFrame
-//                tableView.tableHeaderView = headerView
-//            }
-//        }
+        if let headerView = tableView.tableHeaderView {
+            let height = headerView.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize).height
+            var headerFrame = headerView.frame
+
+            // If we don't have this check, viewDidLayoutSubviews() will get called infinitely
+            if height != headerFrame.size.height {
+                headerFrame.size.height = height
+                headerView.frame = headerFrame
+                tableView.tableHeaderView = headerView
+            }
+        }
     }
     
     func loadComments() {
@@ -146,6 +146,8 @@ class CommentsViewController : UIViewController {
             } else {
                 replyVC.replyingTo = self.post
             }
+        } else if segue.identifier == "Profile", let profileVC = segue.destination as? ProfileViewController {
+            profileVC.user = self.post?.Author
         }
     }
 
@@ -307,6 +309,7 @@ extension CommentsViewController: NewPostTitleViewDelegate {
 
     func didTapAuthorLabel() {
         print("Author hit, open author view for", post!.Author!)
+        self.performSegue(withIdentifier: "Profile", sender: self)
     }
 
     func verifyLink(_ urlString: String?) -> Bool {
@@ -338,10 +341,10 @@ extension CommentsViewController: UITableViewDataSource {
 }
 
 extension CommentsViewController: UITableViewDelegate {
-//    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-//        let view = Bundle.main.loadNibNamed("CommentsHeader", owner: nil, options: nil)?.first as? UIView
-//        return view
-//    }
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        let view = Bundle.main.loadNibNamed("CommentsHeader", owner: nil, options: nil)?.first as? UIView
+        return view
+    }
 
     func tableView(_ tableView: UITableView,
                    leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {

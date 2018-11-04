@@ -33,6 +33,16 @@ class NewsViewController : UIViewController {
     private var notifiedPostID: Int?
     @IBOutlet weak var composeButton: UIBarButtonItem!
 
+    public var hideBarItems: Bool = false {
+        didSet {
+            if hideBarItems == true {
+                print("Hiding bar items!")
+                self.navigationItem.leftBarButtonItems = nil
+                self.navigationItem.rightBarButtonItems = nil
+            }
+        }
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -51,7 +61,7 @@ class NewsViewController : UIViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(NewsViewController.openPostNotification(_:)),
                                                name: NSNotification.Name(rawValue: "notificationOpenPost"), object: nil)
 
-        if case .ForDate(let date) = self.postType {
+        if !self.hideBarItems, case .ForDate(let date) = self.postType {
             let fakIcon = UIImage.fontAwesomeIcon(name: FontAwesome.calendarAlt, style: FontAwesomeStyle.regular,
                                                   textColor: AppThemeProvider.shared.currentTheme.appTintColor, size: CGSize(width: 30, height: 30))
             self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: fakIcon, style: .plain, target: self, action: nil)
@@ -106,6 +116,12 @@ class NewsViewController : UIViewController {
         self.tableView.beginUpdates()
         self.tableView.reloadRows(at: indexPaths, with: .automatic)
         self.tableView.endUpdates()
+    }
+
+    public convenience init(_ postType: HNScraper.Page) {
+        self.init()
+
+        self.postType = postType
     }
 
     @objc func openPostNotification(_ notification: Notification) {
