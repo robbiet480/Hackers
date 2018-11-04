@@ -11,24 +11,64 @@ import FontAwesome_swift
 
 protocol PostTitleViewDelegate {
     func didPressLinkButton(_ post: HNPost)
+    func didTapUsername(_ user: HNUser)
+    func didTapDomain(_ domainName: String)
 }
 
 class PostTitleView: UIView, UIGestureRecognizerDelegate {
     @IBOutlet var titleLabel: UILabel!
-    @IBOutlet var metadataLabel: UILabel!
-    
+
+    @IBOutlet var metadataStackView: UIStackView!
+    @IBOutlet var topStackView: UIStackView!
+    @IBOutlet var pointsLabel: UILabel!
+    @IBOutlet var commentsLabel: UILabel!
+    @IBOutlet var timeLabel: UILabel!
+    @IBOutlet var usernameLabel: UILabel!
+    @IBOutlet var domainLabel: UILabel!
+
     var isTitleTapEnabled = false
     
     var delegate: PostTitleViewDelegate?
     var cellDelegate: PostTitleViewCellDelegate?
 
+    var hideUsername: Bool = false {
+        didSet {
+            self.usernameLabel.isHidden = hideUsername
+        }
+    }
+    var hideDomain: Bool = false {
+        didSet {
+            self.domainLabel.isHidden = hideDomain
+        }
+    }
+
     var post: HNPost? {
         didSet {
             guard let post = post else { return }
 
-            self.titleLabel.text = post.Title
+            if let title = post.Title {
+                if let dead = post.Dead, dead {
+                    self.titleLabel.text = "🥀 " + title
+                } else if let flagged = post.Flagged, flagged {
+                    self.titleLabel.text = "🚩 " + title
+                } else {
+                    self.titleLabel.text = title
+                }
+            }
 
-            self.metadataLabel.attributedText = self.metadataText(post)
+            self.pointsLabel.attributedText = self.generateAttributedString(String(post.Score ?? 0), .arrowUp, .solid)
+
+            self.commentsLabel.attributedText = self.generateAttributedString(String(post.TotalChildren), .comment, .regular)
+
+            self.timeLabel.attributedText = self.generateAttributedString(post.RelativeDate, .clock, .regular)
+
+            if let username = post.Author?.Username {
+                self.usernameLabel.attributedText = self.generateAttributedString(username, .userAlt, .solid)
+            }
+
+            if let domainText = self.domainLabelText(for: post) {
+                self.domainLabel.attributedText = self.generateAttributedString(domainText, .globeAmericas, .solid)
+            }
         }
     }
 
@@ -46,10 +86,24 @@ class PostTitleView: UIView, UIGestureRecognizerDelegate {
         let titleTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.didPressTitleText(_:)))
         titleLabel.addGestureRecognizer(titleTapGestureRecognizer)
 
+        let usernameTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(usernameTapped(_:)))
+        usernameLabel.addGestureRecognizer(usernameTapGestureRecognizer)
+
+        let domainTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(domainTapped(_:)))
+        domainLabel.addGestureRecognizer(domainTapGestureRecognizer)
+
         NotificationCenter.default.addObserver(self, selector: #selector(PostTitleView.handleRealtimeUpdate(_:)),
                                                name: HNRealtime.shared.PostUpdatedNotificationName, object: nil)
     }
-    
+
+    @objc func usernameTapped(_ sender: UITapGestureRecognizer) {
+        delegate?.didTapUsername(self.post!.Author!)
+    }
+
+    @objc func domainTapped(_ sender: UITapGestureRecognizer) {
+        delegate?.didTapDomain(domainLabelText(for: post!)!)
+    }
+
     @objc func didPressTitleText(_ sender: UITapGestureRecognizer) {
         if isTitleTapEnabled, let delegate = delegate {
             delegate.didPressLinkButton(post!)
@@ -67,40 +121,10 @@ class PostTitleView: UIView, UIGestureRecognizerDelegate {
         if host.starts(with: "www.") {
             host = String(host[4...])
         }
-        
+
+        guard host != "news.ycombinator.com" else { return nil } 
+
         return host
-    }
-
-    private func metadataText(_ post: HNPost) -> NSAttributedString {
-
-        let string = NSMutableAttributedString()
-
-        let textColor = AppThemeProvider.shared.currentTheme.textColor
-
-        string.append(fakAttachment(for: .arrowUp, style: .solid))
-        string.append(NSAttributedString.generate(from: String(post.Score ?? 0), color: textColor))
-        string.append(NSAttributedString(string: " "))
-        string.append(fakAttachment(for: .comment, style: .regular))
-        string.append(NSAttributedString(string: " "))
-        string.append(NSAttributedString.generate(from: String(post.TotalChildren), color: textColor))
-        string.append(NSAttributedString(string: " "))
-        string.append(fakAttachment(for: .clock, style: .regular))
-        string.append(NSAttributedString(string: " "))
-        string.append(NSAttributedString.generate(from: String(post.RelativeDate), color: textColor))
-        if let author = post.Author {
-            string.append(NSAttributedString(string: " "))
-            string.append(fakAttachment(for: .userAlt, style: .solid))
-            string.append(NSAttributedString(string: " "))
-            string.append(NSAttributedString.generate(from: author.Username, color: author.Color))
-        }
-        if let domainText = domainLabelText(for: post), domainText != "news.ycombinator.com" {
-            string.append(NSAttributedString(string: "\n"))
-            string.append(fakAttachment(for: .globeAmericas, style: .solid))
-            string.append(NSAttributedString(string: " "))
-            string.append(NSAttributedString(string: domainText))
-        }
-
-        return string
     }
 
     private func fakAttachment(for fakIcon: FontAwesome, style: FontAwesomeStyle) -> NSAttributedString {
@@ -113,15 +137,26 @@ class PostTitleView: UIView, UIGestureRecognizerDelegate {
         attachment.bounds = CGRect(x: 0, y: -2, width: image.size.width, height: image.size.height)
         return NSAttributedString(attachment: attachment)
     }
+
+    func generateAttributedString(_ value: String, _ icon: FontAwesome, _ style: FontAwesomeStyle) -> NSMutableAttributedString {
+        let string = NSMutableAttributedString()
+
+        let textColor = AppThemeProvider.shared.currentTheme.textColor
+
+        string.append(fakAttachment(for: icon, style: style))
+        string.append(NSAttributedString.generate(from: value, color: textColor))
+
+        return string
+    }
 }
 
 extension PostTitleView: Themed {
     func applyTheme(_ theme: AppTheme) {
         titleLabel.textColor = theme.titleTextColor
         titleLabel.font = UIFont.mySystemFont(ofSize: 18.0)
-        if let post = post {
-            self.metadataLabel.attributedText = self.metadataText(post)
-        }
+        //if let post = post {
+        //    self.metadataLabel.attributedText = self.metadataText(post)
+        //}
 //        metadataLabel.textColor = theme.textColor
 //        metadataLabel.font = UIFont.mySystemFont(ofSize: 14.0)
     }

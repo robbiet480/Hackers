@@ -73,7 +73,7 @@
 		B69561CA218C389B00A6FD51 /* ItemLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = B69561C9218C389B00A6FD51 /* ItemLog.swift */; };
 		B69561CC218CC72900A6FD51 /* ReplyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B69561CB218CC72900A6FD51 /* ReplyViewController.swift */; };
 		B69561CE218CD8C000A6FD51 /* SubmitViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B69561CD218CD8C000A6FD51 /* SubmitViewController.swift */; };
-		B69561D0218D521D00A6FD51 /* NewPostTitleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B69561CF218D521D00A6FD51 /* NewPostTitleView.swift */; };
+		B69561D0218D521D00A6FD51 /* CommentsPostTitleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B69561CF218D521D00A6FD51 /* CommentsPostTitleView.swift */; };
 		B6C86D002186A59B00FB18E8 /* HNPost.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6C86CFF2186A59B00FB18E8 /* HNPost.swift */; };
 		B6C86D022186A5A400FB18E8 /* HNComment.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6C86D012186A5A400FB18E8 /* HNComment.swift */; };
 		B6C86D042186A5AE00FB18E8 /* HNUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6C86D032186A5AE00FB18E8 /* HNUser.swift */; };
@@ -114,7 +114,7 @@
 		249A7E31194374550059C079 /* CommentTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentTableViewCell.swift; sourceTree = "<group>"; };
 		249B24741F659A5200028A92 /* CommentsHeader.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CommentsHeader.xib; sourceTree = "<group>"; };
 		24ADA7E2206FAF2200C143F4 /* Main.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
-		24B5BFEE1B52CE8900328C62 /* PostTitleView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PostTitleView.swift; path = Client/PostTitleView.swift; sourceTree = SOURCE_ROOT; };
+		24B5BFEE1B52CE8900328C62 /* PostTitleView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PostTitleView.swift; path = "Client/Posts List/PostTitleView.swift"; sourceTree = SOURCE_ROOT; };
 		24C20D381A7E42D5005B759B /* MainSplitViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainSplitViewController.swift; sourceTree = "<group>"; };
 		24CC0DB6193D1935005AD417 /* Hackers2-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Hackers2-Bridging-Header.h"; sourceTree = "<group>"; };
 		24CE5FEC19434BDC009D2677 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -163,7 +163,7 @@
 		B69561C9218C389B00A6FD51 /* ItemLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemLog.swift; sourceTree = "<group>"; };
 		B69561CB218CC72900A6FD51 /* ReplyViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReplyViewController.swift; sourceTree = "<group>"; };
 		B69561CD218CD8C000A6FD51 /* SubmitViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubmitViewController.swift; sourceTree = "<group>"; };
-		B69561CF218D521D00A6FD51 /* NewPostTitleView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewPostTitleView.swift; sourceTree = "<group>"; };
+		B69561CF218D521D00A6FD51 /* CommentsPostTitleView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentsPostTitleView.swift; sourceTree = "<group>"; };
 		B6C86CFF2186A59B00FB18E8 /* HNPost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HNPost.swift; sourceTree = "<group>"; };
 		B6C86D012186A5A400FB18E8 /* HNComment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HNComment.swift; sourceTree = "<group>"; };
 		B6C86D032186A5AE00FB18E8 /* HNUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HNUser.swift; sourceTree = "<group>"; };
@@ -259,6 +259,7 @@
 			children = (
 				24CE5FF319435061009D2677 /* NewsViewController.swift */,
 				24CE5FF719435A90009D2677 /* PostCell.swift */,
+				24B5BFEE1B52CE8900328C62 /* PostTitleView.swift */,
 			);
 			path = "Posts List";
 			sourceTree = "<group>";
@@ -269,8 +270,7 @@
 				24DFD28B19436E51007F61E7 /* CommentsViewController.swift */,
 				249A7E31194374550059C079 /* CommentTableViewCell.swift */,
 				24E4F26019B4DA9900574B52 /* CommentDelegate.swift */,
-				24B5BFEE1B52CE8900328C62 /* PostTitleView.swift */,
-				B69561CF218D521D00A6FD51 /* NewPostTitleView.swift */,
+				B69561CF218D521D00A6FD51 /* CommentsPostTitleView.swift */,
 				2454B9031F655426005A98C7 /* EmptyViewController.swift */,
 				249B24741F659A5200028A92 /* CommentsHeader.xib */,
 				2464D215209DFF6D00C7F8FC /* CommentsHeaderView.swift */,
@@ -648,7 +648,7 @@
 				24D6B8CA1C1EDBFC00618422 /* AppTheme.swift in Sources */,
 				B614BF672187E80500918E0F /* HNLogin.swift in Sources */,
 				B69561C8218C251C00A6FD51 /* Date+Humanize.swift in Sources */,
-				B69561D0218D521D00A6FD51 /* NewPostTitleView.swift in Sources */,
+				B69561D0218D521D00A6FD51 /* CommentsPostTitleView.swift in Sources */,
 				B614BF5A2187C78E00918E0F /* FirebaseHNUser.swift in Sources */,
 				245DCAB01CD4DA2A00152AA3 /* SFSafariViewController+PreviewActionItems.swift in Sources */,
 				B6CCFB01217EF2120085AC03 /* PushNotificationsDisclaimerViewController.swift in Sources */,

@@ -33,6 +33,8 @@ class NewsViewController : UIViewController {
     private var notifiedPostID: Int?
     @IBOutlet weak var composeButton: UIBarButtonItem!
 
+    private var selectedUser: HNUser?
+
     public var hideBarItems: Bool = false {
         didSet {
             if hideBarItems == true {
@@ -152,6 +154,9 @@ class NewsViewController : UIViewController {
                 let post = posts![indexPath.row]
                 commentsViewController.post = post
             }
+        } else if segue.identifier == "Profile", let vc = segue.destination as? ProfileViewController {
+            vc.user = self.selectedUser
+            self.selectedUser = nil
         }
     }
 
@@ -189,6 +194,16 @@ extension NewsViewController: UITableViewDataSource {
         cell.post = post
         cell.postTitleView.post = post
         cell.postTitleView.delegate = self
+
+        switch self.postType {
+        case .CommentsForUsername, .FavoritesForUsername, .Hidden, .SubmissionsForUsername, .Upvoted:
+            cell.postTitleView.hideUsername = true
+        case .Site:
+            cell.postTitleView.hideDomain = true
+        default: break
+        }
+
+        print("postType", self.postType, cell.postTitleView.hideUsername, cell.postTitleView.hideDomain)
 
         cell.thumbnailImageView.setImage(post)
         
@@ -344,6 +359,31 @@ extension NewsViewController: PostTitleViewDelegate {
 
             self.navigationController?.present(vc, animated: true, completion: nil)
         }
+    }
+
+    func didTapUsername(_ user: HNUser) {
+        print("Tapped user", user)
+        self.selectedUser = user
+        self.performSegue(withIdentifier: "Profile", sender: self)
+    }
+
+    func didTapDomain(_ domainName: String) {
+        print("Tapped domain", domainName)
+        self.show(self.getNewsVC(HNScraper.Page.Site(domainName: domainName)), sender: self)
+    }
+
+    func getNewsVC(_ postType: HNScraper.Page) -> UIViewController {
+        let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "NewsNav")
+        guard let newsVCNav = vc as? AppNavigationController else { fatalError() }
+        guard let newsVC = newsVCNav.topViewController as? NewsViewController else { fatalError() }
+
+        newsVC.title = postType.description
+
+        newsVC.postType = postType
+
+        newsVC.hideBarItems = true
+
+        return newsVC
     }
 }
 

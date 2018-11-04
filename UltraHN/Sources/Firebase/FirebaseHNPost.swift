@@ -19,6 +19,7 @@ public class FirebaseHNPost: HNPost {
         case `Type` = "type"
         case ChildrenIDs = "kids"
         case TotalChildren = "descendants"
+        case Dead = "dead"
         case Link = "url"
     }
 
@@ -32,13 +33,16 @@ public class FirebaseHNPost: HNPost {
         self.Text = try? container.decode(String.self, forKey: .Text)
         self.Score = try? container.decode(Int.self, forKey: .Score)
         self.ID = try container.decode(Int.self, forKey: .ID)
+        self.Dead = try? container.decode(Bool.self, forKey: .Dead)
         if let createdAt = try? container.decode(TimeInterval.self, forKey: .CreatedAt) {
             self.CreatedAt = Date(timeIntervalSince1970: createdAt)
         }
         self.`Type` = try container.decode(HNItemType.self, forKey: .`Type`)
 
         if self.`Type` != .job { // Jobs don't have children
-            self.TotalChildren = try container.decode(Int.self, forKey: .TotalChildren)
+            if let descendants = try? container.decode(Int.self, forKey: .TotalChildren) {
+                self.TotalChildren = descendants
+            }
             if let childIDs = try? container.decode([Int].self, forKey: .ChildrenIDs) {
                 self.ChildrenIDs = childIDs
                 if self.TotalChildren == 0 && childIDs.count > 0 {

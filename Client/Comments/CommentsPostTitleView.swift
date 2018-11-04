@@ -1,5 +1,5 @@
 //
-//  NewPostTitleView.swift
+//  CommentsPostTitleView.swift
 //  Hackers
 //
 //  Created by Weiran Zhang on 12/07/2015.
@@ -9,7 +9,7 @@
 import UIKit
 import FontAwesome_swift
 
-protocol NewPostTitleViewDelegate {
+protocol CommentsPostTitleViewDelegate {
     func didPressActionButton(_ action: ActionButton, _ sender: UIBarButtonItem) -> Bool
     func didPressLinkButton()
     func didTapAuthorLabel()
@@ -25,7 +25,7 @@ public enum ActionButton: Int, CaseIterable {
 
 // Non system action bar icons from https://linearicons.com/free
 
-class NewPostTitleView: UIView, UIGestureRecognizerDelegate {
+class CommentsPostTitleView: UIView, UIGestureRecognizerDelegate {
 
     @IBOutlet var stackView: UIStackView!
 
@@ -85,7 +85,7 @@ class NewPostTitleView: UIView, UIGestureRecognizerDelegate {
         }
     }
 
-    var delegate: NewPostTitleViewDelegate?
+    var delegate: CommentsPostTitleViewDelegate?
 
     var post: HNPost? {
         didSet {
@@ -199,7 +199,7 @@ class NewPostTitleView: UIView, UIGestureRecognizerDelegate {
     }
 }
 
-extension NewPostTitleView: Themed {
+extension CommentsPostTitleView: Themed {
     func applyTheme(_ theme: AppTheme) {
         titleLabel.textColor = theme.titleTextColor
         titleLabel.font = UIFont.myBoldSystemFont(ofSize: 18.0)

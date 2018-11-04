@@ -36,7 +36,7 @@ extension Date {
             if (month >= 2) {
                 return "\(month)m"
             } else if (month >= 1) {
-                return numericDates ? "1m" : "Last month"
+                return numericDates ? "1mo" : "Last month"
             }
         }
         if let weekOfMonth = components.weekOfMonth {

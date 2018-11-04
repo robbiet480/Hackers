@@ -25,7 +25,7 @@ public class FirebaseHNUser: HNUser {
         self.Username = try container.decode(String.self, forKey: .Username)
         self.Karma = try container.decode(Int.self, forKey: .Karma)
         self.CreatedAt = try? container.decode(Date.self, forKey: .CreatedAt)
-        self.About = try container.decode(String.self, forKey: .About)
+        self.About = try? container.decode(String.self, forKey: .About)
         self.SubmittedIDs = try? container.decode([Int].self, forKey: .SubmittedIDs)
         self.SubmissionCount = self.SubmittedIDs?.count
     }

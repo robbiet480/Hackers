@@ -182,7 +182,7 @@ public class HNScraper {
             case .Hidden(let username):
                 return username + "'s hidden stories"
             case .Site(let domainName):
-                return "Submissions from " + domainName
+                return domainName
             }
         }
     }
