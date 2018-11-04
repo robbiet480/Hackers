@@ -7,31 +7,102 @@
 //
 
 import UIKit
-import RealmSwift
 import FontAwesome_swift
 
 protocol NewPostTitleViewDelegate {
-    func didPressLinkButton(_ post: HNPost)
+    func didPressActionButton(_ action: ActionButton, _ sender: UIBarButtonItem) -> Bool
+    func didPressLinkButton()
+    func didTapAuthorLabel()
 }
 
+public enum ActionButton: Int, CaseIterable {
+    case Vote
+    case Favorite
+    case Reply
+    case Share
+    case Flag
+}
+
+// Non system action bar icons from https://linearicons.com/free
+
 class NewPostTitleView: UIView, UIGestureRecognizerDelegate {
-    @IBOutlet var urlLabel: UILabel!
-    @IBOutlet var authorLabel: UILabel!
-    @IBOutlet var metadataLabel: UILabel!
+
+    @IBOutlet var stackView: UIStackView!
+
     @IBOutlet var titleLabel: UILabel!
+
     @IBOutlet var postTextView: UITextView!
+
+    @IBOutlet var linkView: UIView!
+    @IBOutlet var urlLabel: UILabel!
     @IBOutlet var thumbnailImageView: UIImageView!
 
-    var isTitleTapEnabled = false
-    
+    @IBOutlet var authorLabel: UILabel!
+    @IBOutlet var metadataLabel: UILabel!
+
+    @IBOutlet var actionToolbar: UIToolbar!
+    @IBOutlet var upvoteButton: UIBarButtonItem!
+    @IBOutlet var favoriteButton: UIBarButtonItem!
+    @IBOutlet var replyButton: UIBarButtonItem!
+    @IBOutlet var shareButton: UIBarButtonItem!
+    @IBOutlet var flagButton: UIBarButtonItem!
+
+    @IBAction func upvoteButtonTapped(_ sender: UIBarButtonItem) {
+        if let worked = delegate?.didPressActionButton(.Vote, sender), worked {
+            print("Change upvote button state, action worked!", self.post)
+            let button = UIButton(type: .custom)
+            button.setImage(UIImage(named: "arrow-up")!.withRenderingMode(.alwaysTemplate), for: .normal)
+            button.imageView?.tintColor = AppThemeProvider.shared.currentTheme.barBackgroundColor
+            button.layer.backgroundColor = AppThemeProvider.shared.currentTheme.barForegroundColor.cgColor
+            button.layer.cornerRadius = 4.0
+            button.addTarget(self, action: #selector(upvoteButtonTapped(_:)), for: .touchUpInside)
+
+            self.actionToolbar.items![0] = UIBarButtonItem(customView: button)
+        }
+    }
+
+    @IBAction func favoriteButtonTapped(_ sender: UIBarButtonItem) {
+        if let worked = delegate?.didPressActionButton(.Favorite, sender), worked {
+            print("Change favorite button state, action worked!")
+        }
+    }
+
+    @IBAction func replyButtonTapped(_ sender: UIBarButtonItem) {
+        if let worked = delegate?.didPressActionButton(.Reply, sender), worked {
+            print("Change reply button state, action worked!")
+        }
+    }
+
+    @IBAction func shareButtonTapped(_ sender: UIBarButtonItem) {
+        if let worked = delegate?.didPressActionButton(.Share, sender), worked {
+            print("Change share button state, action worked!")
+        }
+    }
+
+    @IBAction func flagButtonTapped(_ sender: UIBarButtonItem) {
+        if let worked = delegate?.didPressActionButton(.Flag, sender), worked {
+            print("Change flag button state, action worked!")
+        }
+    }
+
     var delegate: NewPostTitleViewDelegate?
 
     var post: HNPost? {
         didSet {
             guard let post = post else { return }
 
+            if let author = post.Author {
+                self.authorLabel.text = author.Username
+                self.authorLabel.textColor = author.Color
+            }
+
+            self.titleLabel.text = post.Title
+
+            self.metadataLabel.attributedText = self.metadataText(post)
+
             if let postText = post.Text {
-                let postTextFont = UIFont.systemFont(ofSize: 15)
+                print("Setting post text!")
+                let postTextFont = UIFont.mySystemFont(ofSize: 18.0)
                 let postTextColor = AppThemeProvider.shared.currentTheme.textColor
                 let lineSpacing = 4 as CGFloat
 
@@ -47,27 +118,19 @@ class NewPostTitleView: UIView, UIGestureRecognizerDelegate {
 
                 postTextView.attributedText = postTextAttributedString
 
-                postTextView.isHidden = false
-                thumbnailImageView.isHidden = true
-                urlLabel.isHidden = true
-            } else {
-                postTextView.isHidden = true
-                thumbnailImageView.isHidden = false
-                urlLabel.isHidden = false
+                stackView.removeArrangedSubview(self.linkView)
+                self.linkView.removeFromSuperview()
+                // linkView.isHidden = true
+                // postTextView.isHidden = false
+            } else if let link = post.Link, !post.LinkIsYCDomain {
+                print("Setting post link")
+                stackView.removeArrangedSubview(self.postTextView)
+                self.postTextView.removeFromSuperview()
+                // postTextView.isHidden = true
+                // linkView.isHidden = false
                 thumbnailImageView.setImage(post)
-                if let link = post.Link {
-                    self.urlLabel.text = link.host!.replacingOccurrences(of: "www.", with: "") + link.path
-                }
+                self.urlLabel.text = link.host!.replacingOccurrences(of: "www.", with: "") + link.path
             }
-
-            if let author = post.Author {
-                self.authorLabel.text = author.Username
-                self.authorLabel.textColor = author.Color
-            }
-
-            self.titleLabel.text = post.Title
-
-            self.metadataLabel.attributedText = self.metadataText(post)
         }
     }
 
@@ -78,13 +141,6 @@ class NewPostTitleView: UIView, UIGestureRecognizerDelegate {
         }
     }
 
-    override func awakeFromNib() {
-        super.awakeFromNib()
-        postTextView.isHidden = true
-        thumbnailImageView.isHidden = true
-        urlLabel.isHidden = true
-    }
-
     override func layoutSubviews() {
         super.layoutSubviews()
         setupTheming()
@@ -93,14 +149,19 @@ class NewPostTitleView: UIView, UIGestureRecognizerDelegate {
         urlLabel.addGestureRecognizer(titleTapGestureRecognizer)
         thumbnailImageView.addGestureRecognizer(titleTapGestureRecognizer)
 
+        let authorTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.didPressAuthorText(_:)))
+        authorLabel.addGestureRecognizer(authorTapGestureRecognizer)
+
         NotificationCenter.default.addObserver(self, selector: #selector(PostTitleView.handleRealtimeUpdate(_:)),
                                                name: HNRealtime.shared.PostUpdatedNotificationName, object: nil)
     }
 
     @objc func didPressTitleText(_ sender: UITapGestureRecognizer) {
-        if isTitleTapEnabled, let delegate = delegate {
-            delegate.didPressLinkButton(post!)
-        }
+        delegate?.didPressLinkButton()
+    }
+
+    @objc func didPressAuthorText(_ sender: UITapGestureRecognizer) {
+        delegate?.didTapAuthorLabel()
     }
 
     private func metadataText(_ post: HNPost) -> NSAttributedString {
@@ -141,8 +202,12 @@ class NewPostTitleView: UIView, UIGestureRecognizerDelegate {
 extension NewPostTitleView: Themed {
     func applyTheme(_ theme: AppTheme) {
         titleLabel.textColor = theme.titleTextColor
-        titleLabel.font = UIFont.mySystemFont(ofSize: 18.0)
-        // metadataLabel.textColor = theme.textColor
-        // metadataLabel.font = UIFont.mySystemFont(ofSize: 14.0)
+        titleLabel.font = UIFont.myBoldSystemFont(ofSize: 18.0)
+
+        actionToolbar.barTintColor = theme.barBackgroundColor
+        actionToolbar.tintColor = theme.barForegroundColor
+
+        //postTextView.backgroundColor = theme.backgroundColor
+        postTextView.font = UIFont.mySystemFont(ofSize: 16.0)
     }
 }

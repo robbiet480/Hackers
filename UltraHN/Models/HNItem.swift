@@ -478,7 +478,6 @@ public class HNItem: NSObject, Codable {
     }
 
     var ItemPageTitle: String {
-        print("Type is", self.Type)
         if self.Type != .comment {
             return self.Title! + " | Hacker News"
         } else {

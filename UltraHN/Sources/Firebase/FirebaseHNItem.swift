@@ -33,6 +33,17 @@ public class FirebaseHNItem: HNItem {
         self.ID = try container.decode(Int.self, forKey: .ID)
         self.CreatedAt = try? container.decode(Date.self, forKey: .CreatedAt)
         self.`Type` = try container.decode(HNItemType.self, forKey: .`Type`)
+
+        if self.Type == .story {
+            if let title = self.Title {
+                if title.hasPrefix("Ask HN") {
+                    self.`Type` = .askHN
+                } else if title.hasPrefix("Show HN") {
+                    self.`Type` = .showHN
+                }
+            }
+        }
+
         self.TotalChildren = try container.decode(Int.self, forKey: .TotalChildren)
         if let childIDs = try? container.decode([Int].self, forKey: .ChildrenIDs) {
             self.ChildrenIDs = childIDs

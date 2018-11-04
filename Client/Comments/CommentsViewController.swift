@@ -86,17 +86,17 @@ class CommentsViewController : UIViewController {
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
 
-        if let headerView = tableView.tableHeaderView {
-            let height = headerView.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize).height
-            var headerFrame = headerView.frame
-
-            // If we don't have this check, viewDidLayoutSubviews() will get called infinitely
-            if height != headerFrame.size.height {
-                headerFrame.size.height = height
-                headerView.frame = headerFrame
-                tableView.tableHeaderView = headerView
-            }
-        }
+//        if let headerView = tableView.tableHeaderView {
+//            let height = headerView.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize).height
+//            var headerFrame = headerView.frame
+//
+//            // If we don't have this check, viewDidLayoutSubviews() will get called infinitely
+//            if height != headerFrame.size.height {
+//                headerFrame.size.height = height
+//                headerView.frame = headerFrame
+//                tableView.tableHeaderView = headerView
+//            }
+//        }
     }
     
     func loadComments() {
@@ -104,7 +104,6 @@ class CommentsViewController : UIViewController {
 
         DispatchQueue.global(qos: .userInitiated).async {
             HNScraper.shared.GetItem(post.ID).done { item in
-                print("Got item", item)
                 self.comments = item?.Children
 
                 self.view.hideSkeleton()
@@ -121,34 +120,10 @@ class CommentsViewController : UIViewController {
         guard let postTitleView = postTitleView else { return }
 
         postTitleView.delegate = self
-        postTitleView.isTitleTapEnabled = true
 
         guard let post = post else { return }
         
         postTitleView.post = post
-    }
-    
-    @IBAction func shareTapped(_ sender: UIBarButtonItem) {
-        print("share tapped", self, self.navigationController, self.navigationController?.topViewController)
-
-        let alertController = UIAlertController(title: "Share...", message: nil, preferredStyle: .actionSheet)
-        let postURLAction = UIAlertAction(title: "Content Link", style: .default) { action in
-            let linkVC = self.post!.LinkActivityViewController
-            linkVC.popoverPresentationController?.barButtonItem = sender
-            self.present(linkVC, animated: true, completion: nil)
-        }
-        let hackerNewsURLAction = UIAlertAction(title: "Hacker News Link", style: .default) { action in
-            let commentsVC = self.post!.CommentsActivityViewController
-            commentsVC.popoverPresentationController?.barButtonItem = sender
-            self.present(commentsVC, animated: true, completion: nil)
-        }
-        alertController.addAction(postURLAction)
-        alertController.addAction(hackerNewsURLAction)
-        alertController.addAction(UIAlertAction(title: "Cancel", style: UIAlertAction.Style.cancel, handler: nil))
-
-        self.present(alertController, animated: true, completion: nil)
-
-        alertController.popoverPresentationController?.barButtonItem = sender
     }
 
     @IBAction func moreButton(_ sender: UIBarButtonItem) {
@@ -236,7 +211,7 @@ class CommentsViewController : UIViewController {
 }
 
 extension CommentsViewController: NewPostTitleViewDelegate {
-    func didPressLinkButton(_ post: HNPost) {
+    func didPressLinkButton() {
         // animate background colour for tap
         self.tableView.tableHeaderView?.backgroundColor = AppThemeProvider.shared.currentTheme.cellHighlightColor
         UIView.animate(withDuration: 0.3, animations: {
@@ -246,11 +221,11 @@ extension CommentsViewController: NewPostTitleViewDelegate {
         // show link
         let activity = NSUserActivity(activityType: "com.weiranzhang.Hackers.link")
         activity.isEligibleForHandoff = true
-        activity.webpageURL = post.Link
-        activity.title = post.Title
+        activity.webpageURL = self.post!.Link
+        activity.title = self.post!.Title
         self.userActivity = activity
 
-        if let link = post.Link, let safariViewController = OpenInBrowser.shared.openURL(link) {
+        if let link = post!.Link, let safariViewController = OpenInBrowser.shared.openURL(link) {
             safariViewController.onDoneBlock = { _ in
                 self.userActivity = nil
             }
@@ -258,7 +233,82 @@ extension CommentsViewController: NewPostTitleViewDelegate {
             self.present(safariViewController, animated: true, completion: nil)
         }
     }
-    
+
+    func didPressActionButton(_ action: ActionButton, _ sender: UIBarButtonItem) -> Bool {
+        guard let post = self.post else { return false }
+
+        switch action {
+        case .Vote:
+            print("Vote hit")
+            if let actions = post.Actions {
+                if let unvote = actions.Unvote {
+                    _ = post.FireAction(unvote)
+                    return true
+                } else if let upvote = actions.Upvote {
+                    _ = post.FireAction(upvote)
+                    return true
+                } else if let downvote = actions.Downvote {
+                    _ = post.FireAction(downvote)
+                    return true
+                }
+            }
+            return true
+        case .Favorite:
+            print("Favorite hit")
+            if let actions = post.Actions {
+                if let fave = actions.Favorite {
+                    _ = post.FireAction(fave)
+                    return true
+                } else if let unfave = actions.Unfavorite {
+                    _ = post.FireAction(unfave)
+                    return true
+                }
+            }
+            return true
+        case .Flag:
+            print("Flag hit")
+            if let actions = post.Actions {
+                if let flag = actions.Flag {
+                    _ = post.FireAction(flag)
+                    return true
+                } else if let unflag = actions.Unflag {
+                    _ = post.FireAction(unflag)
+                    return true
+                }
+            }
+            return true
+        case .Reply:
+            print("Reply hit")
+            self.performSegue(withIdentifier: "Reply", sender: self)
+            return true
+        case .Share:
+            print("Share hit")
+            let alertController = UIAlertController(title: "Share...", message: nil, preferredStyle: .actionSheet)
+            let postURLAction = UIAlertAction(title: "Content Link", style: .default) { action in
+                let linkVC = self.post!.LinkActivityViewController
+                linkVC.popoverPresentationController?.barButtonItem = sender
+                self.present(linkVC, animated: true, completion: nil)
+            }
+            let hackerNewsURLAction = UIAlertAction(title: "Hacker News Link", style: .default) { action in
+                let commentsVC = self.post!.CommentsActivityViewController
+                commentsVC.popoverPresentationController?.barButtonItem = sender
+                self.present(commentsVC, animated: true, completion: nil)
+            }
+            alertController.addAction(postURLAction)
+            alertController.addAction(hackerNewsURLAction)
+            alertController.addAction(UIAlertAction(title: "Cancel", style: UIAlertAction.Style.cancel, handler: nil))
+
+            self.present(alertController, animated: true, completion: nil)
+
+            alertController.popoverPresentationController?.barButtonItem = sender
+            return true
+        }
+    }
+
+    func didTapAuthorLabel() {
+        print("Author hit, open author view for", post!.Author!)
+    }
+
     func verifyLink(_ urlString: String?) -> Bool {
         guard let urlString = urlString, let url = URL(string: urlString) else {
             return false
@@ -288,10 +338,10 @@ extension CommentsViewController: UITableViewDataSource {
 }
 
 extension CommentsViewController: UITableViewDelegate {
-    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let view = Bundle.main.loadNibNamed("CommentsHeader", owner: nil, options: nil)?.first as? UIView
-        return view
-    }
+//    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+//        let view = Bundle.main.loadNibNamed("CommentsHeader", owner: nil, options: nil)?.first as? UIView
+//        return view
+//    }
 
     func tableView(_ tableView: UITableView,
                    leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {

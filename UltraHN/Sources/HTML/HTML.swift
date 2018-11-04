@@ -199,8 +199,12 @@ extension HNPost {
 
             if !scoreParsed && !commentsParsed {
                 self.Type = .job
-            } else if !scoreParsed {
-                self.Type = .askHN
+            } else if let title = self.Title {
+                if title.hasPrefix("Ask HN") {
+                    self.Type = .askHN
+                } else if title.hasPrefix("Show HN") {
+                    self.Type = .showHN
+                }
             }
 
             self.ReplyHMAC = try element.ownerDocument()?.select("input[name='hmac']").first()?.val()
