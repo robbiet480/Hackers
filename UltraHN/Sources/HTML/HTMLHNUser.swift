@@ -86,12 +86,14 @@ public class HTMLHNUser: HNUser {
                         }
                     case .Bio:
                         self.Bio = value
+                        self.IsYC = true
                     case .Name:
                         if isEditing {
                             self.Name = try next.select("input[name=fullname]").val()
                         } else {
                             self.Name = value
                         }
+                        self.IsYC = true
                     case .TopColor:
                         self.TopColor = try next.select("input[name=topc]").val()
                     }

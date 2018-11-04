@@ -13,6 +13,12 @@ class ProfileViewController: FormViewController {
 
     var user: HNUser?
 
+    private var dateFormatter: DateFormatter {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "MMMM d, yyyy"
+        return formatter
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -30,16 +36,12 @@ class ProfileViewController: FormViewController {
 
             if let createdAt = user.CreatedAt {
                 self.form.last!
-                    <<< LabelRow("age") {
-                        $0.title = "Age"
+                    <<< LabelRow("created") {
+                        $0.title = "Created"
 
-                        let formatter = DateFormatter()
-                        formatter.dateFormat = "EEEE, MMM d, yyyy"
-
-                        $0.value = formatter.string(from: createdAt)
+                        $0.value = self.dateFormatter.string(from: createdAt)
                     }.onCellSelection { _, _ in
-                        let vc = self.getNewsVC(.ForDate(date: createdAt))
-                        self.show(vc, sender: self)
+                        self.show(self.getNewsVC(.ForDate(date: createdAt)), sender: self)
                     }
             }
 
@@ -48,10 +50,7 @@ class ProfileViewController: FormViewController {
                     <<< LabelRow("updatedAt") {
                             $0.title = "Updated At"
 
-                            let formatter = DateFormatter()
-                            formatter.dateFormat = "EEEE, MMM d, yyyy"
-
-                            $0.value = formatter.string(from: updatedAt)
+                            $0.value = self.dateFormatter.string(from: updatedAt)
                         }
             }
 
@@ -125,8 +124,8 @@ class ProfileViewController: FormViewController {
                     $0.disabled = true
                     $0.presentationMode = .show(controllerProvider: ControllerProvider.callback {
                         return self.getNewsVC(.CommentsForUsername(username: user.Username))
-                        }, onDismiss: { vc in
-                            _ = vc.navigationController?.popViewController(animated: true)
+                    }, onDismiss: { vc in
+                        _ = vc.navigationController?.popViewController(animated: true)
                     })
                 }
                 <<< ButtonRow("submissions") {
@@ -161,8 +160,8 @@ class ProfileViewController: FormViewController {
                         $0.disabled = true
                         $0.presentationMode = .show(controllerProvider: ControllerProvider.callback {
                             return self.getNewsVC(.Upvoted(username: user.Username))
-                            }, onDismiss: { vc in
-                                _ = vc.navigationController?.popViewController(animated: true)
+                        }, onDismiss: { vc in
+                            _ = vc.navigationController?.popViewController(animated: true)
                         })
                     }
                     <<< ButtonRow("upvotedSubmissions") {
