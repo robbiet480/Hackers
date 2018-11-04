@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Eureka
 
 final class AppThemeProvider: ThemeProvider {
     static let shared: AppThemeProvider = .init()
@@ -50,6 +51,45 @@ final class AppThemeProvider: ThemeProvider {
             return
         }
         currentTheme = nextTheme
+    }
+
+    var eurekaCellUpdate: ((BaseCell, BaseRow) -> Void) {
+        return { cell, row in
+            let activeTheme = AppThemeProvider.shared.currentTheme
+            cell.textLabel?.textColor = activeTheme.textColor
+            cell.textLabel?.tintColor = activeTheme.textColor
+            cell.detailTextLabel?.textColor = activeTheme.barForegroundColor
+            cell.detailTextLabel?.tintColor = activeTheme.barForegroundColor
+            cell.backgroundColor = activeTheme.barBackgroundColor
+            cell.tintColor = activeTheme.barForegroundColor
+
+            if let textFieldCell = cell as? TextFieldCell {
+                textFieldCell.textField.tintColor = activeTheme.barForegroundColor
+                textFieldCell.textField.textColor = activeTheme.barForegroundColor
+            }
+
+            if let buttonCell = cell as? ButtonCellOf<String> {
+                buttonCell.textLabel?.textColor = activeTheme.barForegroundColor
+                buttonCell.textLabel?.tintColor = activeTheme.barForegroundColor
+            }
+
+            if let switchCell = cell as? SwitchCell {
+                switchCell.switchControl.onTintColor = activeTheme.barForegroundColor
+                switchCell.switchControl.tintColor = activeTheme.barForegroundColor
+            }
+
+            if let sliderCell = cell as? SliderCell {
+                sliderCell.slider.tintColor = activeTheme.barForegroundColor
+            }
+
+            if let accountCell = cell as? AccountCell {
+                accountCell.textField.textContentType = .username
+            }
+
+            if let passwordCell = cell as? PasswordCell {
+                passwordCell.textField.textContentType = .password
+            }
+        }
     }
 }
 

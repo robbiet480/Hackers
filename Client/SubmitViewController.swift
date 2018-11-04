@@ -16,6 +16,17 @@ class SubmitViewController: FormViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        setupTheming()
+
+        SegmentedRow<String>.defaultCellSetup = AppThemeProvider.shared.eurekaCellUpdate
+        SegmentedRow<String>.defaultCellUpdate = AppThemeProvider.shared.eurekaCellUpdate
+
+        URLRow.defaultCellSetup = AppThemeProvider.shared.eurekaCellUpdate
+        URLRow.defaultCellUpdate = AppThemeProvider.shared.eurekaCellUpdate
+
+        TextAreaRow.defaultCellSetup = AppThemeProvider.shared.eurekaCellUpdate
+        TextAreaRow.defaultCellUpdate = AppThemeProvider.shared.eurekaCellUpdate
+
         self.title = "New Post"
 
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel,
@@ -105,4 +116,14 @@ class SubmitViewController: FormViewController {
     }
     */
 
+}
+
+extension SubmitViewController: Themed {
+    func applyTheme(_ theme: AppTheme) {
+        view.backgroundColor = theme.barBackgroundColor
+        tableView.backgroundColor = theme.barBackgroundColor
+        tableView.separatorColor = theme.separatorColor
+
+        self.tableView.reloadData()
+    }
 }

@@ -22,6 +22,17 @@ class ProfileViewController: FormViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        setupTheming()
+
+        LabelRow.defaultCellSetup = AppThemeProvider.shared.eurekaCellUpdate
+        LabelRow.defaultCellUpdate = AppThemeProvider.shared.eurekaCellUpdate
+
+        TextAreaRow.defaultCellSetup = AppThemeProvider.shared.eurekaCellUpdate
+        TextAreaRow.defaultCellUpdate = AppThemeProvider.shared.eurekaCellUpdate
+
+        ButtonRow.defaultCellSetup = AppThemeProvider.shared.eurekaCellUpdate
+        ButtonRow.defaultCellUpdate = AppThemeProvider.shared.eurekaCellUpdate
+
         guard let user = self.user else { return }
 
         HNScraper.shared.GetUser(user.Username, dataSource: HTMLDataSource()).done {
@@ -223,5 +234,15 @@ extension ProfileViewController: UITextViewDelegate {
 
         return false
 
+    }
+}
+
+extension ProfileViewController: Themed {
+    func applyTheme(_ theme: AppTheme) {
+        view.backgroundColor = theme.barBackgroundColor
+        tableView.backgroundColor = theme.barBackgroundColor
+        tableView.separatorColor = theme.separatorColor
+
+        self.tableView.reloadData()
     }
 }
