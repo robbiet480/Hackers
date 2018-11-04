@@ -110,24 +110,26 @@ public class HTMLDataSource: HNDataSource {
             let parsedHTML = try SwiftSoup.parse(arg0.string)
             let rows = try parsedHTML.select("tr.athing")
             for row in rows {
-                let tds = try row.select("td").array()
+                let leader = HNLeader()
 
-                var rank: Int = 0
+                let tds = try row.select("td").array()
 
                 var rankStr = try? tds[0].text()
                 rankStr?.removeLast()
 
                 if let rankStr = rankStr, let rankInt = Int(string: rankStr) {
-                    rank = rankInt
+                    leader.Rank = rankInt
                 }
-                let username = try tds[1].text()
 
-                var karma: Int?
+                if let hnUserElms = try? tds[1].select(".hnuser"), let hnUser = hnUserElms.first() {
+                    leader.User = HTMLHNUser(hnUserElement: hnUser)
+                }
+
                 if let karmaStr = try? tds[2].text(), let karmaInt = Int(string: karmaStr) {
-                    karma = karmaInt
+                    leader.Karma = karmaInt
                 }
 
-                leaders.append(HNLeader(rank: rank, user: HNUser(username: username), karma: karma))
+                leaders.append(leader)
             }
 
             return Promise.value(leaders)

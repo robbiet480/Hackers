@@ -41,6 +41,7 @@ class LeaderboardTableViewController: UITableViewController {
         let leader = board[indexPath.row]
 
         cell.textLabel?.text = String(leader.Rank) + ". " + leader.User.Username
+        cell.textLabel?.textColor = leader.User.Color
         if let karma = leader.Karma {
             cell.detailTextLabel?.text = String(karma)
         } else {

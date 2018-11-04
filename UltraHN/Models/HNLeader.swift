@@ -13,9 +13,8 @@ public class HNLeader: NSObject {
     public var User: HNUser = HNUser(username: "pg")
     public var Karma: Int?
 
-    public init(rank: Int, user: HNUser, karma: Int?) {
-        super.init()
-
+    public convenience init(rank: Int, user: HNUser, karma: Int?) {
+        self.init()
         self.Rank = rank
         self.User = user
         self.Karma = karma
