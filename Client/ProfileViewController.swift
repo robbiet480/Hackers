@@ -113,7 +113,7 @@ class ProfileViewController: FormViewController {
                         $0.placeholder = "N/A"
                         $0.textAreaHeight = .dynamic(initialTextViewHeight: 30)
                         $0.disabled = true
-                        $0.value = about.htmlDecoded
+                        $0.value = attrText.string
                         $0.cell.textView.isEditable = false
                         $0.cell.textView.dataDetectorTypes = [.link]
                         $0.cell.textView.delegate = self
@@ -186,13 +186,17 @@ class ProfileViewController: FormViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
-        self.navigationController?.navigationBar.titleTextAttributes = [.foregroundColor: self.user?.Color]
+        if let user = self.user {
+            self.navigationController?.navigationBar.titleTextAttributes = [.foregroundColor: user.Color]
+            self.navigationController?.navigationBar.largeTitleTextAttributes = [.foregroundColor: user.Color]
+        }
     }
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
 
         self.navigationController?.navigationBar.titleTextAttributes = nil
+        self.navigationController?.navigationBar.largeTitleTextAttributes = nil
     }
 
     func getNewsVC(_ postType: HNScraper.Page) -> UIViewController {
