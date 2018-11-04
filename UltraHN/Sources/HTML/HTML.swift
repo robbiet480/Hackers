@@ -127,7 +127,7 @@ public class HTMLDataSource: HNDataSource {
                     karma = karmaInt
                 }
 
-                leaders.append(HNLeader(rank: rank, username: username, karma: karma))
+                leaders.append(HNLeader(rank: rank, user: HNUser(username: username), karma: karma))
             }
 
             return Promise.value(leaders)

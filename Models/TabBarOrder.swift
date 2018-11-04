@@ -52,6 +52,8 @@ class TabBarItem: Object {
         case Site
         /// Users profile
         case Profile
+        /// Leaderboard
+        case Leaderboard
 
         var description: String {
             switch self {
@@ -100,6 +102,8 @@ class TabBarItem: Object {
                 return "Site posts"
             case .Profile:
                 return "Profile"
+            case .Leaderboard:
+                return "Leaderboard"
             }
         }
 
@@ -201,7 +205,7 @@ class TabBarItem: Object {
                 return .Hidden(username: associatedValue)
             case .Site:
                 return .Site(domainName: associatedValue)
-            case .Profile: // Not actually home...
+            default: // Not actually home...
                 return .Home
             }
         }
@@ -261,6 +265,8 @@ class TabBarItem: Object {
                 iconName = .codeBranch
             case .Profile:
                 iconName = .userCircle
+            case .Leaderboard:
+                iconName = .listOl
             }
 
             return UIImage.fontAwesomeIcon(name: iconName, style: .solid,

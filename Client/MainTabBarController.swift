@@ -63,6 +63,14 @@ class MainTabBarController: UITabBarController {
                 barItem.title = UserDefaults.standard.loggedInUser?.Username
                 profileVC.tabBarItem = barItem
                 contentViews.append(AppNavigationController(rootViewController: profileVC))
+            } else if tbi.view == .Leaderboard {
+                let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "LeaderboardView")
+                guard let leaderboardVC = vc as? LeaderboardTableViewController else { fatalError() }
+
+                leaderboardVC.title = tbi.view.description
+
+                leaderboardVC.tabBarItem = tbi.view.barItem(tbi.index)
+                contentViews.append(AppNavigationController(rootViewController: leaderboardVC))
             } else {
                 let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "NewsNav")
                 guard let newsVCNav = vc as? AppNavigationController else { fatalError() }
@@ -117,6 +125,7 @@ class MainTabBarController: UITabBarController {
             TabBarItem(6, HNScraper.Page.Best),
             TabBarItem(7, HNScraper.Page.Noob),
             TabBarItem(8, HNScraper.Page.ForDate(date: nil)),
+            TabBarItem(9, .Leaderboard),
         ]
 
         if let user = UserDefaults.standard.loggedInUser {
@@ -132,9 +141,10 @@ class MainTabBarController: UITabBarController {
                 TabBarItem(7, HNScraper.Page.Best),
                 TabBarItem(8, HNScraper.Page.Noob),
                 TabBarItem(9, HNScraper.Page.ForDate(date: nil)),
-                TabBarItem(10, HNScraper.Page.SubmissionsForUsername(username: user.Username)),
-                TabBarItem(11, HNScraper.Page.FavoritesForUsername(username: user.Username)),
-                TabBarItem(12, HNScraper.Page.Upvoted(username: user.Username))
+                TabBarItem(10, .Leaderboard),
+                TabBarItem(11, HNScraper.Page.SubmissionsForUsername(username: user.Username)),
+                TabBarItem(12, HNScraper.Page.FavoritesForUsername(username: user.Username)),
+                TabBarItem(13, HNScraper.Page.Upvoted(username: user.Username))
             ]
         }
 

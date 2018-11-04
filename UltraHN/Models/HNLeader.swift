@@ -10,19 +10,19 @@ import Foundation
 
 public class HNLeader: NSObject {
     public var Rank: Int = 0
-    public var Username: String = ""
+    public var User: HNUser = HNUser(username: "pg")
     public var Karma: Int?
 
-    public init(rank: Int, username: String, karma: Int?) {
+    public init(rank: Int, user: HNUser, karma: Int?) {
         super.init()
 
         self.Rank = rank
-        self.Username = username
+        self.User = user
         self.Karma = karma
     }
 
     override public var description: String {
-        var str = "\(self.Username) is ranked #\(self.Rank.description) on the leaderboard with "
+        var str = "\(self.User.Username) is ranked #\(self.Rank.description) on the leaderboard with "
 
         if let karma = self.Karma {
             str += "\(karma) karma"

@@ -64,6 +64,7 @@
 		B63E78C4217C1C6300750131 /* UIFont+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B63E78C3217C1C6300750131 /* UIFont+Extensions.swift */; };
 		B6563FFB218EFE7200004A96 /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6563FFA218EFE7200004A96 /* ProfileViewController.swift */; };
 		B6563FFD218F107700004A96 /* Int+Pretty.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6563FFC218F107700004A96 /* Int+Pretty.swift */; };
+		B6563FFF218FA4BA00004A96 /* LeaderboardTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6563FFE218FA4BA00004A96 /* LeaderboardTableViewController.swift */; };
 		B683D67F218923570088C3D0 /* URLComponents+QueryDictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = B683D67E218923570088C3D0 /* URLComponents+QueryDictionary.swift */; };
 		B683D681218959070088C3D0 /* HTMLHNComment.swift in Sources */ = {isa = PBXBuildFile; fileRef = B683D680218959070088C3D0 /* HTMLHNComment.swift */; };
 		B683D6832189A6F50088C3D0 /* AlgoliaHNComment.swift in Sources */ = {isa = PBXBuildFile; fileRef = B683D6822189A6F40088C3D0 /* AlgoliaHNComment.swift */; };
@@ -154,6 +155,7 @@
 		B63E78C3217C1C6300750131 /* UIFont+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIFont+Extensions.swift"; sourceTree = "<group>"; };
 		B6563FFA218EFE7200004A96 /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
 		B6563FFC218F107700004A96 /* Int+Pretty.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Int+Pretty.swift"; sourceTree = "<group>"; };
+		B6563FFE218FA4BA00004A96 /* LeaderboardTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeaderboardTableViewController.swift; sourceTree = "<group>"; };
 		B683D67E218923570088C3D0 /* URLComponents+QueryDictionary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URLComponents+QueryDictionary.swift"; sourceTree = "<group>"; };
 		B683D680218959070088C3D0 /* HTMLHNComment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTMLHNComment.swift; sourceTree = "<group>"; };
 		B683D6822189A6F40088C3D0 /* AlgoliaHNComment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlgoliaHNComment.swift; sourceTree = "<group>"; };
@@ -350,6 +352,7 @@
 				B6CCFB00217EF2120085AC03 /* PushNotificationsDisclaimerViewController.swift */,
 				B69561CD218CD8C000A6FD51 /* SubmitViewController.swift */,
 				B6563FFA218EFE7200004A96 /* ProfileViewController.swift */,
+				B6563FFE218FA4BA00004A96 /* LeaderboardTableViewController.swift */,
 			);
 			path = Client;
 			sourceTree = "<group>";
@@ -658,6 +661,7 @@
 				242A00D31D086927003D915B /* UIViewControllerSmoothlyDeselectCellExtension.swift in Sources */,
 				24B5BFEF1B52CE8900328C62 /* PostTitleView.swift in Sources */,
 				B614BF622187DF0B00918E0F /* CustomStringConvertible+Description.swift in Sources */,
+				B6563FFF218FA4BA00004A96 /* LeaderboardTableViewController.swift in Sources */,
 				B683D67F218923570088C3D0 /* URLComponents+QueryDictionary.swift in Sources */,
 				B6563FFB218EFE7200004A96 /* ProfileViewController.swift in Sources */,
 				2464D208209DD7B100C7F8FC /* AppThemeProvider.swift in Sources */,

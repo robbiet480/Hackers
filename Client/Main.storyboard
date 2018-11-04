@@ -770,6 +770,37 @@
             </objects>
             <point key="canvasLocation" x="922" y="1456"/>
         </scene>
+        <!--Leaderboard Table View Controller-->
+        <scene sceneID="p6S-YD-faE">
+            <objects>
+                <tableViewController storyboardIdentifier="LeaderboardView" id="9OQ-fe-AXN" customClass="LeaderboardTableViewController" customModule="Hackers" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="nTH-mR-2cp">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <prototypes>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="Odl-3P-EVl">
+                                <rect key="frame" x="0.0" y="28" width="414" height="44"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Odl-3P-EVl" id="fRN-O0-nqj">
+                                    <rect key="frame" x="0.0" y="0.0" width="414" height="43.5"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </tableViewCellContentView>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="9OQ-fe-AXN" id="YCr-M8-jQj"/>
+                            <outlet property="delegate" destination="9OQ-fe-AXN" id="KIP-zy-1jW"/>
+                        </connections>
+                    </tableView>
+                    <connections>
+                        <segue destination="vMZ-Uo-Xlj" kind="show" identifier="LeaderProfile" id="z96-MP-8YY"/>
+                    </connections>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="bxM-gy-33w" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1777" y="1456"/>
+        </scene>
         <!--App Navigation Controller-->
         <scene sceneID="Oxg-Zn-2s8">
             <objects>
@@ -797,7 +828,7 @@
         <image name="flag" width="20" height="20"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="TLg-HL-anB"/>
+        <segue reference="z96-MP-8YY"/>
         <segue reference="agm-R5-cu8"/>
     </inferredMetricsTieBreakers>
 </document>
