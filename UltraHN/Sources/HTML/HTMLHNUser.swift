@@ -80,11 +80,14 @@ public class HTMLHNUser: HNUser {
                         }
                     case .About:
                         if isEditing {
-                            // We replace \n with <br> so that the text displays the same as in the HTML <textarea>
-                            self.About = try next.select("textarea[name=about]").val().replacingOccurrences(of: "\n", with: "<br>")
+                            self.About = try next.select("textarea[name=about]").val()
                         } else {
                             self.About = try next.html()
                         }
+
+                        // We replace \n with <br> so that the text displays the same as in the HTML <textarea>
+                        self.About = self.About!.replacingOccurrences(of: "\n", with: "<br>")
+
                     case .Bio:
                         self.Bio = value
                         self.IsYC = true
