@@ -72,8 +72,8 @@ public class HTMLHNComment: HNComment {
             self.Author = HTMLHNUser(hnUserElement: hnUser)
         }
 
-        if let time = try? element.select(".age").text() {
-            self.RelativeTime = time
+        if let time = try? element.select(".age").text(), let parsed = HNScraper.shared.parseRelativeTime(time) {
+            self.CreatedAt = parsed
         }
 
         _ = try? element.select(".commtext .reply").remove()

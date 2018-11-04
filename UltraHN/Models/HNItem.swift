@@ -21,8 +21,7 @@ public class HNItem: NSObject, Codable {
     public var Text: String?
     public var Score: Int?
     public var ID: Int = 0
-    public var RelativeTime: String = ""
-    public var CreatedAt: Date?
+    public var CreatedAt: Date = Date()
     public var `Type`: HNItemType = .story
 
     public var ParentID: Int?
@@ -121,11 +120,7 @@ public class HNItem: NSObject, Codable {
     }
 
     var RelativeDate: String {
-        if let createdAt = self.CreatedAt {
-            return createdAt.timeAgo(numericDates: true)
-        }
-
-        return self.RelativeTime
+        return self.CreatedAt.timeAgo(numericDates: true)
     }
 
     public func collectChildren(_ level: Int = 0) -> [HNItem] {

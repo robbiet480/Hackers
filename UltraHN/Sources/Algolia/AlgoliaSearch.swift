@@ -113,7 +113,10 @@ class AlgoliaHit: Codable {
     var hnItem: HNItem {
         let item = HNItem()
         item.ID = self.objectID
-        item.CreatedAt = self.createdAt
+        if let createdAt = self.createdAt {
+            item.CreatedAt = createdAt
+        }
+
         item.Title = self.title
         if let author = self.author {
             item.Author = HNUser(username: author)

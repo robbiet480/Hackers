@@ -98,35 +98,37 @@ class HNRealtime {
         return { snapshot in
             guard let value = snapshot.value else { print("Got an empty snapshot!"); return }
 
+            let decoder = FirebaseDecoder()
+
             do {
                 switch monitorType {
                 case .Post:
                     // print("Got snapshot", snapshot.ref)
-                    let decoded = try FirebaseDecoder().decode(FirebaseHNPost.self, from: value)
+                    let decoded = try decoder.decode(FirebaseHNPost.self, from: value)
                     NotificationCenter.default.post(name: self.PostUpdatedNotificationName,
                                                     object: decoded, userInfo: ["multiple": false,
                                                                                 "id": decoded.ID,
                                                                                 "type": decoded.Type])
                     return
                 case .Comment:
-                    let decoded = try FirebaseDecoder().decode(FirebaseHNItem.self, from: value)
+                    let decoded = try decoder.decode(FirebaseHNItem.self, from: value)
                     NotificationCenter.default.post(name: self.CommentUpdatedNotificationName,
                                                     object: decoded, userInfo: ["multiple": false,
                                                                                 "id": decoded.ID])
                     return
                 case .User:
-                    let decoded = try FirebaseDecoder().decode(FirebaseHNUser.self, from: value)
+                    let decoded = try decoder.decode(FirebaseHNUser.self, from: value)
                     NotificationCenter.default.post(name: self.UserUpdatedNotificationName,
                                                     object: decoded, userInfo: ["username": decoded.Username])
                     return
                 case .Page:
-                    let decoded = try FirebaseDecoder().decode([Int].self, from: value)
+                    let decoded = try decoder.decode([Int].self, from: value)
                     NotificationCenter.default.post(name: self.PageUpdatedNotificationName,
                                                     object: decoded, userInfo: nil)
                     return
                 }
             } catch let error {
-                print("Got error while handling snapshot update!", error)
+                print("Got error while handling snapshot update!", monitorType, error, value)
             }
         }
     }

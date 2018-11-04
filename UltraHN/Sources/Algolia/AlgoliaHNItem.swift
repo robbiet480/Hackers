@@ -34,7 +34,7 @@ public class AlgoliaHNItem: HNItem {
         self.Text = try? container.decode(String.self, forKey: .Text)
         self.Score = try? container.decode(Int.self, forKey: .Score)
         self.ID = try container.decode(Int.self, forKey: .ID)
-        self.CreatedAt = try? container.decode(Date.self, forKey: .CreatedAt)
+        self.CreatedAt = try container.decode(Date.self, forKey: .CreatedAt)
         self.`Type` = try container.decode(HNItemType.self, forKey: .`Type`)
         self.ParentID = try? container.decode(Int.self, forKey: .ParentID)
         self.StoryID = try? container.decode(Int.self, forKey: .StoryID)

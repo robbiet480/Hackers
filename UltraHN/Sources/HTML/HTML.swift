@@ -185,8 +185,8 @@ extension HNPost {
                 self.Author = HTMLHNUser(hnUserElement: hnUser)
             }
 
-            if let time = try metadataLine?.select(".age").text() {
-                self.RelativeTime = time
+            if let time = try metadataLine?.select(".age").text(), let parsed = HNScraper.shared.parseRelativeTime(time) {
+                self.CreatedAt = parsed
             }
 
             if let countText = try metadataLine?.select("a").last()?.text(),
@@ -318,5 +318,37 @@ extension HNScraper {
 
                 return Promise.value(try HNPost(item))
         }
+    }
+
+    public func parseRelativeTime(_ rTime: String) -> Date? {
+        let splitTime = rTime.split(separator: .space)
+        guard let first = splitTime.first else { return nil }
+
+        let numberStr = String(first)
+
+        guard let number = Int(numberStr) else { return nil }
+
+        let unit = String(splitTime[1])
+
+        var components = DateComponents()
+
+        switch unit {
+            case "minute", "minutes":
+                components.minute = -number
+            case "hour", "hours":
+                components.hour = -number
+            case "day", "days":
+                components.day = -number
+            case "week", "weeks":
+                components.day = -(number * 7)
+            case "month", "months":
+                components.month = -number
+            case "year", "years":
+                components.year = -number
+            default:
+                print("Unknown relative date unit", unit)
+        }
+
+        return Calendar.current.date(byAdding: components, to: Date())
     }
 }

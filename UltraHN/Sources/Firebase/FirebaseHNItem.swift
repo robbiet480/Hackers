@@ -31,7 +31,7 @@ public class FirebaseHNItem: HNItem {
         self.Text = try? container.decode(String.self, forKey: .Text)
         self.Score = try? container.decode(Int.self, forKey: .Score)
         self.ID = try container.decode(Int.self, forKey: .ID)
-        self.CreatedAt = try? container.decode(Date.self, forKey: .CreatedAt)
+        self.CreatedAt = try container.decode(Date.self, forKey: .CreatedAt)
         self.`Type` = try container.decode(HNItemType.self, forKey: .`Type`)
 
         if self.Type == .story {
@@ -44,11 +44,13 @@ public class FirebaseHNItem: HNItem {
             }
         }
 
-        self.TotalChildren = try container.decode(Int.self, forKey: .TotalChildren)
-        if let childIDs = try? container.decode([Int].self, forKey: .ChildrenIDs) {
-            self.ChildrenIDs = childIDs
-            if self.TotalChildren == 0 && childIDs.count > 0 {
-                self.TotalChildren = childIDs.count
+        if self.`Type` != .job { // Jobs don't have children
+            self.TotalChildren = try container.decode(Int.self, forKey: .TotalChildren)
+            if let childIDs = try? container.decode([Int].self, forKey: .ChildrenIDs) {
+                self.ChildrenIDs = childIDs
+                if self.TotalChildren == 0 && childIDs.count > 0 {
+                    self.TotalChildren = childIDs.count
+                }
             }
         }
     }
