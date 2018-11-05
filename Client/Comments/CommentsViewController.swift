@@ -19,10 +19,6 @@ class CommentsViewController : UIViewController {
     var post: HNPost? {
         didSet {
             setupPostTitleView()
-            loadComments()
-
-            // FIXME: Mark as read
-            //self.post?.MarkAsRead()
 
             let activity = NSUserActivity(activityType: "com.weiranzhang.Hackers.comments")
             activity.isEligibleForHandoff = true
@@ -59,6 +55,12 @@ class CommentsViewController : UIViewController {
     override func awakeFromNib() {
         super.awakeFromNib()
         navigationItem.largeTitleDisplayMode = .never
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+
+        self.loadComments()
     }
 
     override func viewWillDisappear(_ animated: Bool) {
