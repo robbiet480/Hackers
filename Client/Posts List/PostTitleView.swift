@@ -81,6 +81,8 @@ class PostTitleView: UIView, UIGestureRecognizerDelegate {
 
             if let domainText = self.domainLabelText(for: post) {
                 self.domainLabel.attributedText = self.generateAttributedString(domainText, .globeAmericas, .solid)
+            } else {
+                self.domainLabel.isHidden = true
             }
         }
     }
