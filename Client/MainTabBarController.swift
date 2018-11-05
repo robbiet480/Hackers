@@ -144,6 +144,7 @@ class MainTabBarController: UITabBarController, UITableViewDelegate {
             TabBarItem(8, HNScraper.Page.Noob),
             TabBarItem(9, HNScraper.Page.ForDate(date: nil)),
             TabBarItem(10, .Leaderboard),
+            TabBarItem(11, HNScraper.Page.Classic),
         ]
 
         if let user = UserDefaults.standard.loggedInUser {
@@ -163,7 +164,8 @@ class MainTabBarController: UITabBarController, UITableViewDelegate {
                 TabBarItem(11, .Leaderboard),
                 TabBarItem(12, HNScraper.Page.SubmissionsForUsername(username: user.Username)),
                 TabBarItem(13, HNScraper.Page.FavoritesForUsername(username: user.Username)),
-                TabBarItem(14, HNScraper.Page.Upvoted(username: user.Username))
+                TabBarItem(14, HNScraper.Page.Upvoted(username: user.Username)),
+                TabBarItem(15, HNScraper.Page.Classic),
             ]
         }
 
