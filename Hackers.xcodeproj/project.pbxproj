@@ -56,7 +56,6 @@
 		B614BF582187C70D00918E0F /* AlgoliaHNItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = B614BF572187C70D00918E0F /* AlgoliaHNItem.swift */; };
 		B614BF5A2187C78E00918E0F /* FirebaseHNUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = B614BF592187C78E00918E0F /* FirebaseHNUser.swift */; };
 		B614BF5C2187C8AC00918E0F /* FirebaseHNItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = B614BF5B2187C8AC00918E0F /* FirebaseHNItem.swift */; };
-		B614BF5E2187CCF200918E0F /* AlgoliaHNAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = B614BF5D2187CCF200918E0F /* AlgoliaHNAPI.swift */; };
 		B614BF602187DC6F00918E0F /* HTMLHNUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = B614BF5F2187DC6F00918E0F /* HTMLHNUser.swift */; };
 		B614BF622187DF0B00918E0F /* CustomStringConvertible+Description.swift in Sources */ = {isa = PBXBuildFile; fileRef = B614BF612187DF0B00918E0F /* CustomStringConvertible+Description.swift */; };
 		B614BF652187E30A00918E0F /* HNRealtime.swift in Sources */ = {isa = PBXBuildFile; fileRef = B614BF642187E30A00918E0F /* HNRealtime.swift */; };
@@ -150,7 +149,6 @@
 		B614BF572187C70D00918E0F /* AlgoliaHNItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlgoliaHNItem.swift; sourceTree = "<group>"; };
 		B614BF592187C78E00918E0F /* FirebaseHNUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseHNUser.swift; sourceTree = "<group>"; };
 		B614BF5B2187C8AC00918E0F /* FirebaseHNItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseHNItem.swift; sourceTree = "<group>"; };
-		B614BF5D2187CCF200918E0F /* AlgoliaHNAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlgoliaHNAPI.swift; sourceTree = "<group>"; };
 		B614BF5F2187DC6F00918E0F /* HTMLHNUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTMLHNUser.swift; sourceTree = "<group>"; };
 		B614BF612187DF0B00918E0F /* CustomStringConvertible+Description.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CustomStringConvertible+Description.swift"; sourceTree = "<group>"; };
 		B614BF642187E30A00918E0F /* HNRealtime.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HNRealtime.swift; sourceTree = "<group>"; };
@@ -402,7 +400,6 @@
 				B614BF4A2187186A00918E0F /* Algolia.swift */,
 				B614BF572187C70D00918E0F /* AlgoliaHNItem.swift */,
 				B614BF552187C66900918E0F /* AlgoliaHNUser.swift */,
-				B614BF5D2187CCF200918E0F /* AlgoliaHNAPI.swift */,
 				B683D6822189A6F40088C3D0 /* AlgoliaHNComment.swift */,
 				B6564002218FDF9F00004A96 /* AlgoliaAPI.swift */,
 			);
@@ -688,7 +685,6 @@
 				2464D213209DEFB100C7F8FC /* AppNavigationController.swift in Sources */,
 				2464D20E209DD8F400C7F8FC /* SubscribableValue.swift in Sources */,
 				B6C8E8522181353D0093112A /* OpenInFirefoxController.swift in Sources */,
-				B614BF5E2187CCF200918E0F /* AlgoliaHNAPI.swift in Sources */,
 				B6C86D062186A62300FB18E8 /* HNScraper.swift in Sources */,
 				24C20D391A7E42D5005B759B /* MainSplitViewController.swift in Sources */,
 				2464D21F209E27FE00C7F8FC /* Settings+UserDefaultsExtensions.swift in Sources */,
