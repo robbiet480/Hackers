@@ -323,7 +323,16 @@ extension HNScraper {
     }
 
     public func parseRelativeTime(_ rTime: String) -> Date? {
+
+        if rTime.hasPrefix("on ") { // We are on a VERY old item that has the format "on Mar 29, 2006"
+            let formatter = DateFormatter()
+            formatter.dateFormat = "MMM d, yyyy"
+
+            return formatter.date(from: rTime.components(separatedBy: "on ")[1])
+        }
+
         let splitTime = rTime.split(separator: .space)
+
         guard let first = splitTime.first else { return nil }
 
         let numberStr = String(first)
