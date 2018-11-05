@@ -59,7 +59,7 @@ class PostTitleView: UIView, UIGestureRecognizerDelegate {
                 }
             }
 
-            if let title = post.Title {
+            if post.Title != nil {
                 self.titleLabel.attributedText = post.AttributedTitle
             }
 
@@ -154,10 +154,8 @@ class PostTitleView: UIView, UIGestureRecognizerDelegate {
     func generateAttributedString(_ value: String, _ icon: FontAwesome, _ style: FontAwesomeStyle) -> NSMutableAttributedString {
         let string = NSMutableAttributedString()
 
-        let textColor = AppThemeProvider.shared.currentTheme.textColor
-
         string.append(fakAttachment(for: icon, style: style))
-        string.append(NSAttributedString.generate(from: value, color: textColor))
+        string.append(NSAttributedString.generate(from: value))
 
         return string
     }
@@ -169,7 +167,8 @@ extension PostTitleView: Themed {
 
 // MARK: Extension util which generates NSAttributedString by text,font,color,backgroundColor
 extension NSAttributedString {
-    class func generate(from text: String, font: UIFont = UIFont.mySystemFont(ofSize: 14), color: UIColor = .black,
+    class func generate(from text: String, font: UIFont = UIFont.mySystemFont(ofSize: 14),
+                        color: UIColor = AppThemeProvider.shared.currentTheme.textColor,
                         backgroundColor: UIColor = .clear) -> NSAttributedString {
         let atts: [NSAttributedString.Key : Any] = [.foregroundColor: color, .font: font,
                                                     .backgroundColor: backgroundColor]

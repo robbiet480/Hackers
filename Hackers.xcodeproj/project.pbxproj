@@ -56,7 +56,7 @@
 		B614BF582187C70D00918E0F /* AlgoliaHNItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = B614BF572187C70D00918E0F /* AlgoliaHNItem.swift */; };
 		B614BF5A2187C78E00918E0F /* FirebaseHNUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = B614BF592187C78E00918E0F /* FirebaseHNUser.swift */; };
 		B614BF5C2187C8AC00918E0F /* FirebaseHNItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = B614BF5B2187C8AC00918E0F /* FirebaseHNItem.swift */; };
-		B614BF5E2187CCF200918E0F /* AlgoliaSearch.swift in Sources */ = {isa = PBXBuildFile; fileRef = B614BF5D2187CCF200918E0F /* AlgoliaSearch.swift */; };
+		B614BF5E2187CCF200918E0F /* AlgoliaHNAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = B614BF5D2187CCF200918E0F /* AlgoliaHNAPI.swift */; };
 		B614BF602187DC6F00918E0F /* HTMLHNUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = B614BF5F2187DC6F00918E0F /* HTMLHNUser.swift */; };
 		B614BF622187DF0B00918E0F /* CustomStringConvertible+Description.swift in Sources */ = {isa = PBXBuildFile; fileRef = B614BF612187DF0B00918E0F /* CustomStringConvertible+Description.swift */; };
 		B614BF652187E30A00918E0F /* HNRealtime.swift in Sources */ = {isa = PBXBuildFile; fileRef = B614BF642187E30A00918E0F /* HNRealtime.swift */; };
@@ -65,6 +65,9 @@
 		B6563FFB218EFE7200004A96 /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6563FFA218EFE7200004A96 /* ProfileViewController.swift */; };
 		B6563FFD218F107700004A96 /* Int+Pretty.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6563FFC218F107700004A96 /* Int+Pretty.swift */; };
 		B6563FFF218FA4BA00004A96 /* LeaderboardTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6563FFE218FA4BA00004A96 /* LeaderboardTableViewController.swift */; };
+		B6564001218FCCD800004A96 /* SearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6564000218FCCD800004A96 /* SearchViewController.swift */; };
+		B6564003218FDF9F00004A96 /* AlgoliaAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6564002218FDF9F00004A96 /* AlgoliaAPI.swift */; };
+		B6564009218FEE5800004A96 /* PostCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B6564007218FEE5800004A96 /* PostCell.xib */; };
 		B683D67F218923570088C3D0 /* URLComponents+QueryDictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = B683D67E218923570088C3D0 /* URLComponents+QueryDictionary.swift */; };
 		B683D681218959070088C3D0 /* HTMLHNComment.swift in Sources */ = {isa = PBXBuildFile; fileRef = B683D680218959070088C3D0 /* HTMLHNComment.swift */; };
 		B683D6832189A6F50088C3D0 /* AlgoliaHNComment.swift in Sources */ = {isa = PBXBuildFile; fileRef = B683D6822189A6F40088C3D0 /* AlgoliaHNComment.swift */; };
@@ -147,7 +150,7 @@
 		B614BF572187C70D00918E0F /* AlgoliaHNItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlgoliaHNItem.swift; sourceTree = "<group>"; };
 		B614BF592187C78E00918E0F /* FirebaseHNUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseHNUser.swift; sourceTree = "<group>"; };
 		B614BF5B2187C8AC00918E0F /* FirebaseHNItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseHNItem.swift; sourceTree = "<group>"; };
-		B614BF5D2187CCF200918E0F /* AlgoliaSearch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlgoliaSearch.swift; sourceTree = "<group>"; };
+		B614BF5D2187CCF200918E0F /* AlgoliaHNAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlgoliaHNAPI.swift; sourceTree = "<group>"; };
 		B614BF5F2187DC6F00918E0F /* HTMLHNUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTMLHNUser.swift; sourceTree = "<group>"; };
 		B614BF612187DF0B00918E0F /* CustomStringConvertible+Description.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CustomStringConvertible+Description.swift"; sourceTree = "<group>"; };
 		B614BF642187E30A00918E0F /* HNRealtime.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HNRealtime.swift; sourceTree = "<group>"; };
@@ -156,6 +159,9 @@
 		B6563FFA218EFE7200004A96 /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
 		B6563FFC218F107700004A96 /* Int+Pretty.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Int+Pretty.swift"; sourceTree = "<group>"; };
 		B6563FFE218FA4BA00004A96 /* LeaderboardTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeaderboardTableViewController.swift; sourceTree = "<group>"; };
+		B6564000218FCCD800004A96 /* SearchViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewController.swift; sourceTree = "<group>"; };
+		B6564002218FDF9F00004A96 /* AlgoliaAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlgoliaAPI.swift; sourceTree = "<group>"; };
+		B6564007218FEE5800004A96 /* PostCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PostCell.xib; sourceTree = "<group>"; };
 		B683D67E218923570088C3D0 /* URLComponents+QueryDictionary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URLComponents+QueryDictionary.swift"; sourceTree = "<group>"; };
 		B683D680218959070088C3D0 /* HTMLHNComment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTMLHNComment.swift; sourceTree = "<group>"; };
 		B683D6822189A6F40088C3D0 /* AlgoliaHNComment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlgoliaHNComment.swift; sourceTree = "<group>"; };
@@ -262,6 +268,7 @@
 				24CE5FF319435061009D2677 /* NewsViewController.swift */,
 				24CE5FF719435A90009D2677 /* PostCell.swift */,
 				24B5BFEE1B52CE8900328C62 /* PostTitleView.swift */,
+				B6564007218FEE5800004A96 /* PostCell.xib */,
 			);
 			path = "Posts List";
 			sourceTree = "<group>";
@@ -353,6 +360,7 @@
 				B69561CD218CD8C000A6FD51 /* SubmitViewController.swift */,
 				B6563FFA218EFE7200004A96 /* ProfileViewController.swift */,
 				B6563FFE218FA4BA00004A96 /* LeaderboardTableViewController.swift */,
+				B6564000218FCCD800004A96 /* SearchViewController.swift */,
 			);
 			path = Client;
 			sourceTree = "<group>";
@@ -394,8 +402,9 @@
 				B614BF4A2187186A00918E0F /* Algolia.swift */,
 				B614BF572187C70D00918E0F /* AlgoliaHNItem.swift */,
 				B614BF552187C66900918E0F /* AlgoliaHNUser.swift */,
-				B614BF5D2187CCF200918E0F /* AlgoliaSearch.swift */,
+				B614BF5D2187CCF200918E0F /* AlgoliaHNAPI.swift */,
 				B683D6822189A6F40088C3D0 /* AlgoliaHNComment.swift */,
+				B6564002218FDF9F00004A96 /* AlgoliaAPI.swift */,
 			);
 			path = Algolia;
 			sourceTree = "<group>";
@@ -523,6 +532,7 @@
 				240C5BE018D267C70011177A /* Icons.xcassets in Resources */,
 				24ADA7E3206FAF2200C143F4 /* Main.storyboard in Resources */,
 				24EF5BF41C393D110012AA8A /* LaunchStoryboard.storyboard in Resources */,
+				B6564009218FEE5800004A96 /* PostCell.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -576,7 +586,9 @@
 				"${BUILT_PRODUCTS_DIR}/Eureka/Eureka.framework",
 				"${BUILT_PRODUCTS_DIR}/FontAwesome.swift/FontAwesome_swift.framework",
 				"${BUILT_PRODUCTS_DIR}/GoogleUtilities/GoogleUtilities.framework",
+				"${BUILT_PRODUCTS_DIR}/InstantSearchClient/InstantSearchClient.framework",
 				"${BUILT_PRODUCTS_DIR}/Kingfisher/Kingfisher.framework",
+				"${BUILT_PRODUCTS_DIR}/MoreCodable/MoreCodable.framework",
 				"${BUILT_PRODUCTS_DIR}/OpenGraph/OpenGraph.framework",
 				"${BUILT_PRODUCTS_DIR}/PromiseKit/PromiseKit.framework",
 				"${BUILT_PRODUCTS_DIR}/Realm/Realm.framework",
@@ -596,7 +608,9 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Eureka.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FontAwesome_swift.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleUtilities.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/InstantSearchClient.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Kingfisher.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MoreCodable.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/OpenGraph.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/PromiseKit.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Realm.framework",
@@ -622,6 +636,7 @@
 				B683D6832189A6F50088C3D0 /* AlgoliaHNComment.swift in Sources */,
 				249A7E32194374550059C079 /* CommentTableViewCell.swift in Sources */,
 				B63E78C4217C1C6300750131 /* UIFont+Extensions.swift in Sources */,
+				B6564003218FDF9F00004A96 /* AlgoliaAPI.swift in Sources */,
 				B69561CE218CD8C000A6FD51 /* SubmitViewController.swift in Sources */,
 				2464D216209DFF6D00C7F8FC /* CommentsHeaderView.swift in Sources */,
 				24CE5FED19434BDC009D2677 /* AppDelegate.swift in Sources */,
@@ -644,6 +659,7 @@
 				B6C8E854218135B80093112A /* OpenInBrowser.swift in Sources */,
 				B614BF442186F01400918E0F /* DateFormatter+ISO8601Full.swift in Sources */,
 				24CEAA9B1F8916970050DEDF /* UIView+Extensions.swift in Sources */,
+				B6564001218FCCD800004A96 /* SearchViewController.swift in Sources */,
 				B614BF462186F09000918E0F /* Codable+Alamofire.swift in Sources */,
 				B614BF562187C66900918E0F /* AlgoliaHNUser.swift in Sources */,
 				B6ECEB5D217D16CF00755239 /* Notifications.swift in Sources */,
@@ -672,7 +688,7 @@
 				2464D213209DEFB100C7F8FC /* AppNavigationController.swift in Sources */,
 				2464D20E209DD8F400C7F8FC /* SubscribableValue.swift in Sources */,
 				B6C8E8522181353D0093112A /* OpenInFirefoxController.swift in Sources */,
-				B614BF5E2187CCF200918E0F /* AlgoliaSearch.swift in Sources */,
+				B614BF5E2187CCF200918E0F /* AlgoliaHNAPI.swift in Sources */,
 				B6C86D062186A62300FB18E8 /* HNScraper.swift in Sources */,
 				24C20D391A7E42D5005B759B /* MainSplitViewController.swift in Sources */,
 				2464D21F209E27FE00C7F8FC /* Settings+UserDefaultsExtensions.swift in Sources */,

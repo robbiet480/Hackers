@@ -1,5 +1,5 @@
 //
-//  AlgoliaSearch.swift
+//  AlgoliaHNAPI.swift
 //  Hackers
 //
 //  Created by Robert Trencheny on 10/29/18.
@@ -7,11 +7,9 @@
 //
 
 import Foundation
-import Alamofire
-import PromiseKit
 
-class AlgoliaSearchResult: Codable {
-    let hits: [AlgoliaHit]
+class AlgoliaHNAPISearchResult: Codable {
+    let hits: [AlgoliaHNAPIHit]
     let totalHits: Int?
     let page: Int?
     let totalPages: Int?
@@ -33,7 +31,7 @@ class AlgoliaSearchResult: Codable {
         case params = "params"
     }
 
-    init(hits: [AlgoliaHit]?, totalHits: Int?, page: Int?, totalPages: Int?, hitsPerPage: Int?, processingTimeMS: Int?,
+    init(hits: [AlgoliaHNAPIHit]?, totalHits: Int?, page: Int?, totalPages: Int?, hitsPerPage: Int?, processingTimeMS: Int?,
          totalHitsExhaustive: Bool?, query: String?, params: String?) {
         self.hits = hits != nil ? hits! : []
         self.totalHits = totalHits
@@ -47,7 +45,7 @@ class AlgoliaSearchResult: Codable {
     }
 }
 
-class AlgoliaHit: Codable {
+class AlgoliaHNAPIHit: Codable {
     let createdAt: Date?
     let title: String?
     let url: String?
@@ -62,7 +60,7 @@ class AlgoliaHit: Codable {
     let parentID: Int?
     let createdAtTimestamp: TimeInterval?
     let tags: [String]?
-    var highlightResults: [String: HighlightResult] = [:]
+    var highlightResults: [String: AlgoliaHNAPIHighlightResult] = [:]
 
     lazy var objectID: Int = {
         Int(self.objectIDStr)!
@@ -91,7 +89,7 @@ class AlgoliaHit: Codable {
 
     init(createdAt: Date?, title: String?, url: String?, author: String?, points: Int?, storyText: String?,
          commentText: String?, numComments: Int?, storyID: Int?, storyTitle: String?, storyURL: String?, parentID: Int?,
-         createdAtTimestamp: TimeInterval?, tags: [String]?, objectID: String, highlightResults: [String: HighlightResult]?) {
+         createdAtTimestamp: TimeInterval?, tags: [String]?, objectID: String, highlightResults: [String: AlgoliaHNAPIHighlightResult]?) {
         self.createdAt = createdAt
         self.title = title
         self.url = url
@@ -146,9 +144,9 @@ class AlgoliaHit: Codable {
     }
 }
 
-class HighlightResult: Codable {
+class AlgoliaHNAPIHighlightResult: Codable {
     let value: String?
-    let matchLevel: MatchLevel?
+    let matchLevel: AlgoliaHNAPIMatchLevel?
     let matchedWords: [String]?
     let fullyHighlighted: Bool?
 
@@ -159,7 +157,7 @@ class HighlightResult: Codable {
         case fullyHighlighted = "fullyHighlighted"
     }
 
-    init(value: String?, matchLevel: MatchLevel?, matchedWords: [String]?, fullyHighlighted: Bool?) {
+    init(value: String?, matchLevel: AlgoliaHNAPIMatchLevel?, matchedWords: [String]?, fullyHighlighted: Bool?) {
         self.value = value
         self.matchLevel = matchLevel
         self.matchedWords = matchedWords
@@ -167,7 +165,7 @@ class HighlightResult: Codable {
     }
 }
 
-enum MatchLevel: String, Codable {
+enum AlgoliaHNAPIMatchLevel: String, Codable {
     case none = "none"
     case partial = "partial"
     case full = "full"

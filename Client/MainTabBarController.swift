@@ -71,6 +71,15 @@ class MainTabBarController: UITabBarController {
 
                 leaderboardVC.tabBarItem = tbi.view.barItem(tbi.index)
                 contentViews.append(AppNavigationController(rootViewController: leaderboardVC))
+            } else if tbi.view == .Search {
+                let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "SearchNav")
+                guard let searchVCNav = vc as? AppNavigationController else { fatalError() }
+                guard let searchVC = searchVCNav.topViewController as? SearchViewController else { fatalError() }
+
+                searchVC.title = tbi.view.description
+
+                searchVC.tabBarItem = tbi.view.barItem(tbi.index)
+                contentViews.append(searchVCNav)
             } else {
                 let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "NewsNav")
                 guard let newsVCNav = vc as? AppNavigationController else { fatalError() }
@@ -118,14 +127,15 @@ class MainTabBarController: UITabBarController {
         var order: [TabBarItem] = [
             TabBarItem(0, HNScraper.Page.Home),
             TabBarItem(1, HNScraper.Page.AskHN),
-            TabBarItem(2, HNScraper.Page.Jobs),
-            TabBarItem(3, HNScraper.Page.New),
-            TabBarItem(4, HNScraper.Page.ShowHN),
-            TabBarItem(5, HNScraper.Page.Active),
-            TabBarItem(6, HNScraper.Page.Best),
-            TabBarItem(7, HNScraper.Page.Noob),
-            TabBarItem(8, HNScraper.Page.ForDate(date: nil)),
-            TabBarItem(9, .Leaderboard),
+            TabBarItem(2, .Search),
+            TabBarItem(3, HNScraper.Page.Jobs),
+            TabBarItem(4, HNScraper.Page.New),
+            TabBarItem(5, HNScraper.Page.ShowHN),
+            TabBarItem(6, HNScraper.Page.Active),
+            TabBarItem(7, HNScraper.Page.Best),
+            TabBarItem(8, HNScraper.Page.Noob),
+            TabBarItem(9, HNScraper.Page.ForDate(date: nil)),
+            TabBarItem(10, .Leaderboard),
         ]
 
         if let user = UserDefaults.standard.loggedInUser {
@@ -134,17 +144,18 @@ class MainTabBarController: UITabBarController {
                 TabBarItem(0, HNScraper.Page.Home),
                 TabBarItem(1, HNScraper.Page.AskHN),
                 TabBarItem(2, .Profile),
-                TabBarItem(3, HNScraper.Page.Jobs),
-                TabBarItem(4, HNScraper.Page.New),
-                TabBarItem(5, HNScraper.Page.ShowHN),
-                TabBarItem(6, HNScraper.Page.Active),
-                TabBarItem(7, HNScraper.Page.Best),
-                TabBarItem(8, HNScraper.Page.Noob),
-                TabBarItem(9, HNScraper.Page.ForDate(date: nil)),
-                TabBarItem(10, .Leaderboard),
-                TabBarItem(11, HNScraper.Page.SubmissionsForUsername(username: user.Username)),
-                TabBarItem(12, HNScraper.Page.FavoritesForUsername(username: user.Username)),
-                TabBarItem(13, HNScraper.Page.Upvoted(username: user.Username))
+                TabBarItem(3, .Search),
+                TabBarItem(4, HNScraper.Page.Jobs),
+                TabBarItem(5, HNScraper.Page.New),
+                TabBarItem(6, HNScraper.Page.ShowHN),
+                TabBarItem(7, HNScraper.Page.Active),
+                TabBarItem(8, HNScraper.Page.Best),
+                TabBarItem(9, HNScraper.Page.Noob),
+                TabBarItem(10, HNScraper.Page.ForDate(date: nil)),
+                TabBarItem(11, .Leaderboard),
+                TabBarItem(12, HNScraper.Page.SubmissionsForUsername(username: user.Username)),
+                TabBarItem(13, HNScraper.Page.FavoritesForUsername(username: user.Username)),
+                TabBarItem(14, HNScraper.Page.Upvoted(username: user.Username))
             ]
         }
 

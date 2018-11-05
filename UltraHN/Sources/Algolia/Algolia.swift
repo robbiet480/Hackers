@@ -19,7 +19,8 @@ public class AlgoliaDataSource: HNDataSource {
         guard let url = pageName.algoliaQueryURL else { return Promise.value([HNItem]()) }
 
         return firstly {
-                Alamofire.request(url).responseDecodable(AlgoliaSearchResult.self, decoder: ISO8601FullJSONDecoder())
+                Alamofire.request(url).responseDecodable(AlgoliaItemsSearchResult.self,
+                                                         decoder: ISO8601FullJSONDecoder())
             }.then { (resp) -> Promise<[HNItem]?> in
                 let mapped: [HNItem] = resp.hits.map { $0.hnItem }
 

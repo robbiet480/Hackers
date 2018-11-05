@@ -24,6 +24,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         FirebaseApp.configure(options: FirebaseOptions(googleAppID: "1:123456789112:ios:00a0aa1a00aa0000",
                                                        gcmSenderID: "123456789101"))
 
+
         KingfisherManager.shared.cache.pathExtension = "png"
         KingfisherManager.shared.defaultOptions = [.cacheSerializer(FormatIndicatedCacheSerializer.png),
                                                    .keepCurrentImageWhileLoading]

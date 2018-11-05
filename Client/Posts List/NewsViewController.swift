@@ -63,6 +63,8 @@ class NewsViewController : UIViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(NewsViewController.openPostNotification(_:)),
                                                name: NSNotification.Name(rawValue: "notificationOpenPost"), object: nil)
 
+        tableView.register(UINib(nibName: "PostCell", bundle: nil), forCellReuseIdentifier: "PostCell")
+
         if !self.hideBarItems, case .ForDate(let date) = self.postType {
             let fakIcon = UIImage.fontAwesomeIcon(name: FontAwesome.calendarAlt, style: FontAwesomeStyle.regular,
                                                   textColor: AppThemeProvider.shared.currentTheme.appTintColor, size: CGSize(width: 30, height: 30))
@@ -171,6 +173,86 @@ class NewsViewController : UIViewController {
             self.tableView.rowHeight = UITableView.automaticDimension
             self.tableView.estimatedRowHeight = UITableView.automaticDimension
             self.tableView.reloadData()
+        }
+    }
+
+    @objc func handleShortcut(keyCommand: UIKeyCommand) -> Bool {
+        // Why j/k? https://www.labnol.org/internet/j-k-keyboard-shortcuts/20779/
+        if keyCommand.input == "j" {
+            selectPrev(sender: keyCommand)
+            return true
+        } else if keyCommand.input == "k" {
+            selectNext(sender: keyCommand)
+            return true
+        } else if keyCommand.input == "r" {
+            // https://stackoverflow.com/a/50551396/486182
+            refreshControl.beginRefreshing()
+            tableView.setContentOffset(CGPoint(x: 0, y: tableView.contentOffset.y - (refreshControl.frame.size.height)),
+                                       animated: true)
+            self.loadPosts()
+            return true
+        } else if keyCommand.input == "\r" {
+            selectCurrent(sender: keyCommand)
+            return true
+        } else if keyCommand.input == "l" {
+            openLink(sender: keyCommand)
+            return true
+        }
+
+        return false
+    }
+
+    // UITableView keyboard shortcuts found at
+    // https://stablekernel.com/creating-a-delightful-user-experience-with-ios-keyboard-shortcuts/
+
+    override var keyCommands: [UIKeyCommand] {
+        let reloadCommand = UIKeyCommand(input: "r", modifierFlags: .command,
+                                         action: #selector(handleShortcut(keyCommand:)), discoverabilityTitle: "Reload")
+        let previousObjectCommand = UIKeyCommand(input: "j", modifierFlags: .shift,
+                                                 action: #selector(handleShortcut(keyCommand:)), discoverabilityTitle: "Previous Story")
+        let nextObjectCommand = UIKeyCommand(input: "k", modifierFlags: .shift,
+                                             action: #selector(handleShortcut(keyCommand:)), discoverabilityTitle: "Next Story")
+        let selectObjectCommand = UIKeyCommand(input: "\r", modifierFlags: .shift,
+                                               action: #selector(handleShortcut(keyCommand:)), discoverabilityTitle: "Open Story Comments")
+        let openLinkCommand = UIKeyCommand(input: "l", modifierFlags: [],
+                                           action: #selector(handleShortcut(keyCommand:)), discoverabilityTitle: "Open Story Link")
+
+        var shortcuts: [UIKeyCommand] = [reloadCommand]
+        if let selectedRow = self.tableView?.indexPathForSelectedRow?.row {
+            if selectedRow < self.posts!.count - 1 {
+                shortcuts.append(nextObjectCommand)
+            }
+            if selectedRow > 0 {
+                shortcuts.append(previousObjectCommand)
+            }
+            shortcuts.append(contentsOf: [selectObjectCommand, openLinkCommand])
+        } else {
+            shortcuts.append(nextObjectCommand)
+        }
+        return shortcuts
+    }
+
+    @objc func selectNext(sender: UIKeyCommand) {
+        if let selectedIP = self.tableView?.indexPathForSelectedRow {
+            self.tableView.selectRow(at: NSIndexPath(row: selectedIP.row + 1, section: selectedIP.section) as IndexPath, animated: true, scrollPosition: .middle)
+        } else {
+            self.tableView.selectRow(at: NSIndexPath(row: 0, section: 0) as IndexPath, animated: true, scrollPosition: .top)
+        }
+    }
+
+    @objc func selectPrev(sender: UIKeyCommand) {
+        if let selectedIP = self.tableView?.indexPathForSelectedRow {
+            self.tableView.selectRow(at: NSIndexPath(row: selectedIP.row - 1, section: selectedIP.section) as IndexPath, animated: true, scrollPosition: .middle)
+        }
+    }
+
+    @objc func selectCurrent(sender: UIKeyCommand) {
+        self.performSegue(withIdentifier: "ShowComments", sender: self)
+    }
+
+    @objc func openLink(sender: UIKeyCommand) {
+        if let selectedIP = self.tableView?.indexPathForSelectedRow {
+            didPressLinkButton(posts![selectedIP.row])
         }
     }
 
@@ -420,86 +502,6 @@ extension NewsViewController: PostCellDelegate {
 
             alertController.popoverPresentationController?.sourceView = self.tableView
             alertController.popoverPresentationController?.sourceRect = self.tableView.cellForRow(at: indexPath)!.frame
-        }
-    }
-
-    @objc func handleShortcut(keyCommand: UIKeyCommand) -> Bool {
-        // Why j/k? https://www.labnol.org/internet/j-k-keyboard-shortcuts/20779/
-        if keyCommand.input == "j" {
-            selectPrev(sender: keyCommand)
-            return true
-        } else if keyCommand.input == "k" {
-            selectNext(sender: keyCommand)
-            return true
-        } else if keyCommand.input == "r" {
-            // https://stackoverflow.com/a/50551396/486182
-            refreshControl.beginRefreshing()
-            tableView.setContentOffset(CGPoint(x: 0, y: tableView.contentOffset.y - (refreshControl.frame.size.height)),
-                                       animated: true)
-            self.loadPosts()
-            return true
-        } else if keyCommand.input == "\r" {
-            selectCurrent(sender: keyCommand)
-            return true
-        } else if keyCommand.input == "l" {
-            openLink(sender: keyCommand)
-            return true
-        }
-
-        return false
-    }
-
-    // UITableView keyboard shortcuts found at
-    // https://stablekernel.com/creating-a-delightful-user-experience-with-ios-keyboard-shortcuts/
-
-    override var keyCommands: [UIKeyCommand] {
-        let reloadCommand = UIKeyCommand(input: "r", modifierFlags: .command,
-                                         action: #selector(handleShortcut(keyCommand:)), discoverabilityTitle: "Reload")
-        let previousObjectCommand = UIKeyCommand(input: "j", modifierFlags: .shift,
-                                                 action: #selector(handleShortcut(keyCommand:)), discoverabilityTitle: "Previous Story")
-        let nextObjectCommand = UIKeyCommand(input: "k", modifierFlags: .shift,
-                                             action: #selector(handleShortcut(keyCommand:)), discoverabilityTitle: "Next Story")
-        let selectObjectCommand = UIKeyCommand(input: "\r", modifierFlags: .shift,
-                                               action: #selector(handleShortcut(keyCommand:)), discoverabilityTitle: "Open Story Comments")
-        let openLinkCommand = UIKeyCommand(input: "l", modifierFlags: [],
-                                           action: #selector(handleShortcut(keyCommand:)), discoverabilityTitle: "Open Story Link")
-
-        var shortcuts: [UIKeyCommand] = [reloadCommand]
-        if let selectedRow = self.tableView?.indexPathForSelectedRow?.row {
-            if selectedRow < self.posts!.count - 1 {
-                shortcuts.append(nextObjectCommand)
-            }
-            if selectedRow > 0 {
-                shortcuts.append(previousObjectCommand)
-            }
-            shortcuts.append(contentsOf: [selectObjectCommand, openLinkCommand])
-        } else {
-            shortcuts.append(nextObjectCommand)
-        }
-        return shortcuts
-    }
-
-    @objc func selectNext(sender: UIKeyCommand) {
-        if let selectedIP = self.tableView?.indexPathForSelectedRow {
-            self.tableView.selectRow(at: NSIndexPath(row: selectedIP.row + 1, section: selectedIP.section) as IndexPath, animated: true, scrollPosition: .middle)
-        } else {
-            self.tableView.selectRow(at: NSIndexPath(row: 0, section: 0) as IndexPath, animated: true, scrollPosition: .top)
-        }
-    }
-
-    @objc func selectPrev(sender: UIKeyCommand) {
-        if let selectedIP = self.tableView?.indexPathForSelectedRow {
-            self.tableView.selectRow(at: NSIndexPath(row: selectedIP.row - 1, section: selectedIP.section) as IndexPath, animated: true, scrollPosition: .middle)
-        }
-    }
-
-    @objc func selectCurrent(sender: UIKeyCommand) {
-        self.performSegue(withIdentifier: "ShowComments", sender: self)
-    }
-
-    @objc func openLink(sender: UIKeyCommand) {
-        if let selectedIP = self.tableView?.indexPathForSelectedRow {
-            didPressLinkButton(posts![selectedIP.row])
         }
     }
 }

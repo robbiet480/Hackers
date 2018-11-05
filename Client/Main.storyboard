@@ -28,7 +28,7 @@
                                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 </view>
                                 <prototypes>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="PostCell" rowHeight="77" id="Kis-WD-Vya" customClass="PostCell" customModule="Hackers" customModuleProvider="target">
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="OldPostCell" rowHeight="77" id="Kis-WD-Vya" customClass="PostCell" customModule="Hackers" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="22" width="414" height="77"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Kis-WD-Vya" id="SsN-9i-oXV">
@@ -316,7 +316,7 @@
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="none" rowHeight="115" estimatedRowHeight="100" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="60" sectionFooterHeight="10" translatesAutoresizingMaskIntoConstraints="NO" id="iN8-we-FRa">
-                                <rect key="frame" x="0.0" y="44" width="414" height="852"/>
+                                <rect key="frame" x="0.0" y="88" width="414" height="808"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <view key="tableHeaderView" contentMode="scaleToFill" id="oQf-bd-JX5" customClass="CommentsPostTitleView" customModule="Hackers" customModuleProvider="target">
                                     <rect key="frame" x="0.0" y="0.0" width="414" height="175"/>
@@ -809,6 +809,112 @@
             </objects>
             <point key="canvasLocation" x="3480" y="688"/>
         </scene>
+        <!--Search View Controller-->
+        <scene sceneID="nxS-bT-Pcj">
+            <objects>
+                <viewController storyboardIdentifier="SearchView" id="IuQ-5z-0do" customClass="SearchViewController" customModule="Hackers" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="8YM-yi-B7b">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="wCs-cI-Ti7">
+                                <rect key="frame" x="0.0" y="144" width="414" height="718"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <prototypes>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="UserCell" textLabel="W5M-aY-3VY" detailTextLabel="YmU-Dp-P02" style="IBUITableViewCellStyleValue1" id="M0Z-pM-PMz">
+                                        <rect key="frame" x="0.0" y="28" width="414" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="M0Z-pM-PMz" id="3hf-uN-4YJ">
+                                            <rect key="frame" x="0.0" y="0.0" width="414" height="43.5"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="tptacek" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="W5M-aY-3VY">
+                                                    <rect key="frame" x="20" y="12" width="58" height="20.5"/>
+                                                    <autoresizingMask key="autoresizingMask"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="308070" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="YmU-Dp-P02">
+                                                    <rect key="frame" x="333.5" y="12" width="60.5" height="20.5"/>
+                                                    <autoresizingMask key="autoresizingMask"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                </prototypes>
+                                <connections>
+                                    <outlet property="dataSource" destination="IuQ-5z-0do" id="dxe-Qn-Laq"/>
+                                    <outlet property="delegate" destination="IuQ-5z-0do" id="7aX-Wd-d67"/>
+                                </connections>
+                            </tableView>
+                            <searchBar contentMode="redraw" translatesAutoresizingMaskIntoConstraints="NO" id="ZEt-6A-z37">
+                                <rect key="frame" x="0.0" y="88" width="414" height="56"/>
+                                <textInputTraits key="textInputTraits"/>
+                                <connections>
+                                    <outlet property="delegate" destination="IuQ-5z-0do" id="1vD-db-gxs"/>
+                                </connections>
+                            </searchBar>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="wCs-cI-Ti7" firstAttribute="top" secondItem="ZEt-6A-z37" secondAttribute="bottom" id="5hJ-Pe-jua"/>
+                            <constraint firstItem="ZEt-6A-z37" firstAttribute="leading" secondItem="wCs-cI-Ti7" secondAttribute="leading" id="EZZ-Gu-UE9"/>
+                            <constraint firstAttribute="trailing" secondItem="ZEt-6A-z37" secondAttribute="trailing" id="Tgl-5p-U2L"/>
+                            <constraint firstItem="ZEt-6A-z37" firstAttribute="leading" secondItem="8YM-yi-B7b" secondAttribute="leading" id="YGR-Su-NfK"/>
+                            <constraint firstItem="wCs-cI-Ti7" firstAttribute="bottom" secondItem="eST-Ka-bGb" secondAttribute="bottom" id="mfF-KF-g89"/>
+                            <constraint firstItem="ZEt-6A-z37" firstAttribute="top" secondItem="eST-Ka-bGb" secondAttribute="top" id="pOA-oC-2h1"/>
+                            <constraint firstItem="ZEt-6A-z37" firstAttribute="trailing" secondItem="wCs-cI-Ti7" secondAttribute="trailing" id="yMm-O8-1XV"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="eST-Ka-bGb"/>
+                    </view>
+                    <navigationItem key="navigationItem" id="Sa8-7j-2hh">
+                        <nil key="title"/>
+                        <segmentedControl key="titleView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="bar" selectedSegmentIndex="0" id="NJj-IR-m6P">
+                            <rect key="frame" x="156.5" y="7" width="101" height="30"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <segments>
+                                <segment title="Posts"/>
+                                <segment title="Users"/>
+                            </segments>
+                            <connections>
+                                <action selector="searchTypeChanged:" destination="IuQ-5z-0do" eventType="valueChanged" id="dtZ-uE-PfK"/>
+                            </connections>
+                        </segmentedControl>
+                    </navigationItem>
+                    <connections>
+                        <outlet property="searchBar" destination="ZEt-6A-z37" id="jqw-y7-P5N"/>
+                        <outlet property="searchTypeControl" destination="NJj-IR-m6P" id="W2W-XR-6if"/>
+                        <outlet property="tableView" destination="wCs-cI-Ti7" id="Pgu-xB-hMk"/>
+                        <segue destination="vMZ-Uo-Xlj" kind="show" identifier="Profile" id="0PR-GR-5fH"/>
+                        <segue destination="sfd-t6-bG7" kind="show" identifier="ShowComments" id="Nic-aw-END"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="MUq-7U-Dpa" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="6276.811594202899" y="1648.6607142857142"/>
+        </scene>
+        <!--Search Navigation Controller-->
+        <scene sceneID="g7j-RO-OVn">
+            <objects>
+                <navigationController storyboardIdentifier="SearchNav" automaticallyAdjustsScrollViewInsets="NO" id="raG-4N-lsa" userLabel="Search Navigation Controller" customClass="AppNavigationController" customModule="Hackers" customModuleProvider="target" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="uPu-Ek-A7M">
+                        <rect key="frame" x="0.0" y="44" width="414" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="IuQ-5z-0do" kind="relationship" relationship="rootViewController" id="J2D-Fv-2be"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="ZhA-0e-Yth" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="5366.666666666667" y="1648.6607142857142"/>
+        </scene>
     </scenes>
     <resources>
         <image name="ThumbnailPlaceholderIcon" width="42" height="42"/>
@@ -818,7 +924,8 @@
         <image name="flag" width="20" height="20"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="z96-MP-8YY"/>
+        <segue reference="0PR-GR-5fH"/>
+        <segue reference="Nic-aw-END"/>
         <segue reference="agm-R5-cu8"/>
     </inferredMetricsTieBreakers>
 </document>

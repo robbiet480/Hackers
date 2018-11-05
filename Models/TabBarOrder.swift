@@ -54,6 +54,8 @@ class TabBarItem: Object {
         case Profile
         /// Leaderboard
         case Leaderboard
+        /// Search
+        case Search
 
         var description: String {
             switch self {
@@ -104,6 +106,8 @@ class TabBarItem: Object {
                 return "Profile"
             case .Leaderboard:
                 return "Leaderboard"
+            case .Search:
+                return "Search"
             }
         }
 
@@ -267,6 +271,8 @@ class TabBarItem: Object {
                 iconName = .userCircle
             case .Leaderboard:
                 iconName = .listOl
+            case .Search:
+                iconName = .search
             }
 
             return UIImage.fontAwesomeIcon(name: iconName, style: .solid,
