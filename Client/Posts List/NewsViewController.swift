@@ -38,7 +38,6 @@ class NewsViewController : UIViewController {
     public var hideBarItems: Bool = false {
         didSet {
             if hideBarItems == true {
-                print("Hiding bar items!")
                 self.navigationItem.leftBarButtonItems = nil
                 self.navigationItem.rightBarButtonItems = nil
             }
