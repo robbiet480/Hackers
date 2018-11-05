@@ -61,14 +61,6 @@ class CommentsViewController : UIViewController {
         navigationItem.largeTitleDisplayMode = .never
     }
 
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-
-        if UIDevice().userInterfaceIdiom == .phone {
-            tabBarController?.tabBar.isHidden = true
-        }
-    }
-
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
 

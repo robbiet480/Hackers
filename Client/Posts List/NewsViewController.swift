@@ -53,7 +53,7 @@ class NewsViewController : UIViewController {
         registerForPreviewing(with: self, sourceView: tableView)
 
         refreshControl = UIRefreshControl()
-        refreshControl.addTarget(self, action: #selector(NewsViewController.loadPosts), for: UIControl.Event.valueChanged)
+        refreshControl.addTarget(self, action: #selector(NewsViewController.loadPosts), for: .valueChanged)
         tableView.refreshControl = refreshControl
         
         setupTheming()
@@ -65,7 +65,7 @@ class NewsViewController : UIViewController {
 
         tableView.register(UINib(nibName: "PostCell", bundle: nil), forCellReuseIdentifier: "PostCell")
 
-        if !self.hideBarItems, case .ForDate(let date) = self.postType {
+        if !self.hideBarItems, case .ForDate = self.postType {
             let fakIcon = UIImage.fontAwesomeIcon(name: FontAwesome.calendarAlt, style: FontAwesomeStyle.regular,
                                                   textColor: AppThemeProvider.shared.currentTheme.appTintColor, size: CGSize(width: 30, height: 30))
             self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: fakIcon, style: .plain, target: self, action: nil)
@@ -98,22 +98,14 @@ class NewsViewController : UIViewController {
         rz_smoothlyDeselectRows(tableView: tableView)
     }
 
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-
-        if UIDevice().userInterfaceIdiom == .phone {
-            tabBarController?.tabBar.isHidden = false
-        }
-    }
-
-    /*override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         DispatchQueue.global().async(execute: {
             DispatchQueue.main.sync {
                 print("viewDidRotate being called!")
                 self.viewDidRotate()
             }
         })
-    }*/
+    }
 
     public func viewDidRotate() {
         guard let tableView = self.tableView, let indexPaths = tableView.indexPathsForVisibleRows else { return }
@@ -173,6 +165,7 @@ class NewsViewController : UIViewController {
             self.tableView.rowHeight = UITableView.automaticDimension
             self.tableView.estimatedRowHeight = UITableView.automaticDimension
             self.tableView.reloadData()
+            self.refreshControl.endRefreshing()
         }
     }
 
@@ -270,7 +263,6 @@ extension NewsViewController: UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: "PostCell", for: indexPath) as! PostCell
         cell.tag = indexPath.row
         cell.delegate = self
-        cell.clearImage()
 
         let post = posts![indexPath.row]
         cell.post = post
@@ -372,6 +364,7 @@ extension NewsViewController: Themed {
         tableView.backgroundColor = theme.backgroundColor
         tableView.separatorColor = theme.separatorColor
         refreshControl.tintColor = theme.appTintColor
+        self.tableView.reloadData()
     }
 }
 

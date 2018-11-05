@@ -120,8 +120,8 @@ class SubmitViewController: FormViewController {
 
 extension SubmitViewController: Themed {
     func applyTheme(_ theme: AppTheme) {
-        view.backgroundColor = theme.barBackgroundColor
-        tableView.backgroundColor = theme.barBackgroundColor
+        view.backgroundColor = theme.backgroundColor
+        tableView.backgroundColor = theme.backgroundColor
         tableView.separatorColor = theme.separatorColor
 
         self.tableView.reloadData()

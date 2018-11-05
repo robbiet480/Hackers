@@ -9,9 +9,16 @@
 import UIKit
 import RealmSwift
 
-class MainTabBarController: UITabBarController {
+class MainTabBarController: UITabBarController, UITableViewDelegate {
+    var moreTabTableViewDelegate: UITableViewDelegate?
+
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        if let view: UITableView = self.moreNavigationController.viewControllers[0].view as? UITableView {
+            self.moreTabTableViewDelegate = view.delegate
+            view.delegate = self
+        }
 
         self.delegate = self
 
@@ -20,6 +27,7 @@ class MainTabBarController: UITabBarController {
         setTabBarOrder()
 
         tabBar.clipsToBounds = true
+
     }
 
     var settingsVC: UIViewController {
@@ -168,7 +176,7 @@ class MainTabBarController: UITabBarController {
 
         // Found at http://runmad.com/blog/2010/01/coloring-fun-with-morenavigationcontroller-and-it/
 
-        let editView = tabBarController.view.subviews[1]
+        let editView = self.view.subviews[1]
         editView.backgroundColor = AppThemeProvider.shared.currentTheme.backgroundColor
 
         if let navigationBar = editView.subviews[1] as? UINavigationBar {
@@ -203,47 +211,31 @@ class MainTabBarController: UITabBarController {
             self.selectedIndex = newIndex - 1;
         }
     }
+
+    // These tableView functions control the more tab
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        moreTabTableViewDelegate?.tableView!(tableView, willDisplay: cell, forRowAt: indexPath)
+        cell.textLabel!.textColor = AppThemeProvider.shared.currentTheme.textColor
+        cell.textLabel!.font = UIFont.mySystemFont(ofSize: 18.0)
+        cell.backgroundColor = AppThemeProvider.shared.currentTheme.backgroundColor
+    }
+
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        moreTabTableViewDelegate?.tableView!(tableView, didSelectRowAt: indexPath)
+    }
 }
 
 extension MainTabBarController: UITabBarControllerDelegate {
     func tabBarController(_ tabBarController: UITabBarController,
                           shouldSelect viewController: UIViewController) -> Bool {
-        if viewController == tabBarController.moreNavigationController {
-
-            let moreNavController = viewController as! UINavigationController
+        if viewController == self.moreNavigationController {
 
             let resetButton = UIBarButtonItem(title: "Reset", style: .plain, target: self,
                                               action: #selector(MainTabBarController.handleMoreReset(_:)))
 
-            tabBarController.moreNavigationController.topViewController?.navigationItem.leftBarButtonItem = resetButton
+            self.moreNavigationController.topViewController?.navigationItem.leftBarButtonItem = resetButton
 
-            moreNavController.navigationBar.barTintColor = AppThemeProvider.shared.currentTheme.barBackgroundColor
-            moreNavController.navigationBar.tintColor = AppThemeProvider.shared.currentTheme.barForegroundColor
-            moreNavController.navigationBar.prefersLargeTitles = true
-            moreNavController.navigationBar.titleTextAttributes = [
-                NSAttributedString.Key.foregroundColor: AppThemeProvider.shared.currentTheme.navigationBarTextColor,
-                NSAttributedString.Key.font: UIFont.mySystemFont(ofSize: 17.0)]
-            moreNavController.navigationBar.largeTitleTextAttributes = [
-                NSAttributedString.Key.foregroundColor: AppThemeProvider.shared.currentTheme.navigationBarTextColor,
-                NSAttributedString.Key.font: UIFont.myBoldSystemFont(ofSize: 31.0)]
 
-            moreNavController.view.backgroundColor = AppThemeProvider.shared.currentTheme.backgroundColor
-
-            if tabBarController.moreNavigationController.topViewController?.view is UITableView {
-                let view: UITableView = tabBarController.moreNavigationController.topViewController?.view as! UITableView
-
-                view.bounces = false
-
-                view.tintColor = AppThemeProvider.shared.currentTheme.barForegroundColor
-                view.separatorColor = AppThemeProvider.shared.currentTheme.separatorColor
-                view.backgroundColor = AppThemeProvider.shared.currentTheme.backgroundColor
-
-                for cell in view.visibleCells {
-                    cell.textLabel!.textColor = AppThemeProvider.shared.currentTheme.textColor
-                    cell.textLabel!.font = UIFont.mySystemFont(ofSize: 18.0)
-                    cell.backgroundColor = AppThemeProvider.shared.currentTheme.backgroundColor
-                }
-            }
         }
 
         return true
@@ -297,11 +289,28 @@ extension MainTabBarController: Themed {
         tabBar.tintColor = theme.barForegroundColor
 
         if let application = UIApplication.shared.delegate as? AppDelegate,
-            let splitViewController = application.window?.rootViewController as? UISplitViewController,
-            let tabBarController = splitViewController.viewControllers[0] as? UITabBarController {
+            let tabBarController = application.window?.rootViewController as? UITabBarController {
 
             let selectedIndex = tabBarController.selectedIndex
             self.setButtonStates(selectedIndex)
+        }
+
+        self.moreNavigationController.navigationBar.barTintColor = AppThemeProvider.shared.currentTheme.barBackgroundColor
+        self.moreNavigationController.navigationBar.tintColor = AppThemeProvider.shared.currentTheme.barForegroundColor
+        self.moreNavigationController.navigationBar.prefersLargeTitles = true
+        self.moreNavigationController.navigationBar.titleTextAttributes = [
+            NSAttributedString.Key.foregroundColor: AppThemeProvider.shared.currentTheme.navigationBarTextColor,
+            NSAttributedString.Key.font: UIFont.mySystemFont(ofSize: 17.0)]
+        self.moreNavigationController.navigationBar.largeTitleTextAttributes = [
+            NSAttributedString.Key.foregroundColor: AppThemeProvider.shared.currentTheme.navigationBarTextColor,
+            NSAttributedString.Key.font: UIFont.myBoldSystemFont(ofSize: 31.0)]
+
+        self.moreNavigationController.view.backgroundColor = AppThemeProvider.shared.currentTheme.backgroundColor
+
+        if let view: UITableView = self.moreNavigationController.viewControllers[0].view as? UITableView {
+            view.tintColor = AppThemeProvider.shared.currentTheme.barForegroundColor
+            view.separatorColor = AppThemeProvider.shared.currentTheme.separatorColor
+            view.backgroundColor = AppThemeProvider.shared.currentTheme.backgroundColor
         }
     }
 }

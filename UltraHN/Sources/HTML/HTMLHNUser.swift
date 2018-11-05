@@ -137,10 +137,6 @@ public class HTMLHNUser: HNUser {
             let date = Date(timeIntervalSince1970: interval)
 
             self.CreatedAt = date
-
-            if self.isPassedMoreThan(days: 14, fromDate: date, toDate: Date()) == false {
-                self.IsNew = true
-            }
         }
     }
 

@@ -49,6 +49,14 @@ class SettingsViewController: FormViewController {
                     }
                 }.onExpandInlineRow(inlineStringPickerOnExpandInlineRow)
 
+            <<< SwitchRow {
+                    $0.tag = "fadeBadComments"
+                    $0.title = "Fade downvoted comments"
+                    $0.value = UserDefaults.standard.fadeBadComments
+                }.onChange { row in
+                    UserDefaults.standard.fadeBadComments = row.value!
+                }
+
             +++ Section(header: "Login",
                         footer: "Logging in allows you to upvote and downvote posts and comments as well as favorite posts. \r\n\r\nYour username and password is securely stored in Keychain and only ever sent to Hacker News/Y Combinator, never to the authors of Hackers.") {
                 $0.tag = "login"
@@ -160,6 +168,8 @@ class SettingsViewController: FormViewController {
                     }
 
                     row.section!.reload()
+
+                    self.tableView.reloadData()
                 }
 
             <<< SliderRow("brightnessSlider") {
@@ -372,10 +382,17 @@ class SettingsViewController: FormViewController {
 
 extension SettingsViewController: Themed {
     func applyTheme(_ theme: AppTheme) {
-        view.backgroundColor = theme.barBackgroundColor
-        tableView.backgroundColor = theme.barBackgroundColor
+        view.backgroundColor = theme.backgroundColor
+        tableView.backgroundColor = theme.backgroundColor
         tableView.separatorColor = theme.separatorColor
 
-        self.tableView.reloadData()
+        self.navigationController?.navigationBar.barTintColor = theme.barBackgroundColor
+        self.navigationController?.navigationBar.tintColor = theme.barForegroundColor
+        self.navigationController?.navigationBar.titleTextAttributes = [
+            NSAttributedString.Key.foregroundColor: theme.navigationBarTextColor,
+            NSAttributedString.Key.font: UIFont.mySystemFont(ofSize: 17.0)]
+        self.navigationController?.navigationBar.largeTitleTextAttributes = [
+            NSAttributedString.Key.foregroundColor: theme.navigationBarTextColor,
+            NSAttributedString.Key.font: UIFont.myBoldSystemFont(ofSize: 31.0)]
     }
 }

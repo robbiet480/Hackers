@@ -13,6 +13,8 @@ class ProfileViewController: FormViewController {
 
     var user: HNUser?
 
+    var previousNavTextColor: UIColor?
+
     private var dateFormatter: DateFormatter {
         let formatter = DateFormatter()
         formatter.dateFormat = "MMMM d, yyyy"
@@ -114,8 +116,13 @@ class ProfileViewController: FormViewController {
             }
 
             if let about = user.About, !about.isEmpty {
+
                 let attrText = NSAttributedString(string: about.htmlDecoded,
-                                                  attributes: [.font: UIFont.mySystemFont(ofSize: 14.0)])
+                                                  attributes: [
+                                                    .font: UIFont.mySystemFont(ofSize: 14.0),
+                                                    .backgroundColor: AppThemeProvider.shared.currentTheme.backgroundColor,
+                                                    .foregroundColor: AppThemeProvider.shared.currentTheme.textColor,
+                                                  ])
 
                 self.form
                     +++ Section(header: "About", footer: "")
@@ -128,6 +135,7 @@ class ProfileViewController: FormViewController {
                         $0.cell.textView.isEditable = false
                         $0.cell.textView.dataDetectorTypes = [.link]
                         $0.cell.textView.delegate = self
+                        $0.cell.textView.backgroundColor = AppThemeProvider.shared.currentTheme.backgroundColor
                     }.cellUpdate { cell, row in
                         cell.textView.text = nil
                         cell.textView.attributedText = attrText
@@ -137,15 +145,14 @@ class ProfileViewController: FormViewController {
             self.form
                 +++ Section()
 
-                <<< ButtonRow("comments") {
+                /*<<< ButtonRow("comments") {
                     $0.title = "Comments"
-                    $0.disabled = true
                     $0.presentationMode = .show(controllerProvider: ControllerProvider.callback {
                         return self.getNewsVC(.CommentsForUsername(username: user.Username))
                     }, onDismiss: { vc in
                         _ = vc.navigationController?.popViewController(animated: true)
                     })
-                }
+                }*/
                 <<< ButtonRow("submissions") {
                     $0.title = "Submissions"
                     $0.presentationMode = .show(controllerProvider: ControllerProvider.callback {
@@ -173,7 +180,7 @@ class ProfileViewController: FormViewController {
                             _ = vc.navigationController?.popViewController(animated: true)
                         })
                     }
-                    <<< ButtonRow("upvotedComments") {
+                    /*<<< ButtonRow("upvotedComments") {
                         $0.title = "Upvoted Comments"
                         $0.disabled = true
                         $0.presentationMode = .show(controllerProvider: ControllerProvider.callback {
@@ -181,7 +188,7 @@ class ProfileViewController: FormViewController {
                         }, onDismiss: { vc in
                             _ = vc.navigationController?.popViewController(animated: true)
                         })
-                    }
+                    }*/
                     <<< ButtonRow("upvotedSubmissions") {
                         $0.title = "Upvoted Submissions"
                         $0.presentationMode = .show(controllerProvider: ControllerProvider.callback {
@@ -198,6 +205,12 @@ class ProfileViewController: FormViewController {
         super.viewWillAppear(animated)
 
         if let user = self.user {
+            if self.previousNavTextColor == nil,
+                let attrs = self.navigationController?.navigationBar.titleTextAttributes,
+                let color = attrs[.foregroundColor] as? UIColor {
+                self.previousNavTextColor = color
+            }
+
             self.navigationController?.navigationBar.titleTextAttributes = [.foregroundColor: user.Color]
             self.navigationController?.navigationBar.largeTitleTextAttributes = [.foregroundColor: user.Color]
         }
@@ -206,8 +219,10 @@ class ProfileViewController: FormViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
 
-        self.navigationController?.navigationBar.titleTextAttributes = nil
-        self.navigationController?.navigationBar.largeTitleTextAttributes = nil
+        if let color = self.previousNavTextColor {
+            self.navigationController?.navigationBar.titleTextAttributes = [.foregroundColor: color]
+            self.navigationController?.navigationBar.largeTitleTextAttributes = [.foregroundColor: color]
+        }
     }
 
     func getNewsVC(_ postType: HNScraper.Page) -> UIViewController {
@@ -216,6 +231,10 @@ class ProfileViewController: FormViewController {
         guard let newsVC = newsVCNav.topViewController as? NewsViewController else { fatalError() }
 
         newsVC.title = postType.description
+
+        if case .ForDate = postType {
+            newsVC.title = self.user!.Username + "'s birthday"
+        }
 
         newsVC.postType = postType
 
@@ -239,8 +258,8 @@ extension ProfileViewController: UITextViewDelegate {
 
 extension ProfileViewController: Themed {
     func applyTheme(_ theme: AppTheme) {
-        view.backgroundColor = theme.barBackgroundColor
-        tableView.backgroundColor = theme.barBackgroundColor
+        view.backgroundColor = theme.backgroundColor
+        tableView.backgroundColor = theme.backgroundColor
         tableView.separatorColor = theme.separatorColor
 
         self.tableView.reloadData()

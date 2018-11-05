@@ -30,7 +30,6 @@
 		249B24751F659A5200028A92 /* CommentsHeader.xib in Resources */ = {isa = PBXBuildFile; fileRef = 249B24741F659A5200028A92 /* CommentsHeader.xib */; };
 		24ADA7E3206FAF2200C143F4 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 24ADA7E2206FAF2200C143F4 /* Main.storyboard */; };
 		24B5BFEF1B52CE8900328C62 /* PostTitleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24B5BFEE1B52CE8900328C62 /* PostTitleView.swift */; };
-		24C20D391A7E42D5005B759B /* MainSplitViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24C20D381A7E42D5005B759B /* MainSplitViewController.swift */; };
 		24CE5FED19434BDC009D2677 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24CE5FEC19434BDC009D2677 /* AppDelegate.swift */; };
 		24CE5FF419435061009D2677 /* NewsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24CE5FF319435061009D2677 /* NewsViewController.swift */; };
 		24CE5FF819435A90009D2677 /* PostCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24CE5FF719435A90009D2677 /* PostCell.swift */; };
@@ -118,7 +117,6 @@
 		249B24741F659A5200028A92 /* CommentsHeader.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CommentsHeader.xib; sourceTree = "<group>"; };
 		24ADA7E2206FAF2200C143F4 /* Main.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		24B5BFEE1B52CE8900328C62 /* PostTitleView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PostTitleView.swift; path = "Client/Posts List/PostTitleView.swift"; sourceTree = SOURCE_ROOT; };
-		24C20D381A7E42D5005B759B /* MainSplitViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainSplitViewController.swift; sourceTree = "<group>"; };
 		24CC0DB6193D1935005AD417 /* Hackers2-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Hackers2-Bridging-Header.h"; sourceTree = "<group>"; };
 		24CE5FEC19434BDC009D2677 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		24CE5FF319435061009D2677 /* NewsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewsViewController.swift; sourceTree = "<group>"; };
@@ -345,7 +343,6 @@
 				2464D200209DD06A00C7F8FC /* Themes */,
 				24ADA7E2206FAF2200C143F4 /* Main.storyboard */,
 				24EF5BF31C393D110012AA8A /* LaunchStoryboard.storyboard */,
-				24C20D381A7E42D5005B759B /* MainSplitViewController.swift */,
 				2454B9011F654DB2005A98C7 /* MainTabBarController.swift */,
 				2464D212209DEFB100C7F8FC /* AppNavigationController.swift */,
 				24CE5FEE19434DC0009D2677 /* Posts List */,
@@ -686,7 +683,6 @@
 				2464D20E209DD8F400C7F8FC /* SubscribableValue.swift in Sources */,
 				B6C8E8522181353D0093112A /* OpenInFirefoxController.swift in Sources */,
 				B6C86D062186A62300FB18E8 /* HNScraper.swift in Sources */,
-				24C20D391A7E42D5005B759B /* MainSplitViewController.swift in Sources */,
 				2464D21F209E27FE00C7F8FC /* Settings+UserDefaultsExtensions.swift in Sources */,
 				B6ECEB59217CC4EA00755239 /* OpenInChromeController.swift in Sources */,
 				B614BF4F2187187B00918E0F /* Firebase.swift in Sources */,

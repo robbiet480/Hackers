@@ -60,7 +60,7 @@ final class AppThemeProvider: ThemeProvider {
             cell.textLabel?.tintColor = activeTheme.textColor
             cell.detailTextLabel?.textColor = activeTheme.barForegroundColor
             cell.detailTextLabel?.tintColor = activeTheme.barForegroundColor
-            cell.backgroundColor = activeTheme.barBackgroundColor
+            cell.backgroundColor = activeTheme.backgroundColor
             cell.tintColor = activeTheme.barForegroundColor
 
             if let textFieldCell = cell as? TextFieldCell {
@@ -88,6 +88,11 @@ final class AppThemeProvider: ThemeProvider {
 
             if let passwordCell = cell as? PasswordCell {
                 passwordCell.textField.textContentType = .password
+            }
+
+            if let textAreaCell = cell as? TextAreaCell {
+                textAreaCell.textView.tintColor = activeTheme.barForegroundColor
+                textAreaCell.textView.textColor = activeTheme.barForegroundColor
             }
         }
     }

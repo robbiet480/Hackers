@@ -29,7 +29,7 @@ class SearchViewController: UIViewController {
         print("Search type changed to", self.searchTypeControl.selectedSegmentIndex)
 
         if self.searchTypeControl.selectedSegmentIndex == 0 {
-            self.searchIndex = client.index(withName: "Item_production")
+            self.searchIndex = client.index(withName: "Item_production_ordered")
         } else if self.searchTypeControl.selectedSegmentIndex == 1 {
             self.searchIndex = client.index(withName: "User_production")
         }
@@ -52,7 +52,7 @@ class SearchViewController: UIViewController {
 
         tableView.register(UINib(nibName: "PostCell", bundle: nil), forCellReuseIdentifier: "PostCell")
 
-        self.searchIndex = client.index(withName: "Item_production")
+        self.searchIndex = client.index(withName: "Item_production_ordered")
 
         let singleTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.singleTap(sender:)))
         singleTapGestureRecognizer.numberOfTapsRequired = 1
@@ -93,7 +93,6 @@ extension SearchViewController: UITableViewDataSource {
             let cell = tableView.dequeueReusableCell(withIdentifier: "PostCell", for: indexPath) as! PostCell
             cell.tag = indexPath.row
             cell.delegate = self
-            cell.clearImage()
 
             let post = posts[indexPath.row]
 
@@ -233,7 +232,13 @@ extension SearchViewController: PostTitleViewDelegate {
 
 extension SearchViewController: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        searchIndex!.search(Query(query: searchText), completionHandler: { (content, error) -> Void in
+        let q = Query(query: searchText)
+
+        if self.searchTypeControl.selectedSegmentIndex == 0 {
+            q.tagFilters = ["story"]
+        }
+
+        searchIndex!.search(q, completionHandler: { (content, error) -> Void in
             if let error = error {
                 print("Error during Algolia search:", error)
             } else if let content = content {
@@ -268,6 +273,7 @@ extension SearchViewController: Themed {
         tableView.backgroundColor = theme.backgroundColor
         tableView.separatorColor = theme.separatorColor
         searchBar.tintColor = theme.appTintColor
-        searchBar.backgroundColor = theme.barBackgroundColor
+        searchBar.backgroundColor = theme.backgroundColor
+        searchBar.barTintColor = theme.backgroundColor
     }
 }

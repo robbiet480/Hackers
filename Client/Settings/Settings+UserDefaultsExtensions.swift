@@ -118,6 +118,15 @@ extension UserDefaults {
             return bool(forKey: UserDefaultsKeys.SyncCommentVisibility.rawValue)
         }
     }
+    
+    public var fadeBadComments: Bool {
+        set {
+            set(newValue, forKey: UserDefaultsKeys.FadeBadComments.rawValue)
+        }
+        get {
+            return bool(forKey: UserDefaultsKeys.FadeBadComments.rawValue)
+        }
+    }
 }
 
 enum UserDefaultsKeys: String {
@@ -129,4 +138,5 @@ enum UserDefaultsKeys: String {
     case NotificationPointsThreshold
     case LoggedInUser
     case SyncCommentVisibility
+    case FadeBadComments
 }

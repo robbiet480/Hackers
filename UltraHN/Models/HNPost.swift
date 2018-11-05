@@ -9,7 +9,6 @@
 import Foundation
 import SwiftSoup
 import Kingfisher
-import OpenGraph
 import PromiseKit
 import Alamofire
 
@@ -18,8 +17,6 @@ public class HNPost: HNItem {
     public var Link: URL?
 
     public var ReplyHMAC: String?
-
-    var OpenGraph: [OpenGraphMetadata.RawValue: String] = [:]
 
     override public var description: String {
         return "HNPost: rank: \(self.Rank), type: \(self.Type.description), ID: \(self.IDString) (dead: \(self.Dead)), author: \(self.Author), score: \(self.Score), comments: \(self.TotalChildren), title: \(self.Title), link: \(self.Link), text: \(self.Text)"
@@ -87,35 +84,14 @@ public class HNPost: HNItem {
     }
 
     var ThumbnailURL: URL? {
-        guard let link = self.Link else { return nil }
-
         // https://drcs9k8uelb9s.cloudfront.net/ is the hn.algolia.com thumbnail cache
         // three sizes are available
         // /id.png - 100x100
         // /id-600x315.png - 600x315
         // /id-240x180.png - 240x180
+        // 
         // Previous to this discovery, we used https://image-extractor.now.sh/?url=
-        guard let fallbackURL = URL(string: "https://drcs9k8uelb9s.cloudfront.net/" + self.IDString + "-600x315.png") else { return nil }
-
-        var ogImageURLTest: String? = nil
-
-        let keysToCheck: [OpenGraphMetadata] = [.image, .imageUrl, .imageSecure_url]
-
-        for ogKey in keysToCheck {
-            if let ogURL = self.OpenGraph[ogKey] {
-                ogImageURLTest = ogURL
-                break
-            }
-        }
-
-        guard let ogImageURLStr = ogImageURLTest else { return fallbackURL }
-
-        if !ogImageURLStr.hasPrefix("http") {
-            // og:image is something like /logo.png so we need to prefix it with the base URL for a valid URL.
-            return URL(string: ogImageURLStr, relativeTo: link)
-        }
-
-        return URL(string: ogImageURLStr)
+        return URL(string: "https://drcs9k8uelb9s.cloudfront.net/" + self.IDString + "-600x315.png")
     }
 
     var ThumbnailImageResource: ImageResource? {

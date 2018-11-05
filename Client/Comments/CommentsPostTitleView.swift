@@ -52,7 +52,7 @@ class CommentsPostTitleView: UIView, UIGestureRecognizerDelegate {
             print("Change upvote button state, action worked!", self.post)
             let button = UIButton(type: .custom)
             button.setImage(UIImage(named: "arrow-up")!.withRenderingMode(.alwaysTemplate), for: .normal)
-            button.imageView?.tintColor = AppThemeProvider.shared.currentTheme.barBackgroundColor
+            button.imageView?.tintColor = AppThemeProvider.shared.currentTheme.backgroundColor
             button.layer.backgroundColor = AppThemeProvider.shared.currentTheme.barForegroundColor.cgColor
             button.layer.cornerRadius = 4.0
             button.addTarget(self, action: #selector(upvoteButtonTapped(_:)), for: .touchUpInside)
@@ -208,5 +208,8 @@ extension CommentsPostTitleView: Themed {
 
         postTextView.backgroundColor = theme.backgroundColor
         postTextView.font = UIFont.mySystemFont(ofSize: 16.0)
+
+        linkView.backgroundColor = theme.backgroundColor
+        urlLabel.textColor = theme.textColor
     }
 }

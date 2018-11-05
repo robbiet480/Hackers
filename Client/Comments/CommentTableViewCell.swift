@@ -88,7 +88,10 @@ class CommentTableViewCell : UITableViewCell {
         if let commentTextView = commentTextView {
             // only for expanded comments
             let commentFont = UIFont.mySystemFont(ofSize: 15)
-            let commentTextColor = AppThemeProvider.shared.currentTheme.textColor.withAlphaComponent(comment.FadeAlpha)
+            var commentTextColor = AppThemeProvider.shared.currentTheme.textColor
+            if UserDefaults.standard.fadeBadComments {
+                commentTextColor = commentTextColor.withAlphaComponent(comment.FadeAlpha)
+            }
             let lineSpacing = 4 as CGFloat
             
             let commentAttributedString = NSMutableAttributedString(string: comment.Text!.htmlDecoded)

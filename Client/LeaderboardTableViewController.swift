@@ -17,6 +17,8 @@ class LeaderboardTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        setupTheming()
+
         HTMLDataSource().GetLeaders().done { leaders in
             self.board = leaders
             self.tableView.reloadData()
@@ -30,11 +32,19 @@ class LeaderboardTableViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 100
+        return self.board?.count ?? 0
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = UITableViewCell(style: .value1, reuseIdentifier: "reuseIdentifier")
+        let cell = tableView.dequeueReusableCell(withIdentifier: "leaderCell", for: indexPath)
+
+        cell.textLabel?.textColor = AppThemeProvider.shared.currentTheme.textColor
+        cell.textLabel?.font = UIFont.mySystemFont(ofSize: 18.0)
+
+        cell.detailTextLabel?.textColor = AppThemeProvider.shared.currentTheme.textColor
+        cell.detailTextLabel?.font = UIFont.mySystemFont(ofSize: 18.0)
+
+        cell.backgroundColor = AppThemeProvider.shared.currentTheme.backgroundColor
 
         guard let board = self.board else { return cell }
 
@@ -74,4 +84,12 @@ class LeaderboardTableViewController: UITableViewController {
         }
     }
 
+}
+
+extension LeaderboardTableViewController: Themed {
+    func applyTheme(_ theme: AppTheme) {
+        view.backgroundColor = theme.backgroundColor
+        tableView.backgroundColor = theme.backgroundColor
+        tableView.separatorColor = theme.separatorColor
+    }
 }

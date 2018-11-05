@@ -69,7 +69,7 @@ public class HNComment: HNItem {
         case 8:
             return 0.111111112
         default: // We use level 9 as the default since that color is basically unreadable on light backgrounds.
-            return 0.05
+            return 0.10
         }
     }
 

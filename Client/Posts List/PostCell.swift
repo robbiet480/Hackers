@@ -59,17 +59,23 @@ class PostCell : UITableViewCell {
         backgroundColor = AppThemeProvider.shared.currentTheme.backgroundColor
     }
     
-    func clearImage() {
-        let placeholder = UIImage(named: "ThumbnailPlaceholderIcon")?.withRenderingMode(.alwaysTemplate)
-        thumbnailImageView.image = placeholder
-    }
-    
     @objc func didTapThumbnail(_ sender: Any) {
         delegate?.didTapThumbnail(sender)
     }
 
     @objc func cellLongPress(_ sender: Any) {
         delegate?.didLongPressCell(sender)
+    }
+
+    override func prepareForReuse() {
+        self.post = nil
+        self.postTitleView.post = nil
+        self.postTitleView.hideDomain = false
+        self.postTitleView.hideUsername = false
+        self.postTitleView.delegate = nil
+
+        let placeholder = UIImage(named: "ThumbnailPlaceholderIcon")?.withRenderingMode(.alwaysTemplate)
+        thumbnailImageView.image = placeholder
     }
 }
 
