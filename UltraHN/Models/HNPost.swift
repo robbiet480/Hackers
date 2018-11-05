@@ -25,6 +25,46 @@ public class HNPost: HNItem {
         return "HNPost: rank: \(self.Rank), type: \(self.Type.description), ID: \(self.IDString) (dead: \(self.Dead)), author: \(self.Author), score: \(self.Score), comments: \(self.TotalChildren), title: \(self.Title), link: \(self.Link), text: \(self.Text)"
     }
 
+    var AttributedTitle: NSAttributedString {
+        let badColor = UIColor(rgb: 0x828282)
+        let deadLabel = NSAttributedString(string: "[dead]", attributes: [.foregroundColor: badColor])
+        let flaggedLabel = NSAttributedString(string: "[flagged]", attributes: [.foregroundColor: badColor])
+
+        let titleAttrs: [NSAttributedString.Key: Any] = [
+            .foregroundColor: AppThemeProvider.shared.currentTheme.titleTextColor,
+            .font: UIFont.mySystemFont(ofSize: 18.0)
+        ]
+
+        let titleStr = NSAttributedString(string: self.Title!, attributes: titleAttrs)
+
+        if self.Dead, self.Flagged {
+            let badTitle = NSMutableAttributedString()
+            badTitle.append(deadLabel)
+            badTitle.append(NSAttributedString(string: " "))
+            badTitle.append(flaggedLabel)
+            badTitle.append(NSAttributedString(string: " "))
+            badTitle.append(titleStr)
+
+            return badTitle
+        } else if self.Dead {
+            let badTitle = NSMutableAttributedString()
+            badTitle.append(deadLabel)
+            badTitle.append(NSAttributedString(string: " "))
+            badTitle.append(titleStr)
+
+            return badTitle
+        } else if self.Flagged {
+            let badTitle = NSMutableAttributedString()
+            badTitle.append(flaggedLabel)
+            badTitle.append(NSAttributedString(string: " "))
+            badTitle.append(titleStr)
+
+            return badTitle
+        }
+
+        return titleStr
+    }
+
     var Site: String? {
         return self.Link?.host
     }

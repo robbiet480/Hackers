@@ -138,7 +138,9 @@ public class HTMLHNUser: HNUser {
 
             self.CreatedAt = date
 
-            self.IsNew = !self.isPassedMoreThan(days: 14, fromDate: date, toDate: Date())
+            if self.isPassedMoreThan(days: 14, fromDate: date, toDate: Date()) == false {
+                self.IsNew = true
+            }
         }
     }
 

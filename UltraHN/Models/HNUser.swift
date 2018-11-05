@@ -76,4 +76,10 @@ public class HNUser: NSObject, Codable {
 
         return AppThemeProvider.shared.currentTheme.textColor
     }
+
+    var AttributedUsername: NSAttributedString {
+        let attrs: [NSAttributedString.Key: Any] = [ .foregroundColor: self.Color ]
+
+        return NSAttributedString(string: self.Username, attributes: attrs)
+    }
 }

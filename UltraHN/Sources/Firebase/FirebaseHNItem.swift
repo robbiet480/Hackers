@@ -32,7 +32,9 @@ public class FirebaseHNItem: HNItem {
         self.Text = try? container.decode(String.self, forKey: .Text)
         self.Score = try? container.decode(Int.self, forKey: .Score)
         self.ID = try container.decode(Int.self, forKey: .ID)
-        self.Dead = try? container.decode(Bool.self, forKey: .Dead)
+        if let dead = try? container.decode(Bool.self, forKey: .Dead) {
+            self.Dead = dead
+        }
         if let createdAt = try? container.decode(TimeInterval.self, forKey: .CreatedAt) {
             self.CreatedAt = Date(timeIntervalSince1970: createdAt)
         }

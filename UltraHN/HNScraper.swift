@@ -18,8 +18,8 @@ public class HNScraper {
 
     public static var defaultDataSource = HTMLDataSource()
 
-    public func GetPage(_ pageName: HNScraper.Page,
-                        pageNumber: Int = 1, dataSource: HNDataSource = defaultDataSource) -> Promise<[HNItem]?> {
+    public func GetPage(_ pageName: HNScraper.Page, pageNumber: Int = 1,
+                        dataSource: HNDataSource = defaultDataSource) -> Promise<[HNItem]?> {
         return dataSource.GetPage(pageName, pageNumber: pageNumber).then { items -> Promise<[HNItem]?> in
             _ = HNRealtime.shared.Monitor(pageName)
             items?.forEach { _ = HNRealtime.shared.Monitor($0.ID, $0.Type) }

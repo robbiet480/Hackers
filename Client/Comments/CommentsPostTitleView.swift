@@ -91,17 +91,24 @@ class CommentsPostTitleView: UIView, UIGestureRecognizerDelegate {
         didSet {
             guard let post = post else { return }
 
-            if let author = post.Author {
-                self.authorLabel.text = author.Username
-                self.authorLabel.textColor = author.Color
+            if let oldValue = oldValue, let oldAuthor = oldValue.Author, let newAuthor = post.Author {
+                if oldAuthor.IsYC == true && newAuthor.IsYC == false {
+                    newAuthor.IsYC = true
+                }
+                if oldAuthor.IsNew == true && newAuthor.IsNew == false {
+                    newAuthor.IsNew = true
+                }
             }
 
-            self.titleLabel.text = post.Title
+            if let author = post.Author {
+                self.authorLabel.attributedText = author.AttributedUsername
+            }
+
+            self.titleLabel.attributedText = post.AttributedTitle
 
             self.metadataLabel.attributedText = self.metadataText(post)
 
             if let postText = post.Text {
-                print("Setting post text!")
                 let postTextFont = UIFont.mySystemFont(ofSize: 18.0)
                 let postTextColor = AppThemeProvider.shared.currentTheme.textColor
                 let lineSpacing = 4 as CGFloat
@@ -120,14 +127,9 @@ class CommentsPostTitleView: UIView, UIGestureRecognizerDelegate {
 
                 stackView.removeArrangedSubview(self.linkView)
                 self.linkView.removeFromSuperview()
-                // linkView.isHidden = true
-                // postTextView.isHidden = false
             } else if let link = post.Link, !post.LinkIsYCDomain {
-                print("Setting post link")
                 stackView.removeArrangedSubview(self.postTextView)
                 self.postTextView.removeFromSuperview()
-                // postTextView.isHidden = true
-                // linkView.isHidden = false
                 thumbnailImageView.setImage(post)
                 self.urlLabel.text = link.host!.replacingOccurrences(of: "www.", with: "") + link.path
             }
@@ -201,13 +203,10 @@ class CommentsPostTitleView: UIView, UIGestureRecognizerDelegate {
 
 extension CommentsPostTitleView: Themed {
     func applyTheme(_ theme: AppTheme) {
-        titleLabel.textColor = theme.titleTextColor
-        titleLabel.font = UIFont.myBoldSystemFont(ofSize: 18.0)
-
         actionToolbar.barTintColor = theme.barBackgroundColor
         actionToolbar.tintColor = theme.barForegroundColor
 
-        //postTextView.backgroundColor = theme.backgroundColor
+        postTextView.backgroundColor = theme.backgroundColor
         postTextView.font = UIFont.mySystemFont(ofSize: 16.0)
     }
 }

@@ -203,8 +203,6 @@ extension NewsViewController: UITableViewDataSource {
         default: break
         }
 
-        print("postType", self.postType, cell.postTitleView.hideUsername, cell.postTitleView.hideDomain)
-
         cell.thumbnailImageView.setImage(post)
         
         return cell
@@ -253,8 +251,6 @@ extension NewsViewController: UITableViewDelegate {
             let actions = post.Actions != nil ? post.Actions! : HNScraper.shared.ActionsCache[post.ID]!
 
             let config = actions.swipeActionsConfiguration(item: post, trailing: false)
-
-            print("Leading actions for post", post.ID, actions, config)
 
             return config
     }
@@ -362,7 +358,6 @@ extension NewsViewController: PostTitleViewDelegate {
     }
 
     func didTapUsername(_ user: HNUser) {
-        print("Tapped user", user)
         self.selectedUser = user
         self.performSegue(withIdentifier: "Profile", sender: self)
     }

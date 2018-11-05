@@ -15,8 +15,8 @@ import FontAwesome_swift
 
 public class HNItem: NSObject, Codable {
     public var Author: HNUser?
-    public var Dead: Bool?
-    public var Flagged: Bool?
+    public var Dead: Bool = false
+    public var Flagged: Bool = false
     public var Title: String?
     public var Text: String?
     public var Score: Int?
@@ -389,19 +389,16 @@ public class HNItem: NSObject, Codable {
             }
         }
 
-        var AllActions: [HNItem.ActionType] {
-            return [self.Upvote, self.Downvote, self.Unvote, self.Vouch, self.Unvouch, self.Flag, self.Unflag,
-                    self.Hide, self.Unhide, self.Favorite, self.Unfavorite].compactMap { $0 }
+        var SwipeableActions: [HNItem.ActionType] {
+            return [self.Upvote, self.Downvote, self.Unvote].compactMap { $0 }
         }
 
         func swipeActionsConfiguration(item: HNItem, trailing: Bool = false) -> UISwipeActionsConfiguration {
             var allTableActions: [UIContextualAction?] = []
 
-            for action in self.AllActions {
+            for action in self.SwipeableActions {
                 allTableActions.append(action.tableAction(item: item, trailing: trailing))
             }
-
-            print("Returning actions", allTableActions)
 
             return UISwipeActionsConfiguration(actions: allTableActions.compactMap { $0 })
         }

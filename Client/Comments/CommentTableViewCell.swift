@@ -11,17 +11,39 @@ import UIKit
 
 class CommentTableViewCell : UITableViewCell {
     var delegate: CommentDelegate?
-    
+
     var level: Int = 0 {
         didSet { updateIndentPadding() }
     }
 
-    var post: HNPost?
+    var post: HNPost? {
+        didSet {
+            guard let post = post else { return }
+
+            if let oldValue = oldValue, let oldAuthor = oldValue.Author, let newAuthor = post.Author {
+                if oldAuthor.IsYC == true && newAuthor.IsYC == false {
+                    newAuthor.IsYC = true
+                }
+                if oldAuthor.IsNew == true && newAuthor.IsNew == false {
+                    newAuthor.IsNew = true
+                }
+            }
+        }
+    }
 
     var comment: HNComment? {
         didSet {
             guard let comment = comment else { return }
             guard comment.Text != nil else { return }
+
+            if let oldValue = oldValue, let oldAuthor = oldValue.Author, let newAuthor = comment.Author {
+                if oldAuthor.IsYC == true && newAuthor.IsYC == false {
+                    newAuthor.IsYC = true
+                }
+                if oldAuthor.IsNew == true && newAuthor.IsNew == false {
+                    newAuthor.IsNew = true
+                }
+            }
 
             updateCommentContent(with: comment)
         }
@@ -60,14 +82,12 @@ class CommentTableViewCell : UITableViewCell {
         datePostedLabel.text = comment.RelativeDate
 
         if let author = comment.Author {
-            self.authorLabel.text = author.Username
-
-            self.authorLabel.textColor = author.Color
+            self.authorLabel.attributedText = author.AttributedUsername
         }
 
         if let commentTextView = commentTextView {
             // only for expanded comments
-            let commentFont = UIFont.systemFont(ofSize: 15)
+            let commentFont = UIFont.mySystemFont(ofSize: 15)
             let commentTextColor = AppThemeProvider.shared.currentTheme.textColor.withAlphaComponent(comment.FadeAlpha)
             let lineSpacing = 4 as CGFloat
             
@@ -124,11 +144,6 @@ extension CommentTableViewCell: Themed {
             commentTextView.font = UIFont.mySystemFont(ofSize: 15.0)
         }
         if authorLabel != nil {
-            if let author = self.comment?.Author {
-                self.authorLabel.textColor = author.Color
-            } else {
-                self.authorLabel.textColor = theme.lightTextColor
-            }
             authorLabel.font = UIFont.mySystemFont(ofSize: 15.0)
         }
         if datePostedLabel != nil {

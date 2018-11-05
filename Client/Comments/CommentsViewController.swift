@@ -455,7 +455,7 @@ extension CommentsViewController: CommentDelegate {
 
 extension CommentsViewController: DZNEmptyDataSetSource, DZNEmptyDataSetDelegate {
     func title(forEmptyDataSet scrollView: UIScrollView!) -> NSAttributedString! {
-        let attributes = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 15.0)]
+        let attributes = [NSAttributedString.Key.font: UIFont.mySystemFont(ofSize: 15.0)]
         return comments == nil ? NSAttributedString(string: "Loading comments", attributes: attributes) : NSAttributedString(string: "No comments", attributes: attributes)
     }
 }

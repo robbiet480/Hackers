@@ -46,14 +46,21 @@ class PostTitleView: UIView, UIGestureRecognizerDelegate {
         didSet {
             guard let post = post else { return }
 
-            if let title = post.Title {
-                if let dead = post.Dead, dead {
-                    self.titleLabel.text = "🥀 " + title
-                } else if let flagged = post.Flagged, flagged {
-                    self.titleLabel.text = "🚩 " + title
-                } else {
-                    self.titleLabel.text = title
+            if let oldValue = oldValue, oldValue.Flagged == true && post.Flagged == false {
+                post.Flagged = true
+            }
+
+            if let oldValue = oldValue, let oldAuthor = oldValue.Author, let newAuthor = post.Author {
+                if oldAuthor.IsYC == true && newAuthor.IsYC == false {
+                    newAuthor.IsYC = true
                 }
+                if oldAuthor.IsNew == true && newAuthor.IsNew == false {
+                    newAuthor.IsNew = true
+                }
+            }
+
+            if let title = post.Title {
+                self.titleLabel.attributedText = post.AttributedTitle
             }
 
             self.pointsLabel.attributedText = self.generateAttributedString(String(post.Score ?? 0), .arrowUp, .solid)
@@ -62,8 +69,14 @@ class PostTitleView: UIView, UIGestureRecognizerDelegate {
 
             self.timeLabel.attributedText = self.generateAttributedString(post.RelativeDate, .clock, .regular)
 
-            if let username = post.Author?.Username {
-                self.usernameLabel.attributedText = self.generateAttributedString(username, .userAlt, .solid)
+            if let author = post.Author {
+                let username = NSMutableAttributedString()
+
+                username.append(fakAttachment(for: .userAlt, style: .solid))
+                username.append(author.AttributedUsername)
+
+                self.usernameLabel.attributedText = username
+                self.usernameLabel.font = UIFont.mySystemFont(ofSize: 14)
             }
 
             if let domainText = self.domainLabelText(for: post) {
@@ -151,20 +164,12 @@ class PostTitleView: UIView, UIGestureRecognizerDelegate {
 }
 
 extension PostTitleView: Themed {
-    func applyTheme(_ theme: AppTheme) {
-        titleLabel.textColor = theme.titleTextColor
-        titleLabel.font = UIFont.mySystemFont(ofSize: 18.0)
-        //if let post = post {
-        //    self.metadataLabel.attributedText = self.metadataText(post)
-        //}
-//        metadataLabel.textColor = theme.textColor
-//        metadataLabel.font = UIFont.mySystemFont(ofSize: 14.0)
-    }
+    func applyTheme(_ theme: AppTheme) {}
 }
 
 // MARK: Extension util which generates NSAttributedString by text,font,color,backgroundColor
 extension NSAttributedString {
-    class func generate(from text: String, font: UIFont = UIFont.systemFont(ofSize: 14), color: UIColor = .black,
+    class func generate(from text: String, font: UIFont = UIFont.mySystemFont(ofSize: 14), color: UIColor = .black,
                         backgroundColor: UIColor = .clear) -> NSAttributedString {
         let atts: [NSAttributedString.Key : Any] = [.foregroundColor: color, .font: font,
                                                     .backgroundColor: backgroundColor]
