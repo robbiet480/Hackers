@@ -60,8 +60,12 @@ class CommentTableViewCell : UITableViewCell {
         setupTheming()
         contentView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(CommentTableViewCell.cellTapped)))
         contentView.addGestureRecognizer(UILongPressGestureRecognizer(target: self, action: #selector(CommentTableViewCell.cellLongPress)))
+
+        if authorLabel != nil {
+            authorLabel.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(CommentTableViewCell.authorTapped)))
+        }
     }
-    
+
     @objc func cellTapped() {
         delegate?.commentTapped(self)
         setSelected(!isSelected, animated: false)
@@ -69,6 +73,10 @@ class CommentTableViewCell : UITableViewCell {
 
     @objc func cellLongPress() {
         delegate?.commentLongPressed(self)
+    }
+
+    @objc func authorTapped() {
+        delegate?.authorTapped(self.comment!.Author!)
     }
 
     func updateIndentPadding() {

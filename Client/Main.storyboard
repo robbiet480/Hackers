@@ -496,10 +496,10 @@
                                                         <constraint firstAttribute="height" constant="0.5" id="zGd-NY-aeW"/>
                                                     </constraints>
                                                 </view>
-                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Author" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="I5X-8d-Ibl">
-                                                    <rect key="frame" x="10" y="10" width="145" height="21"/>
+                                                <label opaque="NO" clipsSubviews="YES" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Author" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="I5X-8d-Ibl">
+                                                    <rect key="frame" x="10" y="10" width="48" height="21"/>
                                                     <constraints>
-                                                        <constraint firstAttribute="width" constant="145" id="bph-KD-QLd"/>
+                                                        <constraint firstAttribute="width" relation="lessThanOrEqual" constant="145" id="bph-KD-QLd"/>
                                                         <constraint firstAttribute="height" constant="21" id="kvY-te-zvU"/>
                                                     </constraints>
                                                     <fontDescription key="fontDescription" type="system" weight="medium" pointSize="15"/>
@@ -507,7 +507,7 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="2h ago" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="XII-Xj-vK5">
-                                                    <rect key="frame" x="259" y="10" width="145" height="21"/>
+                                                    <rect key="frame" x="356" y="10" width="48" height="21"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="21" id="VIb-nL-GGj"/>
                                                     </constraints>
@@ -950,7 +950,7 @@
         <image name="flag" width="20" height="20"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="TLg-HL-anB"/>
+        <segue reference="sND-ZO-5nv"/>
         <segue reference="rxv-oa-aIG"/>
         <segue reference="qrH-bd-6ID"/>
     </inferredMetricsTieBreakers>

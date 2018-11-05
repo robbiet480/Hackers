@@ -45,6 +45,8 @@ class CommentsViewController : UIViewController {
 
     var replyToComment: HNComment?
 
+    var selectedUser: HNUser?
+
     override func viewDidLoad() {
         super.viewDidLoad()
         setupTheming()
@@ -141,7 +143,8 @@ class CommentsViewController : UIViewController {
                 replyVC.replyingTo = self.post
             }
         } else if segue.identifier == "Profile", let profileVC = segue.destination as? ProfileViewController {
-            profileVC.user = self.post?.Author
+            profileVC.user = self.selectedUser
+            self.selectedUser = nil
         }
     }
 
@@ -303,6 +306,7 @@ extension CommentsViewController: CommentsPostTitleViewDelegate {
 
     func didTapAuthorLabel() {
         print("Author hit, open author view for", post!.Author!)
+        self.selectedUser = self.post?.Author
         self.performSegue(withIdentifier: "Profile", sender: self)
     }
 
@@ -444,6 +448,11 @@ extension CommentsViewController: CommentDelegate {
                 self.tableView.scrollToRow(at: indexPath, at: .top, animated: true)
             }
         }
+    }
+
+    func authorTapped(_ user: HNUser) {
+        self.selectedUser = user
+        self.performSegue(withIdentifier: "Profile", sender: self)
     }
 }
 
