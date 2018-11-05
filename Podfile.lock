@@ -22,8 +22,6 @@ PODS:
   - InstantSearchClient (6.1.0)
   - Kingfisher (4.8.1)
   - leveldb-library (1.20)
-  - MoreCodable (0.2.0)
-  - OpenGraph (1.0.5)
   - PromiseKit (6.5.2):
     - PromiseKit/CorePromise (= 6.5.2)
     - PromiseKit/Foundation (= 6.5.2)
@@ -56,8 +54,6 @@ DEPENDENCIES:
   - FontAwesome.swift
   - InstantSearchClient (~> 6.0)
   - Kingfisher
-  - MoreCodable
-  - OpenGraph (from `https://github.com/robbiet480/OpenGraph`, branch `patch-1`)
   - PromiseKit
   - PromiseKit/Alamofire
   - RealmSwift
@@ -81,23 +77,12 @@ SPEC REPOS:
     - InstantSearchClient
     - Kingfisher
     - leveldb-library
-    - MoreCodable
     - PromiseKit
     - Realm
     - RealmSwift
     - SkeletonView
     - StatusAlert
     - SwiftSoup
-
-EXTERNAL SOURCES:
-  OpenGraph:
-    :branch: patch-1
-    :git: https://github.com/robbiet480/OpenGraph
-
-CHECKOUT OPTIONS:
-  OpenGraph:
-    :commit: 997b394f024a7193e0a068cf1da7299058d8f309
-    :git: https://github.com/robbiet480/OpenGraph
 
 SPEC CHECKSUMS:
   1PasswordExtension: 0e95bdea64ec8ff2f4f693be5467a09fac42a83d
@@ -114,8 +99,6 @@ SPEC CHECKSUMS:
   InstantSearchClient: 0f80d0a828a0b975d039aa6a20f99eb453266a33
   Kingfisher: 868c1149679a7ab6869be118faa9b5aed154aaf0
   leveldb-library: 08cba283675b7ed2d99629a4bc5fd052cd2bb6a5
-  MoreCodable: 1dd5f2b2ee520c8e594593389c5e3d21147ed648
-  OpenGraph: f3529e35045abd3b163f455278d4d866c0eb061b
   PromiseKit: 27c1601bfb73405871b805bcb8cf7e55c4dad3db
   Realm: 037c5919b9ceb59d6beed5d3b031096856b119b3
   RealmSwift: c9580133e73ef40ed340401af2dbc9a5790dfea7
@@ -123,6 +106,6 @@ SPEC CHECKSUMS:
   StatusAlert: c2935888a01e89efc0f4478d7c452140386559ea
   SwiftSoup: 92f5b348c131aed8af04f4326db1579ab19fa08c
 
-PODFILE CHECKSUM: 5c4b60b893cd504d763451df31f8004684707f62
+PODFILE CHECKSUM: 5095c64610132472bea5cbbfb72955ac339077af
 
 COCOAPODS: 1.6.0.beta.1

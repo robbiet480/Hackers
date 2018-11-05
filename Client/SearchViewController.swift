@@ -8,10 +8,10 @@
 
 import UIKit
 import InstantSearchClient
-import MoreCodable
 
 class SearchViewController: UIViewController {
 
+    // hn.algolia.com tokens
     let client = Client(appID: "UJ5WYC0L7X", apiKey: "8ece23f8eb07cd25d40262a1764599b1")
 
     var searchIndex: Index?

@@ -13,8 +13,6 @@ target 'Hackers' do
   pod 'FontAwesome.swift'
   pod 'InstantSearchClient', '~> 6.0'
   pod 'Kingfisher'
-  pod 'MoreCodable'
-  pod 'OpenGraph', :git => 'https://github.com/robbiet480/OpenGraph', :branch => 'patch-1'
   pod 'PromiseKit'
   pod 'PromiseKit/Alamofire'
   pod 'RealmSwift'
