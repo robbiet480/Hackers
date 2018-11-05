@@ -41,10 +41,6 @@ public class HNScraper {
         }
     }
 
-    public func GetChildren(_ itemID: Int, dataSource: HNDataSource = defaultDataSource) -> Promise<[HNItem]?> {
-        return self.GetItem(itemID, dataSource: dataSource).map({ $0?.Children as [HNItem]? })
-    }
-
     public var ActionsCache: [Int: HNItem.Actions] = [:]
 
     /// Errors thrown by the scraper
