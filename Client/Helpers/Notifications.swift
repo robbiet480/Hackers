@@ -92,19 +92,21 @@ final class Notifications {
 
                 guard previousIDs.contains(item.ID) == false else { return false }
 
-                guard item.Type == .job && UserDefaults.standard.notifyForJobs == false else {
-                    print("No jobs allowed", item.ID)
+                if item.Type == .job && UserDefaults.standard.notifyForJobs == false {
+                    print("No jobs allowed", item.ID, item.Type)
                     return false
                 }
 
                 guard item.Score ?? 0 >= UserDefaults.standard.minimumPointsForNotification else {
-                    print("Doesn't meet points", item.ID, item.Score)
+                    print("Doesn't meet points", item.ID)
                     return false
                 }
 
                 return true
 
             }).compactMap { $0 as? HNPost }
+
+            ImagePrefetcher(resources: postsMeetingCriteria.compactMap { $0.ThumbnailImageResource }).start()
 
             print("Got", postsMeetingCriteria.count, "possible notifies")
 
