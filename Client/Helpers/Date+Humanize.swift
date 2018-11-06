@@ -8,68 +8,68 @@
 
 import Foundation
 
+// From https://gist.github.com/minorbug/468790060810e0d29545#gistcomment-2714133
 extension Date {
     ///
     /// Provides a humanised date. For instance: 1 minute, 1 week ago, 3 months ago
     ///
     /// - Parameters:
-    //      - numericDates: Set it to true to get "1 year ago", "1 month ago" or false if you prefer "Last year", "Last month"
+    //      - short: Set it to true to get "1y", "1mo" or false if you prefer "Last year", "Last month"
     ///
-    func timeAgo(numericDates:Bool) -> String {
+    func timeAgo(short: Bool) -> String {
         let calendar = Calendar.current
         let now = Date()
         let earliest = self < now ? self : now
-        let latest =  self > now ? self : now
+        let latest = self > now ? self : now
 
         let unitFlags: Set<Calendar.Component> = [.minute, .hour, .day, .weekOfMonth, .month, .year, .second]
         let components: DateComponents = calendar.dateComponents(unitFlags, from: earliest, to: latest)
-        //print("")
-        //print(components)
+
         if let year = components.year {
             if (year >= 2) {
-                return "\(year)y"
+                return short ? "\(year)y" : "\(year) years ago"
             } else if (year >= 1) {
-                return numericDates ?  "1y" : "Last year"
+                return short ? "1y" : "Last year"
             }
         }
         if let month = components.month {
             if (month >= 2) {
-                return "\(month)m"
+                return short ? "\(month)mo" : "\(month) months ago"
             } else if (month >= 1) {
-                return numericDates ? "1mo" : "Last month"
+                return short ? "1mo" : "Last month"
             }
         }
         if let weekOfMonth = components.weekOfMonth {
             if (weekOfMonth >= 2) {
-                return "\(weekOfMonth)w"
+                return short ? "\(weekOfMonth)w" : "\(weekOfMonth) weeks ago"
             } else if (weekOfMonth >= 1) {
-                return numericDates ? "1w" : "Last week"
+                return short ? "1w" : "Last week"
             }
         }
         if let day = components.day {
             if (day >= 2) {
-                return "\(day)d"
+                return short ? "\(day)d" : "\(day) days ago"
             } else if (day >= 1) {
-                return numericDates ? "1d" : "Yesterday"
+                return short ? "1d" : "Yesterday"
             }
         }
         if let hour = components.hour {
             if (hour >= 2) {
-                return "\(hour)h"
+                return short ? "\(hour)h" : "\(hour) hours ago"
             } else if (hour >= 1) {
-                return numericDates ? "1h" : "An hour ago"
+                return short ? "1h" : "An hour ago"
             }
         }
         if let minute = components.minute {
             if (minute >= 2) {
-                return "\(minute)m"
+                return short ? "\(minute)m" : "\(minute) minutes ago"
             } else if (minute >= 1) {
-                return numericDates ? "1m" : "A minute ago"
+                return short ? "1m" : "A minute ago"
             }
         }
         if let second = components.second {
-            if (second >= 3) {
-                return "\(second)s"
+            if (second >= 2) {
+                return short ? "\(second)s" : "\(second) seconds ago"
             }
         }
         return "now"

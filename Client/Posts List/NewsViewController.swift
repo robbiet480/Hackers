@@ -30,7 +30,6 @@ class NewsViewController : UIViewController {
     
     private var cancelFetch: (() -> Void)?
 
-    private var notifiedPostID: Int?
     @IBOutlet weak var composeButton: UIBarButtonItem!
 
     private var selectedUser: HNUser?
@@ -58,9 +57,6 @@ class NewsViewController : UIViewController {
         setupTheming()
 
         view.showAnimatedSkeleton(usingColor: AppThemeProvider.shared.currentTheme.skeletonColor)
-
-        NotificationCenter.default.addObserver(self, selector: #selector(NewsViewController.openPostNotification(_:)),
-                                               name: NSNotification.Name(rawValue: "notificationOpenPost"), object: nil)
 
         tableView.register(UINib(nibName: "PostCell", bundle: nil), forCellReuseIdentifier: "PostCell")
 
@@ -119,34 +115,12 @@ class NewsViewController : UIViewController {
         self.postType = postType
     }
 
-    @objc func openPostNotification(_ notification: Notification) {
-        print("Received notification!", notification)
-
-        if let postID = notification.userInfo?["POST_ID"] as? Int {
-            print("Open post id!")
-
-            self.notifiedPostID = postID
-
-            self.performSegue(withIdentifier: "ShowComments", sender: self)
-        }
-    }
-
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "ShowComments" {
-            if let notifiedPostID = self.notifiedPostID, let segueNavigationController = segue.destination as? UINavigationController,
-                let commentsViewController = segueNavigationController.topViewController as? CommentsViewController {
+        if segue.identifier == "ShowComments", let indexPath = tableView.indexPathForSelectedRow,
+            let commentsViewController = segue.destination as? CommentsViewController {
 
-                self.notifiedPostID = nil
-
-                HNScraper.shared.GetItem(notifiedPostID).done {
-                    commentsViewController.post = $0 as? HNPost
-                }
-            } else if let indexPath = tableView.indexPathForSelectedRow,
-                let commentsViewController = segue.destination as? CommentsViewController {
-
-                let post = posts![indexPath.row]
-                commentsViewController.post = post
-            }
+            let post = posts![indexPath.row]
+            commentsViewController.post = post
         } else if segue.identifier == "Profile", let vc = segue.destination as? ProfileViewController {
             vc.user = self.selectedUser
             self.selectedUser = nil

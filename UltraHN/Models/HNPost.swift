@@ -75,6 +75,23 @@ public class HNPost: HNItem {
         return urlStr.absoluteString.contains("ycombinator.com")
     }
 
+    var Domain: String? {
+        guard let link = self.Link else { return nil }
+
+        guard let urlComponents = URLComponents(url: link, resolvingAgainstBaseURL: true),
+            var host = urlComponents.host else {
+                return nil
+        }
+
+        if host.starts(with: "www.") {
+            host = String(host[4...])
+        }
+
+        guard host != "news.ycombinator.com" else { return nil }
+
+        return host
+    }
+
     var ThumbnailCacheKey: String {
         return self.IDString
     }
@@ -118,17 +135,17 @@ public class HNPost: HNItem {
             return
         }
 
-        if let ir = self.ThumbnailImageResource {
-            KingfisherManager.shared.retrieveImage(with: ir, options: nil, progressBlock: nil) { (image, error, cacheType, kfURL) in
-                if let error = error {
-                    print("Error when getting thumbnail for post", self.ID, "with img url", kfURL, error.debugDescription)
-                    handler(nil)
-                    return
-                }
+        guard let ir = self.ThumbnailImageResource else { handler(nil); return }
 
-                handler(image)
+        KingfisherManager.shared.retrieveImage(with: ir, options: nil, progressBlock: nil) { (image, error, _, _) in
+            if let error = error {
+                print("Error when getting thumbnail for post", self.ID, "with img url", ir, error.debugDescription)
+                handler(nil)
                 return
             }
+
+            handler(image)
+            return
         }
     }
 

@@ -127,6 +127,33 @@ extension UserDefaults {
             return bool(forKey: UserDefaultsKeys.FadeBadComments.rawValue)
         }
     }
+
+    public var notificationsEnabled: Bool {
+        set {
+            set(newValue, forKey: UserDefaultsKeys.NotificationsEnabled.rawValue)
+        }
+        get {
+            return bool(forKey: UserDefaultsKeys.NotificationsEnabled.rawValue)
+        }
+    }
+
+    public var notificationTapOpensLink: Bool {
+        set {
+            set(newValue, forKey: UserDefaultsKeys.NotificationTapOpensLink.rawValue)
+        }
+        get {
+            return bool(forKey: UserDefaultsKeys.NotificationTapOpensLink.rawValue)
+        }
+    }
+
+    public var notifyForJobs: Bool {
+        set {
+            set(newValue, forKey: UserDefaultsKeys.NotifyForJobs.rawValue)
+        }
+        get {
+            return bool(forKey: UserDefaultsKeys.NotifyForJobs.rawValue)
+        }
+    }
 }
 
 enum UserDefaultsKeys: String {
@@ -139,4 +166,7 @@ enum UserDefaultsKeys: String {
     case LoggedInUser
     case SyncCommentVisibility
     case FadeBadComments
+    case NotificationsEnabled
+    case NotificationTapOpensLink
+    case NotifyForJobs
 }

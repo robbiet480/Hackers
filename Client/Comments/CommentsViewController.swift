@@ -18,6 +18,8 @@ import PromiseKit
 class CommentsViewController : UIViewController {
     var post: HNPost? {
         didSet {
+            guard let post = self.post else { return }
+
             setupPostTitleView()
 
             let activity = NSUserActivity(activityType: "com.weiranzhang.Hackers.comments")
@@ -35,7 +37,11 @@ class CommentsViewController : UIViewController {
             }
         }
     }
-    
+
+    var openedFromNotification: Bool = false
+
+    var notifAction: NotificationActions?
+
     let commentsController = CommentsController()
     
     @IBOutlet var tableView: UITableView!
@@ -52,8 +58,13 @@ class CommentsViewController : UIViewController {
         setupTheming()
         setupPostTitleView()
         view.showAnimatedSkeleton(usingColor: AppThemeProvider.shared.currentTheme.skeletonColor)
+
+        if self.openedFromNotification {
+            let barButton = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(handleDone(_:)))
+            self.navigationItem.rightBarButtonItems?.insert(barButton, at: 0)
+        }
     }
-    
+
     override func awakeFromNib() {
         super.awakeFromNib()
         navigationItem.largeTitleDisplayMode = .never
@@ -61,6 +72,47 @@ class CommentsViewController : UIViewController {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+
+        if self.openedFromNotification, let post = self.post {
+            // If user hit "Open Link" action
+            // OR
+            // User tapped notification AND has the notification tap opens link preference set
+            // OR
+            // Post type is job, since job posts don't have comments, so lets go directly to the link
+            if (self.notifAction == .OpenLink || (self.notifAction == .DefaultTap && UserDefaults.standard.notificationTapOpensLink) || post.Type == .job),
+                let link = post.Link {
+
+                let vc = OpenInBrowser.shared.openURL(link)
+
+                if let vc = vc { // We are opening a SFSafariViewController.
+                    vc.onDoneBlock = { _ in
+                        self.dismiss(animated: true, completion: nil)
+                    }
+
+                    self.present(vc, animated: true, completion: nil)
+                } else {
+                    self.dismiss(animated: true, completion: nil)
+                }
+
+            } else if let action = notifAction {
+                var shareVC: UIActivityViewController?
+                switch action {
+                case .ShareComments:
+                    shareVC = post.CommentsActivityViewController
+                case .ShareLink:
+                    shareVC = post.LinkActivityViewController
+                default: break
+                }
+
+                if let shareVC = shareVC {
+                    shareVC.modalPresentationStyle = .fullScreen
+                    shareVC.completionWithItemsHandler = {(_, _, _, _) in
+                        self.dismiss(animated: true, completion: nil)
+                    }
+                    self.present(shareVC, animated: true, completion: nil)
+                }
+            }
+        }
 
         self.loadComments()
     }
@@ -94,7 +146,11 @@ class CommentsViewController : UIViewController {
             }
         }
     }
-    
+
+    @objc func handleDone(_ sender: UIBarButtonItem) {
+        self.dismiss(animated: true, completion: nil)
+    }
+
     func loadComments() {
         guard let post = self.post else { return }
 

@@ -12,6 +12,9 @@ import RealmSwift
 class MainTabBarController: UITabBarController, UITableViewDelegate {
     var moreTabTableViewDelegate: UITableViewDelegate?
 
+    private var notifiedPostID: Int?
+    private var notifAction: NotificationActions?
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -28,6 +31,8 @@ class MainTabBarController: UITabBarController, UITableViewDelegate {
 
         tabBar.clipsToBounds = true
 
+        NotificationCenter.default.addObserver(self, selector: #selector(MainTabBarController.openPostNotification(_:)),
+                                               name: NSNotification.Name(rawValue: "notificationOpenPost"), object: nil)
     }
 
     var settingsVC: UIViewController {
@@ -282,6 +287,36 @@ extension MainTabBarController: UITabBarControllerDelegate {
         }
 
         self.setTabBarOrder()
+    }
+
+    @objc func openPostNotification(_ notification: Notification) {
+        print("Received notification!", notification)
+
+        if let postID = notification.userInfo?["POST_ID"] as? Int {
+            self.notifiedPostID = postID
+        }
+
+        if let actionStr = notification.userInfo?["action_identifier"] as? String {
+            self.notifAction = NotificationActions(rawValue: actionStr)
+        }
+
+        self.performSegue(withIdentifier: "ShowStoryForNotification", sender: self)
+    }
+
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "ShowStoryForNotification", let notifiedPostID = self.notifiedPostID,
+            let commentsNav = segue.destination as? AppNavigationController,
+            let commentsViewController = commentsNav.topViewController as? CommentsViewController {
+
+            self.notifiedPostID = nil
+
+            commentsViewController.openedFromNotification = true
+            commentsViewController.notifAction = self.notifAction
+
+            HNScraper.shared.GetItem(notifiedPostID).done {
+                commentsViewController.post = $0 as? HNPost
+            }
+        }
     }
 }
 

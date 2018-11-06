@@ -79,8 +79,8 @@ class PostTitleView: UIView, UIGestureRecognizerDelegate {
                 self.usernameLabel.font = UIFont.mySystemFont(ofSize: 14)
             }
 
-            if let domainText = self.domainLabelText(for: post) {
-                self.domainLabel.attributedText = self.generateAttributedString(domainText, .globeAmericas, .solid)
+            if let domain = post.Domain {
+                self.domainLabel.attributedText = self.generateAttributedString(domain, .globeAmericas, .solid)
             } else {
                 self.domainLabel.isHidden = true
             }
@@ -116,30 +116,13 @@ class PostTitleView: UIView, UIGestureRecognizerDelegate {
     }
 
     @objc func domainTapped(_ sender: UITapGestureRecognizer) {
-        delegate?.didTapDomain(domainLabelText(for: post!)!)
+        delegate?.didTapDomain(self.post!.Domain!)
     }
 
     @objc func didPressTitleText(_ sender: UITapGestureRecognizer) {
         if isTitleTapEnabled, let delegate = delegate {
-            delegate.didPressLinkButton(post!)
+            delegate.didPressLinkButton(self.post!)
         }
-    }
-    
-    private func domainLabelText(for post: HNPost) -> String? {
-        guard let link = post.Link else { return nil }
-
-        guard let urlComponents = URLComponents(url: link, resolvingAgainstBaseURL: true),
-            var host = urlComponents.host else {
-            return nil
-        }
-        
-        if host.starts(with: "www.") {
-            host = String(host[4...])
-        }
-
-        guard host != "news.ycombinator.com" else { return nil } 
-
-        return host
     }
 
     private func fakAttachment(for fakIcon: FontAwesome, style: FontAwesomeStyle) -> NSAttributedString {

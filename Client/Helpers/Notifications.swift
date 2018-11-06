@@ -14,14 +14,6 @@ import RealmSwift
 
 final class Notifications {
 
-    private static let defaults = UserDefaults.standard
-
-    private static let notificationKey = "com.weiranzhang.Hackers.notifications-enabled"
-    static var isLocalNotificationEnabled: Bool {
-        get { return defaults.bool(forKey: notificationKey) }
-        set { return defaults.set(newValue, forKey: notificationKey)}
-    }
-
     static func check(callback: @escaping (Bool) -> Void) {
         UNUserNotificationCenter.current().getNotificationSettings { settings in
             DispatchQueue.main.async {
@@ -39,79 +31,86 @@ final class Notifications {
         application: UIApplication = UIApplication.shared,
         permissionHandler: ((Bool) -> Void)? = nil
         ) {
-        var options: UNAuthorizationOptions = []
 
-        if isLocalNotificationEnabled {
-            options = [.alert, .badge, .sound]
+        guard UserDefaults.standard.notificationsEnabled else {
+            DispatchQueue.main.async {
+                application.setMinimumBackgroundFetchInterval(UIApplication.backgroundFetchIntervalNever)
+            }
+            permissionHandler?(false)
+            return
         }
 
-        if !options.isEmpty {
-            UNUserNotificationCenter.current().requestAuthorization(options: options, completionHandler: { (granted, _) in
-                permissionHandler?(granted)
-            })
+        let opts: UNAuthorizationOptions = [.alert, .badge, .sound]
 
-            // Define the custom actions.
-            let openCommentsAction = UNNotificationAction(identifier: "OPEN_COMMENTS",
-                                                    title: "Open Comments",
-                                                    options: [.foreground])
-            let openLinkAction = UNNotificationAction(identifier: "OPEN_LINK",
-                                                      title: "Open Link",
-                                                      options: [.foreground])
-            let shareHNLinkAction = UNNotificationAction(identifier: "SHARE_HN_LINK",
-                                                         title: "Share Hacker News Link",
-                                                         options: [.foreground])
-            let shareLinkAction = UNNotificationAction(identifier: "SHARE_LINK",
-                                                       title: "Share Link",
-                                                       options: [.foreground])
-            // Define the notification type
-            let storyNotificationCategory =
-                UNNotificationCategory(identifier: "POST",
-                                       actions: [openCommentsAction, openLinkAction, shareHNLinkAction, shareLinkAction],
-                                       intentIdentifiers: [],
-                                       hiddenPreviewsBodyPlaceholder: "",
-                                       options: .customDismissAction)
-            // Register the notification type.
-            UNUserNotificationCenter.current().setNotificationCategories([storyNotificationCategory])
+        UNUserNotificationCenter.current().requestAuthorization(options: opts, completionHandler: { (granted, _) in
+            if granted {
+                var notifActions: [NotificationActions] = [.OpenLink, .ShareComments, .ShareLink]
 
-            application.setMinimumBackgroundFetchInterval(UIApplication.backgroundFetchIntervalMinimum)
-        } else {
-            application.setMinimumBackgroundFetchInterval(UIApplication.backgroundFetchIntervalNever)
-        }
+                if UserDefaults.standard.notificationTapOpensLink {
+                    notifActions = [.OpenComments, .ShareComments, .ShareLink]
+                }
+
+                print("Registering POST notification category with actions", notifActions)
+
+                let storyNotificationCategory = UNNotificationCategory(identifier: "POST",
+                                                                       actions: notifActions.map { $0.action },
+                                                                       intentIdentifiers: [],
+                                                                       hiddenPreviewsBodyPlaceholder: "%u stories",
+                                                                       options: .customDismissAction)
+
+                UNUserNotificationCenter.current().setNotificationCategories([storyNotificationCategory])
+
+                DispatchQueue.main.async {
+                    application.setMinimumBackgroundFetchInterval(UIApplication.backgroundFetchIntervalMinimum)
+                }
+            }
+
+            permissionHandler?(granted)
+        })
     }
 
     func fetch(application: UIApplication, handler: @escaping (UIBackgroundFetchResult) -> Void) {
-        let isLocalNotificationEnabled = Notifications.isLocalNotificationEnabled
-        guard isLocalNotificationEnabled else {
+        guard UserDefaults.standard.notificationsEnabled else {
             print("Notifications are disabled")
+
+            DispatchQueue.main.async {
+                application.setMinimumBackgroundFetchInterval(UIApplication.backgroundFetchIntervalNever)
+            }
+
             handler(.noData)
             return
         }
 
-        HNScraper.shared.GetPage(HNScraper.Page.Home).done { items in
+        HNScraper.shared.GetPage(.Home).done { items in
             guard let items = items else { handler(.noData); return }
-            var itemsMeetingCriteria: [HNPost] = []
-
-            for item in items {
-                if item.Score ?? 0 >= UserDefaults.standard.minimumPointsForNotification, let post = item as? HNPost {
-                    itemsMeetingCriteria.append(post)
-                }
-            }
-
-            print("Got", itemsMeetingCriteria.count, "possible notifies")
 
             let previousIDs = Realm.live().objects(ItemLog.self).filter("NotifiedAt != nil").map { $0.ID }
 
             print("Got", previousIDs.count, "previously stored IDs")
 
-            let filtered = itemsMeetingCriteria.filter({ post -> Bool in
-                return !previousIDs.contains(post.ID)
-            })
+            let postsMeetingCriteria: [HNPost] = items.filter({ item -> Bool in
 
-            print("Got", filtered.count, "filtered notifies")
+                guard previousIDs.contains(item.ID) == false else { return false }
 
-            self.sendLocalPush(for: filtered)
+                guard item.Type == .job && UserDefaults.standard.notifyForJobs == false else {
+                    print("No jobs allowed", item.ID)
+                    return false
+                }
 
-            handler(filtered.count > 0 ? .newData : .noData)
+                guard item.Score ?? 0 >= UserDefaults.standard.minimumPointsForNotification else {
+                    print("Doesn't meet points", item.ID, item.Score)
+                    return false
+                }
+
+                return true
+
+            }).compactMap { $0 as? HNPost }
+
+            print("Got", postsMeetingCriteria.count, "possible notifies")
+
+            self.sendLocalPush(for: postsMeetingCriteria)
+
+            handler(postsMeetingCriteria.count > 0 ? .newData : .noData)
 
         }.catch { error in
             print("Hit an error during background fetch to grab stories", error)
@@ -126,16 +125,23 @@ final class Notifications {
             print("Building notification for", post)
             let content = UNMutableNotificationContent()
             content.title = post.Title!
-            if let link = post.Link {
-                content.body = link.host!.replacingOccurrences(of: "www.", with: "")
+
+            if let text = post.Domain {
+                content.subtitle = text
             }
-            content.subtitle = "Posted " + post.RelativeDate
+
+            let postedAt = post.RelativeDateLong.lowercased()
+
+            content.body = "Posted " + postedAt
+
             if let score = post.Score, let author = post.Author {
-                content.subtitle = score.description + " points, posted by " + author.Username + " " + post.RelativeDate
+                content.body = score.description + " points, posted by " + author.Username + " " + postedAt
             }
+
             if post.Rank > 0 {
-                content.subtitle = "#" + String(post.Rank) + ", " + content.subtitle
+                content.body = "#" + String(post.Rank) + ", " + content.body
             }
+
             content.categoryIdentifier = "POST"
             content.userInfo = ["POST_ID": post.ID]
 
@@ -160,18 +166,50 @@ final class Notifications {
     }
 
     func getAttachmentForPost(_ post: HNPost, handler: @escaping (UNNotificationAttachment?) -> Void) {
+        let options = [UNNotificationAttachmentOptionsTypeHintKey: kUTTypePNG]
+
+        let isCached = ImageCache.default.imageCachedType(forKey: post.ThumbnailCacheKey)
+        if isCached.cached {
+            handler(try? UNNotificationAttachment(identifier: post.IDString,
+                                          url: post.ThumbnailFileURL,
+                                          options: options as [NSObject: AnyObject]))
+            return
+        }
+
         post.Thumbnail(true) { (image) in
-            if image != nil {
-                let options = [UNNotificationAttachmentOptionsTypeHintKey: kUTTypePNG]
-                do {
-                    let attachment = try UNNotificationAttachment.init(identifier: post.IDString, url: post.ThumbnailFileURL, options: options as [NSObject: AnyObject])
-                    handler(attachment)
-                } catch let attachmentError {
-                    print("Error when building attachment", post.Link, post.IDString, post.ThumbnailFileURL, attachmentError)
-                    handler(nil)
-                }
-            }
+            guard image != nil else { handler(nil); return }
+
+            handler(try? UNNotificationAttachment(identifier: post.IDString,
+                                                  url: post.ThumbnailFileURL,
+                                                  options: options as [NSObject: AnyObject]))
         }
     }
 
+}
+
+public enum NotificationActions: String, CaseIterable {
+    case OpenComments = "OPEN_COMMENTS"
+    case OpenLink = "OPEN_LINK"
+    case ShareComments = "SHARE_COMMENTS"
+    case ShareLink = "SHARE_LINK"
+    case DefaultTap = "com.apple.UNNotificationDefaultActionIdentifier" // UNNotificationDefaultActionIdentifier
+
+    var title: String {
+        switch self {
+        case .OpenComments:
+            return "Open Comments"
+        case .OpenLink:
+            return "Open Link"
+        case .ShareComments:
+            return "Share Comments"
+        case .ShareLink:
+            return "Share Link"
+        case .DefaultTap:
+            return "Default Tap"
+        }
+    }
+
+    var action: UNNotificationAction {
+        return UNNotificationAction(identifier: self.rawValue, title: self.title, options: [.foreground])
+    }
 }

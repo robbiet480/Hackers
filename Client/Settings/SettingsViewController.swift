@@ -188,13 +188,13 @@ class SettingsViewController: FormViewController {
                                                     userInfo: nil)
                 }
 
-            +++ Section(header: "Notifications", footer: "")
+            +++ Section(header: "Notifications", footer: "By default, tapping a notification opens its comments.")
             <<< SwitchRow { row in
                 row.tag = "enableNotifications"
                 row.title = "Enable Notifications"
-                row.value = Notifications.isLocalNotificationEnabled
+                row.value = UserDefaults.standard.notificationsEnabled
             }.onChange { row in
-                Notifications.isLocalNotificationEnabled = row.value!
+                UserDefaults.standard.notificationsEnabled = row.value!
                 if row.value! == true {
                     Notifications.configure()
                 }
@@ -209,6 +209,25 @@ class SettingsViewController: FormViewController {
                 if let value = row.value {
                     UserDefaults.standard.minimumPointsForNotification = value
                 }
+            }
+
+            <<< SwitchRow {
+                $0.tag = "notifyForJobs"
+                $0.title = "Notify for jobs"
+                $0.value = UserDefaults.standard.notifyForJobs
+                $0.hidden = "$enableNotifications == false"
+            }.onChange { row in
+                UserDefaults.standard.notifyForJobs = row.value!
+            }
+
+            <<< SwitchRow {
+                $0.tag = "notificationTapOpensLink"
+                $0.title = "Tapping notification opens link"
+                $0.value = UserDefaults.standard.notificationTapOpensLink
+                $0.hidden = "$enableNotifications == false"
+            }.onChange { row in
+                UserDefaults.standard.notificationTapOpensLink = row.value!
+                Notifications.configure()
             }
     }
 

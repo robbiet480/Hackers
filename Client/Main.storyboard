@@ -302,6 +302,9 @@
                         <autoresizingMask key="autoresizingMask"/>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                     </tabBar>
+                    <connections>
+                        <segue destination="Dnd-3v-VsF" kind="presentation" identifier="ShowStoryForNotification" id="UFc-qx-Iv6"/>
+                    </connections>
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Txu-0A-weJ" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -694,7 +697,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="sVF-6q-fhE" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2678" y="1456"/>
+            <point key="canvasLocation" x="2380" y="1456"/>
         </scene>
         <!--Reply View Controller-->
         <scene sceneID="VOx-nh-ekd">
@@ -770,6 +773,22 @@
             </objects>
             <point key="canvasLocation" x="922" y="1456"/>
         </scene>
+        <!--Notifications Navigation Controller-->
+        <scene sceneID="sKR-zW-bCf">
+            <objects>
+                <navigationController id="Dnd-3v-VsF" userLabel="Notifications Navigation Controller" customClass="AppNavigationController" customModule="Hackers" customModuleProvider="target" sceneMemberID="viewController">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="HcO-ga-jZ7">
+                        <rect key="frame" x="0.0" y="44" width="414" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <connections>
+                        <segue destination="sfd-t6-bG7" kind="relationship" relationship="rootViewController" id="oCe-jr-gHI"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="c4L-Ey-rlu" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1596" y="1456"/>
+        </scene>
         <!--Leaderboard Table View Controller-->
         <scene sceneID="p6S-YD-faE">
             <objects>
@@ -815,7 +834,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="bxM-gy-33w" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1777" y="1456"/>
+            <point key="canvasLocation" x="3496" y="2117"/>
         </scene>
         <!--App Navigation Controller-->
         <scene sceneID="Oxg-Zn-2s8">

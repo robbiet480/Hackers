@@ -127,11 +127,11 @@ class CommentsPostTitleView: UIView, UIGestureRecognizerDelegate {
 
                 stackView.removeArrangedSubview(self.linkView)
                 self.linkView.removeFromSuperview()
-            } else if let link = post.Link, !post.LinkIsYCDomain {
+            } else if let domain = post.Domain {
                 stackView.removeArrangedSubview(self.postTextView)
                 self.postTextView.removeFromSuperview()
                 thumbnailImageView.setImage(post)
-                self.urlLabel.text = link.host!.replacingOccurrences(of: "www.", with: "") + link.path
+                self.urlLabel.text = domain
             }
         }
     }

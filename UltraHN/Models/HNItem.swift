@@ -120,7 +120,11 @@ public class HNItem: NSObject, Codable {
     }
 
     var RelativeDate: String {
-        return self.CreatedAt.timeAgo(numericDates: true)
+        return self.CreatedAt.timeAgo(short: true)
+    }
+
+    var RelativeDateLong: String {
+        return self.CreatedAt.timeAgo(short: false)
     }
 
     public func collectChildren(_ level: Int = 0) -> [HNItem] {

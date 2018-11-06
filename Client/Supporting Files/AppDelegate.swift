@@ -79,35 +79,21 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse,
                                 withCompletionHandler completionHandler: @escaping () -> Void) {
 
-        print("Handling didReceive!")
+        print("Handling didReceive!", response)
 
         let actionIdentifier = response.actionIdentifier
         let content = response.notification.request.content
 
         print("didReceive identifier", actionIdentifier)
 
-        switch actionIdentifier {
-        case UNNotificationDismissActionIdentifier: // Notification was dismissed by user
-            // Do something
+        if actionIdentifier == UNNotificationDismissActionIdentifier {
             print("Dismiss action identifier didReceive!")
             completionHandler()
-        case UNNotificationDefaultActionIdentifier: // App was opened from notification
-            // Do something
-            print("Default action identifier didReceive!")
-            if let postID = content.userInfo["POST_ID"] as? Int {
-                print("Open post ID", postID)
-
-                let userInfo = ["POST_ID":postID]
-                NotificationCenter.default.post(name: Notification.Name(rawValue: "notificationOpenPost"),
-                                                object: self, userInfo: userInfo)
-
-            }
-            completionHandler()
-//        case "com.usernotificationstutorial.delete":
-//            // Delete message
-//            completionHandler()
-        default:
-            print("Some other action identifier received", actionIdentifier)
+        } else {
+            var userInfo: [AnyHashable: Any] = content.userInfo
+            userInfo["action_identifier"] = actionIdentifier
+            NotificationCenter.default.post(name: Notification.Name(rawValue: "notificationOpenPost"),
+                                            object: self, userInfo: userInfo)
             completionHandler()
         }
     }
