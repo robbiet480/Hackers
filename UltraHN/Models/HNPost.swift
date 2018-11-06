@@ -84,14 +84,19 @@ public class HNPost: HNItem {
     }
 
     var ThumbnailURL: URL? {
-        // https://drcs9k8uelb9s.cloudfront.net/ is the hn.algolia.com thumbnail cache
-        // three sizes are available
-        // /id.png - 100x100
-        // /id-600x315.png - 600x315
-        // /id-240x180.png - 240x180
-        // 
-        // Previous to this discovery, we used https://image-extractor.now.sh/?url=
-        return URL(string: "https://drcs9k8uelb9s.cloudfront.net/" + self.IDString + "-600x315.png")
+        guard let link = self.Link else { return nil }
+
+        // Three options for thumbnails
+        // 1. https://drcs9k8uelb9s.cloudfront.net/ is the hn.algolia.com thumbnail cache
+        //   three sizes are available
+        //   /id.png - 100x100
+        //   /id-600x315.png - 600x315
+        //   /id-240x180.png - 240x180
+        // 2. https://image-extractor.now.sh/?url= - weiran's service, extracts images (in order) by file extension,
+        //    mime type, open graph, then scanning the HTML
+        // 3. https://hackers-image-extractor.herokuapp.com/?url= - robbiet480's service, same as weiran's except with caching
+        //    and order is open graph, file extension, mime type, scanning HTML.
+        return URL(string: "https://hackers-image-extractor.herokuapp.com/?url=" + link.absoluteString)
     }
 
     var ThumbnailImageResource: ImageResource? {
