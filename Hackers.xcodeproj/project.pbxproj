@@ -545,7 +545,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "TAGS=\"TODO:|FIXME:\"\nERRORTAG=\"ERROR:\"\nfind \"${SRCROOT}\" \\( -path ./Pods -name \"*.h\" -or -name \"*.m\" -or -name \"*.swift\" \\) -print0 | xargs -0 egrep --with-filename --line-number --only-matching \"($TAGS).*\\$|($ERRORTAG).*\\$\" | perl -p -e \"s/($TAGS)/ warning: \\$1/\" | perl -p -e \"s/($ERRORTAG)/ error: \\$1/\"\n";
+			shellScript = "# From https://github.com/aashishtamsya/awesome-xcode-scripts/blob/master/Scripts/DetectFixMeToDoSwift.sh\n# Contributor : \n#    Manuel García-Estañ\n#    Aashish Tamsya\n\n# Set this var a false if you prefer to include your cocoa pods warnings\nEXCLUDEPODS=true\n\n# Add the tags you want to mark as warnings  and or errors\nWARNINGTAGS=\"TODO:|FIXME:|WARNING:\"\nERRORTAG=\"ERROR:\"\n\nif $EXCLUDEPODS; then PODSTRING=\"-path ./Pods -prune\"; else PODSTRING=\"\"; fi\n\nfind \"${SRCROOT}\" $PODSTRING \\( -name \"*.h\" -or -name \"*.m\" -or -name \"*.swift\" \\) -print0 | xargs -0 egrep --with-filename --line-number --only-matching \"($WARNINGTAGS).*\\$|($ERRORTAG).*\\$\" | perl -p -e \"s/($WARNINGTAGS)/ warning: 🛠 \\$1/\" | perl -p -e \"s/($ERRORTAG)/ error: 😱 \\$1/\"\n";
 		};
 		32F4D363AD3C2A95650B70E3 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;

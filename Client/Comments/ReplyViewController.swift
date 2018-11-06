@@ -29,11 +29,11 @@ class ReplyViewController: UIViewController {
     }
 
     @IBAction func postButton(_ sender: UIBarButtonItem) {
-        print("Post comment with text", replyingTo?.ID, replyText.text)
+        print("Post comment with text", replyingTo?.IDString, replyText.text)
 
         if let replyingTo = replyingTo, replyingTo.Type != .comment, let post = replyingTo as? HNPost {
             post.Reply(replyText.text).done { newComment in
-                print("Reply to post generated new comment", newComment)
+                print("Reply to post generated new comment", newComment?.description)
                 self.success()
             }.catch { error in
                 print("Received error when attempting to reply to post", error)
@@ -42,7 +42,7 @@ class ReplyViewController: UIViewController {
             }
         } else if let replyingTo = replyingTo, replyingTo.Type == .comment, let comment = replyingTo as? HNComment {
             comment.Reply(replyText.text).done { newComment in
-                print("Reply to comment generated new comment", newComment)
+                print("Reply to comment generated new comment", newComment?.description)
                 self.success()
             }.catch { error in
                 print("Received error when attempting to reply to comment", error)

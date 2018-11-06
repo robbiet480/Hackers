@@ -313,7 +313,7 @@ extension MainTabBarController: UITabBarControllerDelegate {
             commentsViewController.openedFromNotification = true
             commentsViewController.notifAction = self.notifAction
 
-            HNScraper.shared.GetItem(notifiedPostID).done {
+            _ = HNScraper.shared.GetItem(notifiedPostID).done {
                 commentsViewController.post = $0 as? HNPost
             }
         }

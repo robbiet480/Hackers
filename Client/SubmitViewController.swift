@@ -81,7 +81,7 @@ class SubmitViewController: FormViewController {
             let text = (self.form.rowBy(tag: "text") as! TextAreaRow).value
 
             HNScraper.shared.Submit(title, url: url, text: text).done { newPost in
-                print("newPost", newPost)
+                print("newPost", newPost?.description)
 
                 self.dismiss(animated: true, completion: {
                     let statusAlert = StatusAlert()

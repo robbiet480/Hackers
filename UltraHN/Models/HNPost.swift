@@ -138,8 +138,9 @@ public class HNPost: HNItem {
         guard let ir = self.ThumbnailImageResource else { handler(nil); return }
 
         KingfisherManager.shared.retrieveImage(with: ir, options: nil, progressBlock: nil) { (image, error, _, _) in
+            print("Image retrieved", self.ID)
             if let error = error {
-                print("Error when getting thumbnail for post", self.ID, "with img url", ir, error.debugDescription)
+                print("Error when getting thumbnail for post", self.ID, "with img url", ir, error)
                 handler(nil)
                 return
             }

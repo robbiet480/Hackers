@@ -37,7 +37,7 @@ class ProfileViewController: FormViewController {
 
         guard let user = self.user else { return }
 
-        HNScraper.shared.GetUser(user.Username, dataSource: HTMLDataSource()).done {
+        _ = HNScraper.shared.GetUser(user.Username, dataSource: HTMLDataSource()).done {
             self.user = $0
 
             guard let user = $0 else { return }

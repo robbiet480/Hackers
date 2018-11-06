@@ -18,7 +18,7 @@ import PromiseKit
 class CommentsViewController : UIViewController {
     var post: HNPost? {
         didSet {
-            guard let post = self.post else { return }
+            guard self.post != nil else { return }
 
             setupPostTitleView()
 

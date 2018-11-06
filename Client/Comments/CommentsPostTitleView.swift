@@ -49,7 +49,7 @@ class CommentsPostTitleView: UIView, UIGestureRecognizerDelegate {
 
     @IBAction func upvoteButtonTapped(_ sender: UIBarButtonItem) {
         if let worked = delegate?.didPressActionButton(.Vote, sender), worked {
-            print("Change upvote button state, action worked!", self.post)
+            print("Change upvote button state, action worked!", self.post!.description)
             let button = UIButton(type: .custom)
             button.setImage(UIImage(named: "arrow-up")!.withRenderingMode(.alwaysTemplate), for: .normal)
             button.imageView?.tintColor = AppThemeProvider.shared.currentTheme.backgroundColor

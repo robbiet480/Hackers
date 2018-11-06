@@ -19,7 +19,7 @@ class LeaderboardTableViewController: UITableViewController {
 
         setupTheming()
 
-        HTMLDataSource().GetLeaders().done { leaders in
+        _ = HTMLDataSource().GetLeaders().done { leaders in
             self.board = leaders
             self.tableView.reloadData()
         }
