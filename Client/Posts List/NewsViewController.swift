@@ -128,14 +128,14 @@ class NewsViewController : UIViewController {
     }
 
     @objc func loadPosts() {
-        _ = HNScraper.shared.GetPage(self.pageType, pageNumber: self.pageNumber).done { newPosts in
+        _ = HNScraper.shared.GetPage(self.pageType).done { newPosts in
             guard let newPosts = newPosts as? [HNPost] else { return }
             print("Done getting \(self.pageType.description) posts and got \(newPosts.count) new ones")
 
+            ImagePrefetcher(resources: newPosts.compactMap { $0.ThumbnailImageResource }).start()
+
             if self.pageType != .Jobs && UserDefaults.standard.hideJobs {
-                self.posts = newPosts.filter { post -> Bool in
-                    return post.Type != .job
-                }
+                self.posts = newPosts.filter { $0.Type != .job }
             } else {
                 self.posts = newPosts
             }
@@ -285,6 +285,8 @@ extension NewsViewController: UITableViewDelegate {
             _ = HNScraper.shared.GetPage(self.pageType, pageNumber: self.pageNumber).done { newPosts in
                 guard let newPosts = newPosts as? [HNPost] else { return }
                 print("Done getting \(self.pageType.description) posts and got \(newPosts.count) new ones")
+
+                ImagePrefetcher(resources: newPosts.compactMap { $0.ThumbnailImageResource }).start()
 
                 self.posts!.append(contentsOf: newPosts)
 
