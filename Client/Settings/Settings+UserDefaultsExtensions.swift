@@ -128,6 +128,15 @@ extension UserDefaults {
         }
     }
 
+    public var hideJobs: Bool {
+        set {
+            set(newValue, forKey: UserDefaultsKeys.HideJobs.rawValue)
+        }
+        get {
+            return bool(forKey: UserDefaultsKeys.HideJobs.rawValue)
+        }
+    }
+
     public var notificationsEnabled: Bool {
         set {
             set(newValue, forKey: UserDefaultsKeys.NotificationsEnabled.rawValue)
@@ -166,6 +175,7 @@ enum UserDefaultsKeys: String {
     case LoggedInUser
     case SyncCommentVisibility
     case FadeBadComments
+    case HideJobs
     case NotificationsEnabled
     case NotificationTapOpensLink
     case NotifyForJobs

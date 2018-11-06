@@ -57,6 +57,14 @@ class SettingsViewController: FormViewController {
                     UserDefaults.standard.fadeBadComments = row.value!
                 }
 
+            <<< SwitchRow {
+                    $0.tag = "hideJobs"
+                    $0.title = "Hide Jobs in feeds"
+                    $0.value = UserDefaults.standard.hideJobs
+                }.onChange { row in
+                    UserDefaults.standard.hideJobs = row.value!
+                }
+
             +++ Section(header: "Login",
                         footer: "Logging in allows you to upvote and downvote posts and comments as well as favorite posts. \r\n\r\nYour username and password is securely stored in Keychain and only ever sent to Hacker News/Y Combinator, never to the authors of Hackers.") {
                 $0.tag = "login"

@@ -132,7 +132,13 @@ class NewsViewController : UIViewController {
             guard let newPosts = newPosts as? [HNPost] else { return }
             print("Done getting \(self.postType.description) posts and got \(newPosts.count) new ones")
 
-            self.posts = newPosts
+            if self.postType != .Jobs && UserDefaults.standard.hideJobs {
+                self.posts = newPosts.filter { post -> Bool in
+                    return post.Type != .job
+                }
+            } else {
+                self.posts = newPosts
+            }
 
             self.view.hideSkeleton()
             self.tableView.rowHeight = UITableView.automaticDimension
