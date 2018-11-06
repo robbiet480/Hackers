@@ -37,8 +37,10 @@ class PostCell : UITableViewCell {
     }
     
     private func setupThumbnailGesture() {
-        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(didTapThumbnail(_:)))
-        thumbnailImageView.addGestureRecognizer(tapGestureRecognizer)
+        if let thumbnailImageView = thumbnailImageView {
+            let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(didTapThumbnail(_:)))
+            thumbnailImageView.addGestureRecognizer(tapGestureRecognizer)
+        }
     }
     
     override func setSelected(_ selected: Bool, animated: Bool) {
