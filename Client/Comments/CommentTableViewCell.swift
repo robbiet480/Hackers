@@ -95,7 +95,7 @@ class CommentTableViewCell : UITableViewCell {
 
         if let commentTextView = commentTextView {
             // only for expanded comments
-            let commentFont = UIFont.mySystemFont(ofSize: 15)
+            // let commentFont = UIFont.mySystemFont(ofSize: 15)
             var commentTextColor = AppThemeProvider.shared.currentTheme.textColor
             if UserDefaults.standard.fadeBadComments {
                 commentTextColor = commentTextColor.withAlphaComponent(comment.FadeAlpha)
@@ -108,7 +108,7 @@ class CommentTableViewCell : UITableViewCell {
             
             let commentRange = NSMakeRange(0, commentAttributedString.length)
             
-            commentAttributedString.addAttribute(NSAttributedString.Key.font, value: commentFont, range: commentRange)
+            // commentAttributedString.addAttribute(NSAttributedString.Key.font, value: commentFont, range: commentRange)
             commentAttributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: commentTextColor, range: commentRange)
             commentAttributedString.addAttribute(NSAttributedString.Key.paragraphStyle, value: paragraphStyle, range: commentRange)
             
@@ -151,15 +151,16 @@ extension CommentTableViewCell: Themed {
     func applyTheme(_ theme: AppTheme) {
         backgroundColor = theme.backgroundColor
         if commentTextView != nil {
-            commentTextView.tintColor = theme.appTintColor
-            commentTextView.font = UIFont.mySystemFont(ofSize: 15.0)
+            commentTextView.textColor = theme.textColor
+            //commentTextView.font = UIFont.mySystemFont(ofSize: 15.0)
+            commentTextView.linkTextAttributes = [.foregroundColor: theme.appTintColor]
         }
-        if authorLabel != nil {
+        /*if authorLabel != nil {
             authorLabel.font = UIFont.mySystemFont(ofSize: 15.0)
-        }
+        }*/
         if datePostedLabel != nil {
             datePostedLabel.textColor = theme.lightTextColor
-            datePostedLabel.font = UIFont.mySystemFont(ofSize: 15.0)
+            // datePostedLabel.font = UIFont.mySystemFont(ofSize: 15.0)
         }
         if separatorView != nil {
             separatorView.backgroundColor = theme.separatorColor

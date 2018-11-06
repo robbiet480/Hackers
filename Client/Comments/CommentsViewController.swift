@@ -34,6 +34,7 @@ class CommentsViewController : UIViewController {
         didSet {
             if let comments = comments {
                 commentsController.comments = comments
+                self.title = "\(comments.count) comments"
             }
         }
     }
@@ -129,22 +130,6 @@ class CommentsViewController : UIViewController {
     
     deinit {
         NotificationCenter.default.removeObserver(self)
-    }
-
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-
-        if let headerView = tableView.tableHeaderView {
-            let height = headerView.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize).height
-            var headerFrame = headerView.frame
-
-            // If we don't have this check, viewDidLayoutSubviews() will get called infinitely
-            if height != headerFrame.size.height {
-                headerFrame.size.height = height
-                headerView.frame = headerFrame
-                tableView.tableHeaderView = headerView
-            }
-        }
     }
 
     @objc func handleDone(_ sender: UIBarButtonItem) {
@@ -268,10 +253,10 @@ class CommentsViewController : UIViewController {
 extension CommentsViewController: CommentsPostTitleViewDelegate {
     func didPressLinkButton() {
         // animate background colour for tap
-        self.tableView.tableHeaderView?.backgroundColor = AppThemeProvider.shared.currentTheme.cellHighlightColor
-        UIView.animate(withDuration: 0.3, animations: {
-            self.tableView.tableHeaderView?.backgroundColor = AppThemeProvider.shared.currentTheme.backgroundColor
-        })
+//        self.tableView.tableHeaderView?.backgroundColor = AppThemeProvider.shared.currentTheme.cellHighlightColor
+//        UIView.animate(withDuration: 0.3, animations: {
+//            self.tableView.tableHeaderView?.backgroundColor = AppThemeProvider.shared.currentTheme.backgroundColor
+//        })
 
         // show link
         let activity = NSUserActivity(activityType: "com.weiranzhang.Hackers.link")
@@ -395,10 +380,10 @@ extension CommentsViewController: UITableViewDataSource {
 }
 
 extension CommentsViewController: UITableViewDelegate {
-    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let view = Bundle.main.loadNibNamed("CommentsHeader", owner: nil, options: nil)?.first as? UIView
-        return view
-    }
+//    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+//        let view = Bundle.main.loadNibNamed("CommentsHeader", owner: nil, options: nil)?.first as? UIView
+//        return view
+//    }
 
     func tableView(_ tableView: UITableView,
                    leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {

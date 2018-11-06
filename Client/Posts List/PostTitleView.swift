@@ -152,11 +152,9 @@ extension PostTitleView: Themed {
 
 // MARK: Extension util which generates NSAttributedString by text,font,color,backgroundColor
 extension NSAttributedString {
-    class func generate(from text: String, font: UIFont = UIFont.mySystemFont(ofSize: 14),
-                        color: UIColor = AppThemeProvider.shared.currentTheme.textColor,
-                        backgroundColor: UIColor = .clear) -> NSAttributedString {
-        let atts: [NSAttributedString.Key : Any] = [.foregroundColor: color, .font: font,
-                                                    .backgroundColor: backgroundColor]
+    class func generate(from text: String) -> NSAttributedString {
+        let atts: [NSAttributedString.Key : Any] = [.foregroundColor: AppThemeProvider.shared.currentTheme.textColor,
+                                                    .backgroundColor: UIColor.clear]
         return NSAttributedString(string: text, attributes: atts)
     }
 }

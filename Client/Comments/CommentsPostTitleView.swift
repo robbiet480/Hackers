@@ -47,6 +47,8 @@ class CommentsPostTitleView: UIView, UIGestureRecognizerDelegate {
     @IBOutlet var shareButton: UIBarButtonItem!
     @IBOutlet var flagButton: UIBarButtonItem!
 
+    @IBOutlet weak var belowActionBarSeparator: UIView!
+
     @IBAction func upvoteButtonTapped(_ sender: UIBarButtonItem) {
         if let worked = delegate?.didPressActionButton(.Vote, sender), worked {
             print("Change upvote button state, action worked!", self.post!.description)
@@ -109,7 +111,7 @@ class CommentsPostTitleView: UIView, UIGestureRecognizerDelegate {
             self.metadataLabel.attributedText = self.metadataText(post)
 
             if let postText = post.Text {
-                let postTextFont = UIFont.mySystemFont(ofSize: 18.0)
+                // let postTextFont = UIFont.mySystemFont(ofSize: 18.0)
                 let postTextColor = AppThemeProvider.shared.currentTheme.textColor
                 let lineSpacing = 4 as CGFloat
 
@@ -119,7 +121,7 @@ class CommentsPostTitleView: UIView, UIGestureRecognizerDelegate {
 
                 let postTextRange = NSMakeRange(0, postTextAttributedString.length)
 
-                postTextAttributedString.addAttribute(NSAttributedString.Key.font, value: postTextFont, range: postTextRange)
+                // postTextAttributedString.addAttribute(NSAttributedString.Key.font, value: postTextFont, range: postTextRange)
                 postTextAttributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: postTextColor, range: postTextRange)
                 postTextAttributedString.addAttribute(NSAttributedString.Key.paragraphStyle, value: paragraphStyle, range: postTextRange)
 
@@ -148,14 +150,29 @@ class CommentsPostTitleView: UIView, UIGestureRecognizerDelegate {
         setupTheming()
 
         let titleTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.didPressTitleText(_:)))
-        urlLabel.addGestureRecognizer(titleTapGestureRecognizer)
-        thumbnailImageView.addGestureRecognizer(titleTapGestureRecognizer)
+        linkView.addGestureRecognizer(titleTapGestureRecognizer)
 
         let authorTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.didPressAuthorText(_:)))
         authorLabel.addGestureRecognizer(authorTapGestureRecognizer)
 
         NotificationCenter.default.addObserver(self, selector: #selector(PostTitleView.handleRealtimeUpdate(_:)),
                                                name: HNRealtime.shared.PostUpdatedNotificationName, object: nil)
+
+        thumbnailImageView.roundCorners(corners: [.topLeft, .bottomLeft], radius: 9.0)
+
+        let path = UIBezierPath()
+        path.move(to: CGPoint(x: self.actionToolbar.bounds.minX, y: self.actionToolbar.bounds.minY ))
+        path.addLine(to: CGPoint(x: self.actionToolbar.bounds.maxX, y: self.actionToolbar.bounds.minY ))
+
+        let shape = CAShapeLayer()
+
+        shape.path = path.cgPath
+        shape.strokeColor = AppThemeProvider.shared.currentTheme.separatorColor.cgColor
+        shape.fillColor = UIColor.clear.cgColor
+        shape.lineWidth = 0.5
+        shape.lineCap = .round
+
+        self.actionToolbar.layer.addSublayer(shape)
     }
 
     @objc func didPressTitleText(_ sender: UITapGestureRecognizer) {
@@ -170,30 +187,29 @@ class CommentsPostTitleView: UIView, UIGestureRecognizerDelegate {
 
         let string = NSMutableAttributedString()
 
-        let textColor = AppThemeProvider.shared.currentTheme.textColor
-
-        let pointsIconAttachment = fakAttachment(for: .arrowUp, style: .solid, color: textColor)
+        let pointsIconAttachment = fakAttachment(for: .arrowUp, style: .solid)
         
-        let commentsIconAttachment = fakAttachment(for: .comment, style: .regular, color: textColor)
+        let commentsIconAttachment = fakAttachment(for: .comment, style: .regular)
         
-        let timeIconAttachment = fakAttachment(for: .clock, style: .regular, color: textColor)
+        let timeIconAttachment = fakAttachment(for: .clock, style: .regular)
         
         string.append(pointsIconAttachment)
-        string.append(NSAttributedString.generate(from: String(post.Score ?? 0), color: textColor))
+        string.append(NSAttributedString.generate(from: String(post.Score ?? 0)))
         string.append(NSAttributedString(string: " "))
         string.append(commentsIconAttachment)
-        string.append(NSAttributedString.generate(from: String(post.TotalChildren), color: textColor))
+        string.append(NSAttributedString.generate(from: String(post.TotalChildren)))
         string.append(NSAttributedString(string: " "))
         string.append(timeIconAttachment)
-        string.append(NSAttributedString.generate(from: String(post.RelativeDate), color: textColor))
+        string.append(NSAttributedString.generate(from: String(post.RelativeDate)))
 
         return string
     }
 
-    private func fakAttachment(for fakIcon: FontAwesome, style: FontAwesomeStyle, color: UIColor) -> NSAttributedString {
+    private func fakAttachment(for fakIcon: FontAwesome, style: FontAwesomeStyle) -> NSAttributedString {
         let attachment = NSTextAttachment()
+        let color = AppThemeProvider.shared.currentTheme.textColor
         let image = UIImage.fontAwesomeIcon(name: fakIcon, style: style, textColor: color,
-                                            size: CGSize(width: 16, height: 16))
+                                            size: CGSize(width: 14, height: 14))
 
         attachment.image = image
         attachment.bounds = CGRect(x: 0, y: -2, width: image.size.width, height: image.size.height)
@@ -204,11 +220,18 @@ class CommentsPostTitleView: UIView, UIGestureRecognizerDelegate {
 extension CommentsPostTitleView: Themed {
     func applyTheme(_ theme: AppTheme) {
         actionToolbar.tintColor = theme.barForegroundColor
+        actionToolbar.barTintColor = theme.backgroundColor
+        actionToolbar.backgroundColor = theme.backgroundColor
 
         postTextView.backgroundColor = theme.backgroundColor
-        postTextView.font = UIFont.mySystemFont(ofSize: 16.0)
+        // postTextView.font = UIFont.mySystemFont(ofSize: 16.0)
 
         linkView.backgroundColor = theme.backgroundColor
+        linkView.borderColor = theme.separatorColor
         urlLabel.textColor = theme.textColor
+
+        if self.belowActionBarSeparator != nil {
+            belowActionBarSeparator.backgroundColor = theme.separatorColor
+        }
     }
 }
