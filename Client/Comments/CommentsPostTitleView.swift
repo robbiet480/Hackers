@@ -127,11 +127,11 @@ class CommentsPostTitleView: UIView, UIGestureRecognizerDelegate {
 
                 stackView.removeArrangedSubview(self.linkView)
                 self.linkView.removeFromSuperview()
-            } else if let domain = post.Domain {
+            } else if let link = post.LinkForDisplay {
                 stackView.removeArrangedSubview(self.postTextView)
                 self.postTextView.removeFromSuperview()
                 thumbnailImageView.setImage(post)
-                self.urlLabel.text = domain
+                self.urlLabel.text = link
             }
         }
     }
@@ -203,7 +203,6 @@ class CommentsPostTitleView: UIView, UIGestureRecognizerDelegate {
 
 extension CommentsPostTitleView: Themed {
     func applyTheme(_ theme: AppTheme) {
-        actionToolbar.barTintColor = theme.barBackgroundColor
         actionToolbar.tintColor = theme.barForegroundColor
 
         postTextView.backgroundColor = theme.backgroundColor

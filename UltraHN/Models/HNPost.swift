@@ -92,6 +92,18 @@ public class HNPost: HNItem {
         return host
     }
 
+    var LinkForDisplay: String? {
+        guard let link = self.Link else { return nil }
+
+        guard let host = link.host else { return nil }
+
+        guard host.hasPrefix("news.ycombinator.com") == false else { return nil }
+
+        let cleanHost = host.hasPrefix("www.") ? String(host[4...]) : host
+
+        return cleanHost + link.path
+    }
+
     var ThumbnailCacheKey: String {
         return self.IDString
     }

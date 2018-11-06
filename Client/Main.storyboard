@@ -336,7 +336,6 @@
                                                 </label>
                                                 <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" horizontalHuggingPriority="1000" verticalHuggingPriority="1000" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" scrollEnabled="NO" editable="NO" text="Post Text" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="pLo-MZ-0Ox" userLabel="Post Text">
                                                     <rect key="frame" x="0.0" y="21.5" width="394" height="50"/>
-                                                    <color key="backgroundColor" red="0.01" green="0.66000000000000003" blue="0.95999999999999996" alpha="1" colorSpace="calibratedRGB"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="50" id="g0q-Xt-U3l"/>
                                                     </constraints>
@@ -430,6 +429,7 @@
                                                             </connections>
                                                         </barButtonItem>
                                                     </items>
+                                                    <color key="barTintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 </toolbar>
                                             </subviews>
                                             <constraints>
