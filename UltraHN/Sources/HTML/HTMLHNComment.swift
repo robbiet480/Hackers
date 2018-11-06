@@ -78,7 +78,19 @@ public class HTMLHNComment: HNComment {
 
         _ = try? element.select(".commtext .reply").remove()
 
-        self.Text = try? element.select(".commtext").html()
+        var commText = try? element.select(".commtext").html()
+
+        // Replace any truncated links
+        if let hrefs = try? element.select(".commtext a") {
+            for href in hrefs {
+                guard let link = try? href.attr("href") else { continue }
+                guard let text = try? href.text() else { continue }
+                guard text.hasSuffix("...") else { continue }
+                commText = commText?.replacingOccurrences(of: text, with: link)
+            }
+        }
+
+        self.Text = commText
 
         if let fadeClasses = try? element.select(".commtext").attr("class") {
             self.FadeLevel = self.MapFadeLevel(fadeClasses)
