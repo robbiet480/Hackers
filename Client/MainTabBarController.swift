@@ -318,6 +318,10 @@ extension MainTabBarController: UITabBarControllerDelegate {
             }
         }
     }
+
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return AppThemeProvider.shared.currentTheme.statusBarStyle
+    }
 }
 
 extension MainTabBarController: Themed {
@@ -332,22 +336,26 @@ extension MainTabBarController: Themed {
             self.setButtonStates(selectedIndex)
         }
 
-        self.moreNavigationController.navigationBar.barTintColor = AppThemeProvider.shared.currentTheme.barBackgroundColor
-        self.moreNavigationController.navigationBar.tintColor = AppThemeProvider.shared.currentTheme.barForegroundColor
+        self.moreNavigationController.navigationBar.barTintColor = theme.barBackgroundColor
+        self.moreNavigationController.navigationBar.tintColor = theme.barForegroundColor
         self.moreNavigationController.navigationBar.prefersLargeTitles = true
         self.moreNavigationController.navigationBar.titleTextAttributes = [
-            NSAttributedString.Key.foregroundColor: AppThemeProvider.shared.currentTheme.navigationBarTextColor,
+            NSAttributedString.Key.foregroundColor: theme.navigationBarTextColor,
             NSAttributedString.Key.font: UIFont.mySystemFont(ofSize: 17.0)]
         self.moreNavigationController.navigationBar.largeTitleTextAttributes = [
-            NSAttributedString.Key.foregroundColor: AppThemeProvider.shared.currentTheme.navigationBarTextColor,
+            NSAttributedString.Key.foregroundColor: theme.navigationBarTextColor,
             NSAttributedString.Key.font: UIFont.myBoldSystemFont(ofSize: 31.0)]
 
-        self.moreNavigationController.view.backgroundColor = AppThemeProvider.shared.currentTheme.backgroundColor
+        self.moreNavigationController.view.backgroundColor = theme.backgroundColor
 
         if let view: UITableView = self.moreNavigationController.viewControllers[0].view as? UITableView {
-            view.tintColor = AppThemeProvider.shared.currentTheme.barForegroundColor
-            view.separatorColor = AppThemeProvider.shared.currentTheme.separatorColor
-            view.backgroundColor = AppThemeProvider.shared.currentTheme.backgroundColor
+            view.tintColor = theme.barForegroundColor
+            view.separatorColor = theme.separatorColor
+            view.backgroundColor = theme.backgroundColor
         }
+
+        /// It's not ideal to use UIApplication.shared but overriding preferredStatusBarStyle
+        /// doesn't work with a UITabBarController and UISplitViewController
+        UIApplication.shared.statusBarStyle = theme.statusBarStyle
     }
 }
