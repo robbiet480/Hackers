@@ -100,7 +100,7 @@ class MainTabBarController: UITabBarController, UITableViewDelegate {
 
                 newsVC.title = tbi.view.description
 
-                newsVC.postType = tbi.view.scraperPage(tbi.associatedValue)
+                newsVC.pageType = tbi.view.scraperPage(tbi.associatedValue)
                 newsVC.tabBarItem = tbi.view.barItem(tbi.index)
                 contentViews.append(newsVCNav)
             }
@@ -263,7 +263,7 @@ extension MainTabBarController: UITabBarControllerDelegate {
             for (index, viewController) in viewControllers.enumerated() {
                 guard let navigationController = viewController as? UINavigationController,
                     let newsViewController = navigationController.topViewController as? NewsViewController,
-                    let tbi = TabBarItem.View(newsViewController.postType)
+                    let tbi = TabBarItem.View(newsViewController.pageType)
                     else {
                         continue
                 }

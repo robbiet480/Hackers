@@ -22,7 +22,7 @@ class NewsViewController : UIViewController {
     var notificationToken: NotificationToken? = nil
 
     var posts: [HNPost]?
-    var postType: HNScraper.Page = .Home
+    var pageType: HNScraper.Page = .Home
     var pageNumber: Int = 1
 
     private var peekedIndexPath: IndexPath?
@@ -60,14 +60,14 @@ class NewsViewController : UIViewController {
 
         tableView.register(UINib(nibName: "PostCell", bundle: nil), forCellReuseIdentifier: "PostCell")
 
-        if !self.hideBarItems, case .ForDate = self.postType {
+        if !self.hideBarItems, case .ForDate = self.pageType {
             let fakIcon = UIImage.fontAwesomeIcon(name: FontAwesome.calendarAlt, style: FontAwesomeStyle.regular,
                                                   textColor: AppThemeProvider.shared.currentTheme.appTintColor, size: CGSize(width: 30, height: 30))
             self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: fakIcon, style: .plain, target: self, action: nil)
 
-            self.postType = .ForDate(date: Date(timeIntervalSince1970: 1465171200))
+            self.pageType = .ForDate(date: Date(timeIntervalSince1970: 1465171200))
 
-            self.navigationItem.title = self.postType.description
+            self.navigationItem.title = self.pageType.description
 
             self.loadPosts()
         }
@@ -112,7 +112,7 @@ class NewsViewController : UIViewController {
     public convenience init(_ postType: HNScraper.Page) {
         self.init()
 
-        self.postType = postType
+        self.pageType = postType
     }
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -128,11 +128,11 @@ class NewsViewController : UIViewController {
     }
 
     @objc func loadPosts() {
-        _ = HNScraper.shared.GetPage(self.postType, pageNumber: self.pageNumber).done { newPosts in
+        _ = HNScraper.shared.GetPage(self.pageType, pageNumber: self.pageNumber).done { newPosts in
             guard let newPosts = newPosts as? [HNPost] else { return }
-            print("Done getting \(self.postType.description) posts and got \(newPosts.count) new ones")
+            print("Done getting \(self.pageType.description) posts and got \(newPosts.count) new ones")
 
-            if self.postType != .Jobs && UserDefaults.standard.hideJobs {
+            if self.pageType != .Jobs && UserDefaults.standard.hideJobs {
                 self.posts = newPosts.filter { post -> Bool in
                     return post.Type != .job
                 }
@@ -248,7 +248,7 @@ extension NewsViewController: UITableViewDataSource {
         cell.postTitleView.post = post
         cell.postTitleView.delegate = self
 
-        switch self.postType {
+        switch self.pageType {
         case .CommentsForUsername, .FavoritesForUsername, .Hidden, .SubmissionsForUsername, .Upvoted:
             cell.postTitleView.hideUsername = true
         case .Site:
@@ -282,9 +282,9 @@ extension NewsViewController: UITableViewDelegate {
 
             self.pageNumber += 1
 
-            _ = HNScraper.shared.GetPage(self.postType, pageNumber: self.pageNumber).done { newPosts in
+            _ = HNScraper.shared.GetPage(self.pageType, pageNumber: self.pageNumber).done { newPosts in
                 guard let newPosts = newPosts as? [HNPost] else { return }
-                print("Done getting \(self.postType.description) posts and got \(newPosts.count) new ones")
+                print("Done getting \(self.pageType.description) posts and got \(newPosts.count) new ones")
 
                 self.posts!.append(contentsOf: newPosts)
 
@@ -428,7 +428,7 @@ extension NewsViewController: PostTitleViewDelegate {
 
         newsVC.title = postType.description
 
-        newsVC.postType = postType
+        newsVC.pageType = postType
 
         newsVC.hideBarItems = true
 

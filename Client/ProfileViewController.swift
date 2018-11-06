@@ -236,7 +236,7 @@ class ProfileViewController: FormViewController {
             newsVC.title = self.user!.Username + "'s birthday"
         }
 
-        newsVC.postType = postType
+        newsVC.pageType = postType
 
         newsVC.hideBarItems = true
 

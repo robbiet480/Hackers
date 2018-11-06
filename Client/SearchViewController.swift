@@ -222,7 +222,7 @@ extension SearchViewController: PostTitleViewDelegate {
 
         newsVC.title = postType.description
 
-        newsVC.postType = postType
+        newsVC.pageType = postType
 
         newsVC.hideBarItems = true
 
