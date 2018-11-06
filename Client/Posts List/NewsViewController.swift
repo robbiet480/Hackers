@@ -96,7 +96,6 @@ class NewsViewController : UIViewController {
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         DispatchQueue.global().async(execute: {
             DispatchQueue.main.sync {
-                print("viewDidRotate being called!")
                 self.viewDidRotate()
             }
         })
