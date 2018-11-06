@@ -406,6 +406,8 @@ extension CommentsViewController: UITableViewDelegate {
         // Only logged in users can swipe to upvote/downvote
         guard UserDefaults.standard.loggedInUser != nil else { return nil }
 
+        guard commentsController.visibleComments.count > indexPath.row + 1 else { return nil }
+
         let comment = commentsController.visibleComments[indexPath.row]
 
         let actions = comment.Actions != nil ? comment.Actions! : HNScraper.shared.ActionsCache[comment.ID]!
@@ -418,6 +420,8 @@ extension CommentsViewController: UITableViewDelegate {
 
         // Only logged in users can swipe to upvote/downvote
         guard UserDefaults.standard.loggedInUser != nil else { return nil }
+
+        guard commentsController.visibleComments.count > indexPath.row + 1 else { return nil }
 
         let comment = commentsController.visibleComments[indexPath.row]
 
