@@ -136,6 +136,18 @@ class NewsViewController : UIViewController {
 
             ImagePrefetcher(resources: newPosts.compactMap { $0.ThumbnailImageResource }).start()
 
+            /*DispatchQueue.global(qos: DispatchQoS.QoSClass.userInitiated).async {
+                let startTime = Date().timeIntervalSince1970
+
+                print("Starting cache fill", startTime)
+
+                HTMLDataSource().GetActions(self.pageType).done { _ in
+                    print("Done filling actions cache, took", Date().timeIntervalSince1970 - startTime)
+                }.catch { error in
+                    print("Got error while filling actions cache!", error)
+                }
+            }*/
+
             if self.pageType != .Jobs && UserDefaults.standard.hideJobs {
                 self.posts = newPosts.filter { $0.Type != .job }
             } else {
