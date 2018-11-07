@@ -395,7 +395,7 @@ extension CommentsViewController: UITableViewDelegate {
 
         let comment = commentsController.visibleComments[indexPath.row]
 
-        let actions = comment.Actions != nil ? comment.Actions! : HNScraper.shared.ActionsCache[comment.ID]!
+        guard let actions = comment.Actions != nil ? comment.Actions! : HNScraper.shared.ActionsCache[comment.ID] else { return nil }
 
         return actions.swipeActionsConfiguration(item: comment, trailing: false)
     }
@@ -410,7 +410,7 @@ extension CommentsViewController: UITableViewDelegate {
 
         let comment = commentsController.visibleComments[indexPath.row]
 
-        let actions = comment.Actions != nil ? comment.Actions! : HNScraper.shared.ActionsCache[comment.ID]!
+        guard let actions = comment.Actions != nil ? comment.Actions! : HNScraper.shared.ActionsCache[comment.ID] else { return nil }
 
         let config = actions.swipeActionsConfiguration(item: comment, trailing: true)
 

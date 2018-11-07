@@ -46,6 +46,9 @@ class NewsViewController : UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        self.tableView.rowHeight = UITableView.automaticDimension
+        self.tableView.estimatedRowHeight = UITableView.automaticDimension
+
         self.loadPosts()
 
         registerForPreviewing(with: self, sourceView: tableView)
@@ -140,8 +143,6 @@ class NewsViewController : UIViewController {
             }
 
             self.view.hideSkeleton()
-            self.tableView.rowHeight = UITableView.automaticDimension
-            self.tableView.estimatedRowHeight = UITableView.automaticDimension
             self.tableView.reloadData()
             self.refreshControl.endRefreshing()
         }
@@ -244,19 +245,7 @@ extension NewsViewController: UITableViewDataSource {
 
         let post = posts![indexPath.row]
         cell.post = post
-        cell.postTitleView.post = post
-        cell.postTitleView.delegate = self
 
-        switch self.pageType {
-        case .CommentsForUsername, .FavoritesForUsername, .Hidden, .SubmissionsForUsername, .Upvoted:
-            cell.postTitleView.hideUsername = true
-        case .Site:
-            cell.postTitleView.hideDomain = true
-        default: break
-        }
-
-        cell.thumbnailImageView.setImage(post)
-        
         return cell
     }
 
@@ -302,7 +291,7 @@ extension NewsViewController: UITableViewDelegate {
 
             let post = posts![indexPath.row]
 
-            let actions = post.Actions != nil ? post.Actions! : HNScraper.shared.ActionsCache[post.ID]!
+            guard let actions = post.Actions != nil ? post.Actions! : HNScraper.shared.ActionsCache[post.ID] else { return nil }
 
             let config = actions.swipeActionsConfiguration(item: post, trailing: false)
 
@@ -317,7 +306,7 @@ extension NewsViewController: UITableViewDelegate {
 
         let post = posts![indexPath.row]
 
-        let actions = post.Actions != nil ? post.Actions! : HNScraper.shared.ActionsCache[post.ID]!
+        guard let actions = post.Actions != nil ? post.Actions! : HNScraper.shared.ActionsCache[post.ID] else { return nil }
 
         return actions.swipeActionsConfiguration(item: post, trailing: true)
     }
@@ -332,8 +321,8 @@ extension NewsViewController: UITableViewDelegate {
             _ = HNRealtime.shared.Unmonitor(post.ID)
         }
 
-        if let cell = cell as? PostCell {
-            cell.thumbnailImageView.kf.cancelDownloadTask()
+        if let cell = cell as? PostCell, let view = cell.previewImageView {
+            view.kf.cancelDownloadTask()
         }
     }
 }

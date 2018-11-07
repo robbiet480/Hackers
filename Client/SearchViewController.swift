@@ -50,7 +50,7 @@ class SearchViewController: UIViewController {
         self.tableView.delegate = self
         self.tableView.dataSource = self
 
-        tableView.register(UINib(nibName: "PostCell", bundle: nil), forCellReuseIdentifier: "PostCell")
+        tableView.register(UINib(nibName: "CompactPostCell", bundle: nil), forCellReuseIdentifier: "CompactPostCell")
 
         self.searchIndex = client.index(withName: "Item_production_ordered")
 
@@ -90,7 +90,7 @@ extension SearchViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 
         if self.searchTypeControl.selectedSegmentIndex == 0, let posts = self.posts {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "PostCell", for: indexPath) as! PostCell
+            let cell = tableView.dequeueReusableCell(withIdentifier: "CompactPostCell", for: indexPath) as! CompactPostCell
             cell.tag = indexPath.row
             cell.delegate = self
 
@@ -100,7 +100,7 @@ extension SearchViewController: UITableViewDataSource {
             cell.postTitleView.post = post
             cell.postTitleView.delegate = self
 
-            cell.thumbnailImageView.setImage(post)
+            cell.previewImageView.setImage(post)
 
             return cell
         } else if let users = self.users {

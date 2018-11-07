@@ -65,6 +65,14 @@ class SettingsViewController: FormViewController {
                     UserDefaults.standard.hideJobs = row.value!
                 }
 
+            <<< SwitchRow {
+                    $0.tag = "hidePreviewImages"
+                    $0.title = "Hide Preview Images"
+                    $0.value = UserDefaults.standard.hidePreviewImage
+                }.onChange { row in
+                    UserDefaults.standard.hidePreviewImage = row.value!
+                }
+
             +++ Section(header: "Login",
                         footer: "Logging in allows you to upvote and downvote posts and comments as well as favorite posts. \r\n\r\nYour username and password is securely stored in Keychain and only ever sent to Hacker News/Y Combinator, never to the authors of Hackers.") {
                 $0.tag = "login"

@@ -12,8 +12,8 @@ import RealmSwift
 extension UIImageView {
     func setImage(_ post: HNPost) {
 
-        let placeholderImage = UIImage(named: "ThumbnailPlaceholderIcon")?.withRenderingMode(.alwaysTemplate)
-        self.image = placeholderImage
+        //let placeholderImage = UIImage(named: "ThumbnailPlaceholderIcon")?.withRenderingMode(.alwaysTemplate)
+        //self.image = placeholderImage
 
         if post.LinkIsYCDomain {
             self.image = UIImage(named: "ycombinator-logo")!

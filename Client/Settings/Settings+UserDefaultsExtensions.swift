@@ -137,6 +137,15 @@ extension UserDefaults {
         }
     }
 
+    public var hidePreviewImage: Bool {
+        set {
+            set(newValue, forKey: UserDefaultsKeys.HidePreviewImage.rawValue)
+        }
+        get {
+            return bool(forKey: UserDefaultsKeys.HidePreviewImage.rawValue)
+        }
+    }
+
     public var notificationsEnabled: Bool {
         set {
             set(newValue, forKey: UserDefaultsKeys.NotificationsEnabled.rawValue)
@@ -176,6 +185,7 @@ enum UserDefaultsKeys: String {
     case SyncCommentVisibility
     case FadeBadComments
     case HideJobs
+    case HidePreviewImage
     case NotificationsEnabled
     case NotificationTapOpensLink
     case NotifyForJobs

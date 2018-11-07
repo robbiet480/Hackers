@@ -35,7 +35,7 @@ class CommentsPostTitleView: UIView, UIGestureRecognizerDelegate {
 
     @IBOutlet var linkView: UIView!
     @IBOutlet var urlLabel: UILabel!
-    @IBOutlet var thumbnailImageView: UIImageView!
+    @IBOutlet var previewImageView: UIImageView!
 
     @IBOutlet var authorLabel: UILabel!
     @IBOutlet var metadataLabel: UILabel!
@@ -132,7 +132,7 @@ class CommentsPostTitleView: UIView, UIGestureRecognizerDelegate {
             } else if let link = post.LinkForDisplay {
                 stackView.removeArrangedSubview(self.postTextView)
                 self.postTextView.removeFromSuperview()
-                thumbnailImageView.setImage(post)
+                previewImageView.setImage(post)
                 self.urlLabel.text = link
             }
         }
@@ -158,7 +158,7 @@ class CommentsPostTitleView: UIView, UIGestureRecognizerDelegate {
         NotificationCenter.default.addObserver(self, selector: #selector(PostTitleView.handleRealtimeUpdate(_:)),
                                                name: HNRealtime.shared.PostUpdatedNotificationName, object: nil)
 
-        thumbnailImageView.roundCorners(corners: [.topLeft, .bottomLeft], radius: 9.0)
+        previewImageView.roundCorners(corners: [.topLeft, .bottomLeft], radius: 9.0)
 
         let path = UIBezierPath()
         path.move(to: CGPoint(x: self.actionToolbar.bounds.minX, y: self.actionToolbar.bounds.minY ))
@@ -227,7 +227,7 @@ extension CommentsPostTitleView: Themed {
         // postTextView.font = UIFont.mySystemFont(ofSize: 16.0)
 
         linkView.backgroundColor = theme.backgroundColor
-        linkView.borderColor = theme.separatorColor
+        // linkView.borderColor = theme.separatorColor
         urlLabel.textColor = theme.textColor
 
         if self.belowActionBarSeparator != nil {

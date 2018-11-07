@@ -8,7 +8,7 @@
 
 import UIKit
 
-@IBDesignable extension UIView {
+/*@IBDesignable extension UIView {
     @IBInspectable var borderColor: UIColor? {
         set {
             layer.borderColor = newValue?.cgColor
@@ -37,7 +37,9 @@ import UIKit
             return layer.cornerRadius
         }
     }
+}*/
 
+extension UIView {
     func roundCorners(corners: UIRectCorner, radius: CGFloat) {
         let path = UIBezierPath(roundedRect: bounds, byRoundingCorners: corners, cornerRadii: CGSize(width: radius, height: radius))
         let mask = CAShapeLayer()

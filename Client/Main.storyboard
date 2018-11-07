@@ -51,7 +51,7 @@
                                                     </userDefinedRuntimeAttributes>
                                                 </imageView>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pEN-w1-yp7">
-                                                    <rect key="frame" x="87" y="11" width="307" height="68"/>
+                                                    <rect key="frame" x="87" y="11" width="493" height="68"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
@@ -82,7 +82,7 @@
                                             <userDefinedRuntimeAttribute type="boolean" keyPath="isSkeletonable" value="YES"/>
                                         </userDefinedRuntimeAttributes>
                                         <connections>
-                                            <outlet property="thumbnailImageView" destination="zNZ-P5-tf8" id="bbw-ky-sLX"/>
+                                            <outlet property="previewImageView" destination="zNZ-P5-tf8" id="bbw-ky-sLX"/>
                                         </connections>
                                     </tableViewCell>
                                 </prototypes>
@@ -200,22 +200,22 @@
                                             <rect key="frame" x="15" y="10" width="384" height="200"/>
                                             <subviews>
                                                 <label opaque="NO" contentMode="left" verticalHuggingPriority="249" text="Title Text" textAlignment="natural" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="WJf-hU-eUB">
-                                                    <rect key="frame" x="0.0" y="0.0" width="384" height="20.5"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="384" height="15"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="15" id="LSg-a0-pwO"/>
                                                     </constraints>
-                                                    <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
+                                                    <fontDescription key="fontDescription" style="UICTFontTextStyleTitle2"/>
                                                     <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" horizontalHuggingPriority="1000" verticalHuggingPriority="1000" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" scrollEnabled="NO" editable="NO" text="Post Text" adjustsFontForContentSizeCategory="YES" translatesAutoresizingMaskIntoConstraints="NO" id="pLo-MZ-0Ox" userLabel="Post Text">
-                                                    <rect key="frame" x="0.0" y="30.5" width="384" height="38"/>
+                                                    <rect key="frame" x="0.0" y="25" width="384" height="38"/>
                                                     <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                                     <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                                                     <dataDetectorType key="dataDetectorTypes" link="YES"/>
                                                 </textView>
                                                 <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ulG-D4-85I" userLabel="Link View">
-                                                    <rect key="frame" x="0.0" y="78.5" width="384" height="50"/>
+                                                    <rect key="frame" x="0.0" y="73" width="384" height="50"/>
                                                     <subviews>
                                                         <imageView contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="ThumbnailPlaceholderIcon" highlightedImage="ThumbnailPlaceholderIcon" translatesAutoresizingMaskIntoConstraints="NO" id="OAG-fN-haY">
                                                             <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
@@ -256,7 +256,7 @@
                                                     </userDefinedRuntimeAttributes>
                                                 </view>
                                                 <stackView opaque="NO" contentMode="scaleToFill" distribution="equalSpacing" translatesAutoresizingMaskIntoConstraints="NO" id="2WT-Nd-wtw" userLabel="Metadata Stack View">
-                                                    <rect key="frame" x="0.0" y="138.5" width="384" height="19.5"/>
+                                                    <rect key="frame" x="0.0" y="133" width="384" height="19.5"/>
                                                     <subviews>
                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" text="1 point" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pfs-SI-CIe">
                                                             <rect key="frame" x="0.0" y="0.0" width="48.5" height="19.5"/>
@@ -273,7 +273,7 @@
                                                     </subviews>
                                                 </stackView>
                                                 <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" translucent="NO" translatesAutoresizingMaskIntoConstraints="NO" id="B8C-vJ-HKj" userLabel="Action Bar">
-                                                    <rect key="frame" x="0.0" y="168" width="384" height="32"/>
+                                                    <rect key="frame" x="0.0" y="162.5" width="384" height="37.5"/>
                                                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                     <items>
                                                         <barButtonItem image="arrow-up" style="plain" id="JYL-eW-JCL">
@@ -348,10 +348,10 @@
                                         <outlet property="linkView" destination="ulG-D4-85I" id="DBj-5K-Vgo"/>
                                         <outlet property="metadataLabel" destination="pfs-SI-CIe" id="JPc-LT-FUr"/>
                                         <outlet property="postTextView" destination="pLo-MZ-0Ox" id="xKC-tZ-DzU"/>
+                                        <outlet property="previewImageView" destination="OAG-fN-haY" id="WYz-PH-HlB"/>
                                         <outlet property="replyButton" destination="ECJ-VU-gBl" id="Px5-KK-iqs"/>
                                         <outlet property="shareButton" destination="Tj1-SZ-3qo" id="Ml2-gD-3jj"/>
                                         <outlet property="stackView" destination="Ac6-mP-4sE" id="dem-11-gSO"/>
-                                        <outlet property="thumbnailImageView" destination="OAG-fN-haY" id="WYz-PH-HlB"/>
                                         <outlet property="titleLabel" destination="WJf-hU-eUB" id="Oiu-bO-JRs"/>
                                         <outlet property="upvoteButton" destination="JYL-eW-JCL" id="QKV-hh-GeG"/>
                                         <outlet property="urlLabel" destination="1NT-yy-V9j" id="ebz-KU-qh3"/>
@@ -493,7 +493,7 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" editable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dvM-Za-txm">
-                                                    <rect key="frame" x="20" y="16" width="374" height="98.5"/>
+                                                    <rect key="frame" x="8" y="13" width="584" height="101"/>
                                                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                     <gestureRecognizers/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="15"/>
@@ -507,7 +507,7 @@
                                                     </connections>
                                                 </textView>
                                                 <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="5Mf-Yk-sXk" userLabel="Separator View">
-                                                    <rect key="frame" x="15" y="114.5" width="399" height="0.5"/>
+                                                    <rect key="frame" x="15" y="114" width="585" height="0.5"/>
                                                     <color key="backgroundColor" red="0.785933514" green="0.785933514" blue="0.785933514" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="0.5" id="6yW-KL-63G"/>
@@ -848,7 +848,7 @@
     </scenes>
     <resources>
         <image name="ThumbnailPlaceholderIcon" width="42" height="42"/>
-        <image name="arrow-up" width="20" height="20"/>
+        <image name="arrow-up" width="75" height="75"/>
         <image name="bookmark" width="20" height="20"/>
         <image name="exit-up" width="20" height="20"/>
         <image name="flag" width="20" height="20"/>
