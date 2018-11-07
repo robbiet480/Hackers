@@ -140,6 +140,15 @@ public class HTMLDataSource: HNDataSource {
     public func GetIDsOnPage(_ pageName: HNScraper.Page) -> Promise<[Int]> {
         return self.GetPage(pageName).compactMap { $0 }.mapValues { $0.ID }
     }
+
+    // Fill the ActionCache for a page that came from a source other than HTML.
+    public func GetActions(_ pageName: HNScraper.Page, _ pageNumber: Int = 1) -> Promise<Void> {
+        return self.Get(pageName.url(pageNumber)).done { htmlStr, _ in
+            let html = try SwiftSoup.parse(htmlStr)
+
+            HNScraper.shared.ExtractActions(html)
+        }
+    }
 }
 
 extension HNPost {
@@ -361,5 +370,49 @@ extension HNScraper {
         }
 
         return Calendar.current.date(byAdding: components, to: Date())
+    }
+
+    /// ExtractActions will attempt to find available actions (vote, flag, hide, etc) in the provided SwiftSoup Document.
+    public func ExtractActions(_ document: Document) {
+        // href looks like
+        // vote?id=<ID>&how=<DIR>&auth=<AUTH KEY>&goto=<REDIRECT>
+
+        // Action links are any links in the item details that have &auth=
+        guard let linkElements = try? document.select("a[href*='&auth=']") else { return }
+
+        // Only return active links
+        let activeHrefOnly = linkElements.filter { $0.hasClass("nosee") == false }
+
+        let allHrefs = activeHrefOnly.compactMap { try? $0.attr("href") }
+
+        _ = self.makeChildActionsMap(allHrefs)
+
+        return
+    }
+
+    public func makeChildActionsMap(_ allHrefs: [String]) -> [Int: HNItem.Actions] {
+        var actionsMap = [Int: HNItem.Actions]()
+
+        var groupedHrefs: [Int: [String]] = [:]
+
+        for href in allHrefs {
+            guard let components = URLComponents(string: href) else { continue }
+
+            guard let id = components.queryItemsDictionary["id"] else { continue }
+
+            guard let idInt = Int(string: id) else { continue }
+
+            if groupedHrefs[idInt] == nil { groupedHrefs[idInt] = [String]() }
+
+            groupedHrefs[idInt]!.append(href)
+        }
+
+        for (id, groupHrefs) in groupedHrefs {
+            let actions = HNItem.Actions(groupHrefs.compactMap { HNItem.ActionType($0) })
+            actionsMap[id] = actions
+            HNScraper.shared.ActionsCache[id] = actions
+        }
+
+        return actionsMap
     }
 }

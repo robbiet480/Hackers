@@ -421,6 +421,15 @@ public class HNItem: NSObject, Codable {
         }
     }
 
+    // Fill the ActionCache for a post that came from a source other than HTML.
+    public func GetActions() -> Promise<Void> {
+        return Alamofire.request(self.ItemURL).responseString().done { (resp) in
+            let html = try SwiftSoup.parse(resp.string)
+
+            self.ExtractActions(html)
+        }
+    }
+
     /// ExtractActions will attempt to find available actions (vote, flag, hide, etc) in the provided SwiftSoup Document.
     public func ExtractActions(_ document: Document) {
         // href looks like
@@ -442,35 +451,9 @@ public class HNItem: NSObject, Codable {
 
         HNScraper.shared.ActionsCache[self.ID] = self.Actions
 
-        self.AllActions = self.makeChildActionsMap(allHrefs.filter { !$0.contains("id=" + self.IDString) })
+        self.AllActions = HNScraper.shared.makeChildActionsMap(allHrefs.filter { !$0.contains("id=" + self.IDString) })
 
         return
-    }
-
-    private func makeChildActionsMap(_ allHrefs: [String]) -> [Int: HNItem.Actions] {
-        var actionsMap = [Int: HNItem.Actions]()
-
-        var groupedHrefs: [Int: [String]] = [:]
-
-        for href in allHrefs {
-            guard let components = URLComponents(string: href) else { continue }
-
-            guard let id = components.queryItemsDictionary["id"] else { continue }
-
-            guard let idInt = Int(string: id) else { continue }
-
-            if groupedHrefs[idInt] == nil { groupedHrefs[idInt] = [String]() }
-
-            groupedHrefs[idInt]!.append(href)
-        }
-
-        for (id, groupHrefs) in groupedHrefs {
-            let actions = HNItem.Actions(groupHrefs.compactMap { HNItem.ActionType($0) })
-            actionsMap[id] = actions
-            HNScraper.shared.ActionsCache[id] = actions
-        }
-
-        return actionsMap
     }
 
     var ItemPageTitle: String {

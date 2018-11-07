@@ -28,8 +28,7 @@ public class HNPost: HNItem {
         let flaggedLabel = NSAttributedString(string: "[flagged]", attributes: [.foregroundColor: badColor])
 
         let titleAttrs: [NSAttributedString.Key: Any] = [
-            .foregroundColor: AppThemeProvider.shared.currentTheme.titleTextColor,
-            .font: UIFont.mySystemFont(ofSize: 18.0)
+            .foregroundColor: AppThemeProvider.shared.currentTheme.titleTextColor
         ]
 
         let titleStr = NSAttributedString(string: self.Title!, attributes: titleAttrs)
@@ -101,7 +100,11 @@ public class HNPost: HNItem {
 
         let cleanHost = host.hasPrefix("www.") ? String(host[4...]) : host
 
-        return cleanHost + link.path
+        if link.path != "/" {
+            return cleanHost + link.path
+        }
+
+        return cleanHost
     }
 
     var ThumbnailCacheKey: String {
