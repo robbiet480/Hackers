@@ -51,24 +51,24 @@ fileprivate extension HNScraper.Page {
         var path = "search"
         switch self {
         case .Home:
-            path = "search?tags=front_page"
+            path = "search_by_date?tags=front_page"
         case .New:
             path = "search_by_date?tags=story"
         case .ShowHN:
-            path = "search?tags=show_hn"
+            path = "search_by_date?tags=show_hn"
         case .AskHN:
-            path = "search?tags=ask_hn"
+            path = "search_by_date?tags=ask_hn"
         case .Jobs:
-            path = "search?tags=job"
+            path = "search_by_date?tags=job"
         case .Over(let points):
-            path = "search?numericFilters=points>" + points.description
+            path = "search_by_date?numericFilters=points>" + points.description
         case .ForDate(let givenDate):
             let date = givenDate != nil ? givenDate! : Date()
             path = "search_by_date?tags=comment&numericFilters=created_at_i>" + date.timeIntervalSince1970.description
         case .SubmissionsForUsername(let username):
-            path = "search?tags=story,author_"+username
+            path = "search_by_date?tags=story,author_"+username
         case .CommentsForUsername(let username):
-            path = "search?tags=comment,author_"+username
+            path = "search_by_date?tags=comment,author_"+username
         default:
             return nil
         }
