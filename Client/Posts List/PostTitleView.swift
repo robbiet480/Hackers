@@ -97,15 +97,21 @@ class PostTitleView: UIView, UIGestureRecognizerDelegate {
     override func layoutSubviews() {
         super.layoutSubviews()
         setupTheming()
-        
-        let titleTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.didPressTitleText(_:)))
-        titleLabel.addGestureRecognizer(titleTapGestureRecognizer)
 
-        let usernameTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(usernameTapped(_:)))
-        usernameLabel.addGestureRecognizer(usernameTapGestureRecognizer)
+        if let titleLabel = titleLabel {
+            let titleTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.didPressTitleText(_:)))
+            titleLabel.addGestureRecognizer(titleTapGestureRecognizer)
+        }
 
-        let domainTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(domainTapped(_:)))
-        domainLabel.addGestureRecognizer(domainTapGestureRecognizer)
+        if let usernameLabel = usernameLabel {
+            let usernameTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(usernameTapped(_:)))
+            usernameLabel.addGestureRecognizer(usernameTapGestureRecognizer)
+        }
+
+        if let domainLabel = domainLabel {
+            let domainTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(domainTapped(_:)))
+            domainLabel.addGestureRecognizer(domainTapGestureRecognizer)
+        }
 
         NotificationCenter.default.addObserver(self, selector: #selector(PostTitleView.handleRealtimeUpdate(_:)),
                                                name: HNRealtime.shared.PostUpdatedNotificationName, object: nil)

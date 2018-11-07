@@ -22,8 +22,8 @@ class PostCell : UITableViewCell {
     var post: HNPost?
     var delegate: PostCellDelegate?
     
-    @IBOutlet weak var postTitleView: PostTitleView!
-    @IBOutlet weak var thumbnailImageView: UIImageView!
+    @IBOutlet var postTitleView: PostTitleView!
+    @IBOutlet var thumbnailImageView: UIImageView!
 
     override func awakeFromNib() {
         super.awakeFromNib()
