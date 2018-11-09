@@ -18,17 +18,12 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <tableView opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="80" estimatedRowHeight="80" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="sTU-Jc-dof">
+                            <tableView opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="sTU-Jc-dof">
                                 <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <view key="tableFooterView" contentMode="scaleToFill" id="OtO-Qd-Rg6">
-                                    <rect key="frame" x="0.0" y="112" width="414" height="0.0"/>
-                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                </view>
                                 <prototypes>
                                     <tableViewCell userInteractionEnabled="NO" contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="SkeletonCell" rowHeight="90" id="qhe-sx-ztl" customClass="PostCell" customModule="Hackers" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="22" width="414" height="90"/>
+                                        <rect key="frame" x="0.0" y="28" width="414" height="90"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="qhe-sx-ztl" id="auJ-O8-bsL">
                                             <rect key="frame" x="0.0" y="0.0" width="414" height="89.5"/>
@@ -51,7 +46,7 @@
                                                     </userDefinedRuntimeAttributes>
                                                 </imageView>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pEN-w1-yp7">
-                                                    <rect key="frame" x="87" y="11" width="493" height="68"/>
+                                                    <rect key="frame" x="87" y="11" width="307" height="68"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
@@ -493,7 +488,7 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" editable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dvM-Za-txm">
-                                                    <rect key="frame" x="8" y="13" width="584" height="101"/>
+                                                    <rect key="frame" x="20" y="16" width="374" height="98.5"/>
                                                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                     <gestureRecognizers/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="15"/>
@@ -507,7 +502,7 @@
                                                     </connections>
                                                 </textView>
                                                 <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="5Mf-Yk-sXk" userLabel="Separator View">
-                                                    <rect key="frame" x="15" y="114" width="585" height="0.5"/>
+                                                    <rect key="frame" x="15" y="114.5" width="399" height="0.5"/>
                                                     <color key="backgroundColor" red="0.785933514" green="0.785933514" blue="0.785933514" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="0.5" id="6yW-KL-63G"/>
@@ -854,7 +849,7 @@
         <image name="flag" width="20" height="20"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="sND-ZO-5nv"/>
+        <segue reference="TLg-HL-anB"/>
         <segue reference="rxv-oa-aIG"/>
         <segue reference="qrH-bd-6ID"/>
     </inferredMetricsTieBreakers>
