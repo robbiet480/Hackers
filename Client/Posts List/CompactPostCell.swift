@@ -11,6 +11,7 @@ import UIKit
 
 protocol PostCellDelegate {
     func didTapThumbnail(_ sender: Any)
+    func didTapUsername(_ user: HNUser)
     func didLongPressCell(_ sender: Any)
 }
 
@@ -65,6 +66,10 @@ class CompactPostCell : UITableViewCell {
         delegate?.didTapThumbnail(sender)
     }
 
+    @objc func didTapUsername(_ user: HNUser) {
+        delegate?.didTapUsername(user)
+    }
+
     @objc func cellLongPress(_ sender: Any) {
         delegate?.didLongPressCell(sender)
     }
@@ -76,7 +81,7 @@ class CompactPostCell : UITableViewCell {
         self.postTitleView.hideUsername = false
         self.postTitleView.delegate = nil
 
-        let placeholder = UIImage(named: "ThumbnailPlaceholderIcon")?.withRenderingMode(.alwaysTemplate)
+        let placeholder = UIImage(named: "ThumbnailPlaceholderIcon")
         previewImageView.image = placeholder
     }
 }

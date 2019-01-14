@@ -32,9 +32,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         ReviewController.incrementLaunchCounter()
         ReviewController.requestReview()
 
-        // FIXME: Need to debounce smooth updates of brightness values
-//        NotificationCenter.default.addObserver(self, selector: #selector(brightnessChanged),
-//                                               name: UIScreen.brightnessDidChangeNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(brightnessChanged),
+                                               name: UIScreen.brightnessDidChangeNotification, object: nil)
 
         print("Realm is stored at", Realm.live().configuration.fileURL!.description)
     }
@@ -44,7 +43,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     @objc private func brightnessChanged(note: NSNotification) {
-        print("Brightness value didChange!", UIScreen.main.brightness)
+        // print("Brightness value didChange!", UIScreen.main.brightness)
         if let screen: UIScreen = note.object as? UIScreen {
             let threshold = UserDefaults.standard.brightnessLevelForThemeSwitch
             let currentTheme = AppThemeProvider.shared.currentTheme
@@ -56,9 +55,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 AppThemeProvider.shared.currentTheme = UserDefaults.standard.darkTheme
             }
         }
-
-        print("Brightness value didChange!", UIScreen.main.brightness)
-        AppThemeProvider.shared.currentTheme = UserDefaults.standard.brightnessCorrectTheme
     }
 
     func application(_ application: UIApplication,

@@ -11,13 +11,16 @@ import UIKit
 import FontAwesome_swift
 
 class PostCell : UITableViewCell {
+
+    var hasImage: Bool = false
+
     var post: HNPost? {
         didSet {
             guard let post = post else {
                 self.titleLabel.attributedText = nil
 
                 if self.linkStackView != nil { // cell was a link, so remove link stuff
-                    self.urlLabel.text = nil
+                    self.urlLabel.setTitle(nil, for: .normal)
                     self.previewImageView.image = nil
 
                     let heightConstraint = self.previewImageView.constraints.first(where: { $0.identifier == "ImageHeight" })
@@ -31,6 +34,8 @@ class PostCell : UITableViewCell {
                 self.usernameLabel.attributedText = nil
                 self.timeLabel.attributedText = nil
 
+                self.urlIcon.image = UIImage(named: "safari")
+
                 return
             }
 
@@ -42,14 +47,7 @@ class PostCell : UITableViewCell {
 
             self.timeLabel.attributedText = self.generateAttributedString(post.RelativeDate, .clock, .regular)
 
-            if let author = post.Author {
-                let username = NSMutableAttributedString()
-
-                username.append(NSAttributedString(string: "by "))
-                username.append(author.AttributedUsername)
-
-                self.usernameLabel.attributedText = username
-            }
+            self.setUsername()
 
             if let postText = post.Text {
                 if let view = self.linkStackView {
@@ -61,13 +59,16 @@ class PostCell : UITableViewCell {
                     view.text = postText
                 }
             } else {
+                self.hasImage = true
                 if let view = self.postTextView {
                     self.postContentStackView.removeArrangedSubview(view)
                     view.removeFromSuperview()
                 }
 
-                if let label = self.urlLabel {
-                    label.text = post.LinkForDisplay
+                self.urlLabel.setTitle(post.LinkForDisplay, for: .normal)
+
+                if post.LinkIsYCDomain {
+                    self.urlIcon.image = UIImage(named: "ycombinator-logo")
                 }
 
                 if let view = self.previewImageView {
@@ -88,6 +89,7 @@ class PostCell : UITableViewCell {
 
                     view.kf.setImage(with: post.ThumbnailImageResource) { (image, _, _, _) in
                         if let image = image {
+
                             let newHeight = view.frame.size.width / image.size.width * image.size.height
 
                             heightConstraint?.constant = newHeight
@@ -100,20 +102,25 @@ class PostCell : UITableViewCell {
                                 iconView.roundCorners(corners: [.bottomLeft], radius: 9.0)
                             }
 
-                            if let labelView = self.urlLabel {
+                            if let labelView = self.detailImageView {
                                 labelView.roundCorners(corners: [.bottomRight], radius: 9.0)
                             }
                         } else {
+                            view.image = nil
+
                             heightConstraint?.constant = 0
 
                             if let urlView = self.urlIcon {
                                 urlView.roundCorners(corners: [.topLeft, .bottomLeft], radius: 9.0)
                             }
 
-                            if let labelView = self.urlLabel {
+                            if let labelView = self.detailImageView {
                                 labelView.roundCorners(corners: [.topRight, .bottomRight], radius: 9.0)
                             }
                         }
+
+                        // self.setNeedsLayout()
+                        self.layoutIfNeeded()
                     }
                 }
             }
@@ -129,7 +136,8 @@ class PostCell : UITableViewCell {
     @IBOutlet weak var previewImageView: UIImageView!
     @IBOutlet weak var urlDescStackView: UIStackView!
     @IBOutlet weak var urlIcon: UIImageView!
-    @IBOutlet weak var urlLabel: UILabel!
+    @IBOutlet weak var urlLabel: UIButton!
+    @IBOutlet weak var detailImageView: UIImageView!
 
     @IBOutlet weak var postTextView: UITextView!
 
@@ -149,26 +157,23 @@ class PostCell : UITableViewCell {
     @IBAction func moreTapped(_ sender: UIButton) {
         print("More tapped")
     }
+
     override func awakeFromNib() {
         super.awakeFromNib()
         contentView.addGestureRecognizer(UILongPressGestureRecognizer(target: self, action: #selector(PostCell.cellLongPress)))
 
-        upvoteButton.setImage(UIImage(named: "arrow-up")?.withRenderingMode(.alwaysTemplate), for: .normal)
-        upvoteButton.tintColor = AppThemeProvider.shared.currentTheme.textColor
-
-        moreButton.setImage(UIImage(named: "more")?.withRenderingMode(.alwaysTemplate), for: .normal)
-        moreButton.tintColor = AppThemeProvider.shared.currentTheme.textColor
-    }
-
-    override func layoutSubviews() {
-        super.layoutSubviews()
         setupTheming()
-        setupThumbnailGesture()
+        setupGestures()
     }
     
-    private func setupThumbnailGesture() {
-        if let view = linkStackView {
-            let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(didTapThumbnail(_:)))
+    private func setupGestures() {
+        if let view = self.linkStackView {
+            let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(didTapLinkView(_:)))
+            view.addGestureRecognizer(tapGestureRecognizer)
+        }
+
+        if let view = self.usernameLabel {
+            let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(didTapUsername(_:)))
             view.addGestureRecognizer(tapGestureRecognizer)
         }
     }
@@ -191,7 +196,7 @@ class PostCell : UITableViewCell {
         backgroundColor = AppThemeProvider.shared.currentTheme.backgroundColor
     }
     
-    @objc func didTapThumbnail(_ sender: Any) {
+    @objc func didTapLinkView(_ sender: Any) {
         delegate?.didTapThumbnail(sender)
     }
 
@@ -199,8 +204,14 @@ class PostCell : UITableViewCell {
         delegate?.didLongPressCell(sender)
     }
 
+    @objc func didTapUsername(_ sender: Any) {
+        print("Username tapped!", self.post!.Author!)
+        delegate?.didTapUsername(self.post!.Author!)
+    }
+
     override func prepareForReuse() {
         self.post = nil
+        self.previewImageView.kf.cancelDownloadTask()
     }
 
     private func fakAttachment(for fakIcon: FontAwesome, style: FontAwesomeStyle) -> NSAttributedString {
@@ -222,10 +233,43 @@ class PostCell : UITableViewCell {
 
         return string
     }
+
+    func setUsername() {
+        guard let author = post?.Author else { return }
+
+        let username = NSMutableAttributedString()
+
+        username.append(NSAttributedString(string: "by ", attributes: [
+            .foregroundColor: AppThemeProvider.shared.currentTheme.textColor,
+        ]))
+        username.append(author.AttributedUsername)
+
+        self.usernameLabel.attributedText = username
+    }
 }
 
 extension PostCell: Themed {
     func applyTheme(_ theme: AppTheme) {
-        backgroundColor = theme.backgroundColor
+        self.backgroundColor = theme.backgroundColor
+
+        self.titleLabel.textColor = theme.textColor
+        self.urlLabel.setTitleColor(theme.textColor, for: .normal)
+        self.pointsLabel.textColor = theme.textColor
+        self.commentsLabel.textColor = theme.textColor
+        self.timeLabel.textColor = theme.textColor
+
+        self.urlLabel.backgroundColor = theme.barBackgroundColor
+        self.urlIcon.backgroundColor = theme.barBackgroundColor
+        self.detailImageView.backgroundColor = theme.barBackgroundColor
+
+        // Do NOT set the username label text color directly because that will override green/orange
+        // self.usernameLabel.textColor = theme.textColor
+        self.setUsername()
+
+        self.urlIcon.tintColor = theme.textColor
+        self.detailImageView.tintColor = theme.textColor
+
+        self.upvoteButton.tintColor = theme.textColor
+        self.moreButton.tintColor = theme.textColor
     }
 }

@@ -139,16 +139,27 @@ class CommentsViewController : UIViewController {
     func loadComments() {
         guard let post = self.post else { return }
 
-        DispatchQueue.global(qos: .userInitiated).async {
-            HNScraper.shared.GetItem(post.ID).done { item in
-                self.comments = item?.Children
+        if let children = post.Children {
+            print("Post already had children!", children.count)
 
-                self.view.hideSkeleton()
-                self.tableView.rowHeight = UITableView.automaticDimension
-                self.tableView.reloadData()
+            self.comments = children
 
-                }.catch { error in
-                    print("Got error while loading comments!", error)
+            self.view.hideSkeleton()
+            self.tableView.rowHeight = UITableView.automaticDimension
+            self.tableView.reloadData()
+        } else {
+            print("Post did not already have children!")
+            DispatchQueue.global(qos: .userInteractive).async {
+                HNScraper.shared.GetItem(post.ID).done { item in
+                    self.comments = item?.Children
+
+                    self.view.hideSkeleton()
+                    self.tableView.rowHeight = UITableView.automaticDimension
+                    self.tableView.reloadData()
+
+                    }.catch { error in
+                        print("Got error while loading comments!", error)
+                }
             }
         }
     }

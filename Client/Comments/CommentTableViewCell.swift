@@ -66,6 +66,14 @@ class CommentTableViewCell : UITableViewCell {
         }
     }
 
+    override func prepareForReuse() {
+        self.post = nil
+        self.comment = nil
+        self.commentTextView?.attributedText = nil
+        self.authorLabel?.attributedText = nil
+        self.datePostedLabel?.text = nil
+    }
+
     @objc func cellTapped() {
         delegate?.commentTapped(self)
         setSelected(!isSelected, animated: false)
@@ -152,15 +160,10 @@ extension CommentTableViewCell: Themed {
         backgroundColor = theme.backgroundColor
         if commentTextView != nil {
             commentTextView.textColor = theme.textColor
-            //commentTextView.font = UIFont.mySystemFont(ofSize: 15.0)
             commentTextView.linkTextAttributes = [.foregroundColor: theme.appTintColor]
         }
-        /*if authorLabel != nil {
-            authorLabel.font = UIFont.mySystemFont(ofSize: 15.0)
-        }*/
         if datePostedLabel != nil {
             datePostedLabel.textColor = theme.lightTextColor
-            // datePostedLabel.font = UIFont.mySystemFont(ofSize: 15.0)
         }
         if separatorView != nil {
             separatorView.backgroundColor = theme.separatorColor

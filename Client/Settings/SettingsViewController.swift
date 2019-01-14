@@ -183,9 +183,7 @@ class SettingsViewController: FormViewController {
                         row.section!.footer = nil
                     }
 
-                    row.section!.reload()
-
-                    self.tableView.reloadData()
+                    self.form.allRows.forEach { $0.updateCell() }
                 }
 
             <<< SliderRow("brightnessSlider") {

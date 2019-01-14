@@ -152,8 +152,15 @@ class NewsViewController : UIViewController {
             }
 
             self.view.hideSkeleton()
-            self.tableView.reloadData()
             self.refreshControl.endRefreshing()
+
+            self.tableView.beginUpdates()
+
+            // let paths = (0 ..< newPosts.count).map { IndexPath(row: $0, section: 0) }
+
+            // self.tableView.insertRows(at: paths, with: .automatic)
+
+            self.tableView.endUpdates()
         }
     }
 
@@ -272,10 +279,10 @@ extension NewsViewController: UITableViewDataSource {
 
 extension NewsViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        guard posts != nil else { return }
+        guard let posts = self.posts else { return }
 
-        if indexPath.row == posts!.count - 5 {
-            print("Getting next page of stories!", indexPath.row, posts!.count)
+        if indexPath.row == posts.count - 5 {
+            print("Getting next page of stories!", indexPath.row, posts.count)
 
             self.pageNumber += 1
 
@@ -285,9 +292,17 @@ extension NewsViewController: UITableViewDelegate {
 
                 ImagePrefetcher(resources: newPosts.compactMap { $0.ThumbnailImageResource }).start()
 
-                self.posts!.append(contentsOf: newPosts)
+                let existingCount = posts.count
 
-                self.tableView.reloadData()
+                self.posts! += newPosts
+
+                self.tableView.beginUpdates()
+
+                let paths = (0 ..< newPosts.count).map { IndexPath(row: existingCount + $0, section: 0) }
+
+                self.tableView.insertRows(at: paths, with: .automatic)
+
+                self.tableView.endUpdates()
             }
         }
     }
@@ -342,7 +357,7 @@ extension NewsViewController: Themed {
         tableView.backgroundColor = theme.backgroundColor
         tableView.separatorColor = theme.separatorColor
         refreshControl.tintColor = theme.appTintColor
-        self.tableView.reloadData()
+        // self.tableView.reloadData()
     }
 }
 
@@ -410,10 +425,10 @@ extension NewsViewController: PostTitleViewDelegate {
         }
     }
 
-    func didTapUsername(_ user: HNUser) {
-        self.selectedUser = user
-        self.performSegue(withIdentifier: "Profile", sender: self)
-    }
+//    func didTapUsername(_ user: HNUser) {
+//        self.selectedUser = user
+//        self.performSegue(withIdentifier: "Profile", sender: self)
+//    }
 
     func didTapDomain(_ domainName: String) {
         print("Tapped domain", domainName)
@@ -474,5 +489,10 @@ extension NewsViewController: PostCellDelegate {
             alertController.popoverPresentationController?.sourceView = self.tableView
             alertController.popoverPresentationController?.sourceRect = self.tableView.cellForRow(at: indexPath)!.frame
         }
+    }
+
+    func didTapUsername(_ user: HNUser) {
+        self.selectedUser = user
+        self.performSegue(withIdentifier: "Profile", sender: self)
     }
 }

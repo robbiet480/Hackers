@@ -71,7 +71,7 @@ public class HNPost: HNItem {
 
     var LinkIsYCDomain: Bool {
         guard let urlStr = self.Link else { return false }
-        return urlStr.absoluteString.contains("ycombinator.com")
+        return urlStr.host!.hasSuffix("ycombinator.com")
     }
 
     var Domain: String? {
@@ -86,7 +86,7 @@ public class HNPost: HNItem {
             host = String(host[4...])
         }
 
-        guard host != "news.ycombinator.com" else { return nil }
+        // guard host != "news.ycombinator.com" else { return nil }
 
         return host
     }
@@ -96,12 +96,16 @@ public class HNPost: HNItem {
 
         guard let host = link.host else { return nil }
 
-        guard host.hasPrefix("news.ycombinator.com") == false else { return nil }
+        // guard host.hasPrefix("news.ycombinator.com") == false else { return nil }
 
         let cleanHost = host.hasPrefix("www.") ? String(host[4...]) : host
 
         if link.path != "/" {
             return cleanHost + link.path
+        }
+
+        if self.LinkIsYCDomain, let query = link.query {
+            return cleanHost + link.path + "?" + query
         }
 
         return cleanHost

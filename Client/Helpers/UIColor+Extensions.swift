@@ -24,4 +24,14 @@ extension UIColor {
             blue: rgb & 0xFF
         )
     }
+
+    var redValue: CGFloat{ return CIColor(color: self).red }
+    var greenValue: CGFloat{ return CIColor(color: self).green }
+    var blueValue: CGFloat{ return CIColor(color: self).blue }
+    var alphaValue: CGFloat{ return CIColor(color: self).alpha }
+
+    open var rgbValues: String {
+        let pieces = [self.redValue, self.greenValue, self.blueValue, self.alphaValue].map { $0.description }
+        return pieces.joined(separator: ", ")
+    }
 }

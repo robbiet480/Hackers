@@ -26,10 +26,10 @@
                         <nil key="highlightedColor"/>
                     </label>
                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="ocN-5C-kJM" userLabel="Post Content View">
-                        <rect key="frame" x="15" y="34" width="370" height="214.5"/>
+                        <rect key="frame" x="15" y="34" width="370" height="203.5"/>
                         <subviews>
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" verticalCompressionResistancePriority="749" scrollEnabled="NO" editable="NO" textAlignment="natural" adjustsFontForContentSizeCategory="YES" translatesAutoresizingMaskIntoConstraints="NO" id="SAu-yC-4Ew">
-                                <rect key="frame" x="0.0" y="0.0" width="370" height="107.5"/>
+                                <rect key="frame" x="0.0" y="0.0" width="370" height="102"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
                                     <constraint firstAttribute="height" relation="lessThanOrEqual" constant="300" identifier="PostTextHeight" id="PLb-SF-iZ3"/>
@@ -44,18 +44,18 @@ If anyone knows a company, using Racket, or a place on the web where I can find 
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                             </textView>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="hlO-QY-V7B" userLabel="Link View">
-                                <rect key="frame" x="0.0" y="107.5" width="370" height="107"/>
+                                <rect key="frame" x="0.0" y="102" width="370" height="101.5"/>
                                 <subviews>
-                                    <imageView contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="NZ3-nV-5xi" userLabel="Preview Image View">
-                                        <rect key="frame" x="0.0" y="0.0" width="370" height="67"/>
+                                    <imageView contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="safari" translatesAutoresizingMaskIntoConstraints="NO" id="NZ3-nV-5xi" userLabel="Preview Image View">
+                                        <rect key="frame" x="0.0" y="0.0" width="370" height="61.5"/>
                                         <color key="backgroundColor" red="0.94123846292495728" green="0.95682555437088013" blue="0.96862214803695679" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                         <gestureRecognizers/>
                                         <constraints>
-                                            <constraint firstAttribute="height" relation="lessThanOrEqual" constant="100" identifier="ImageHeight" id="U3e-pt-u1Q"/>
+                                            <constraint firstAttribute="height" relation="lessThanOrEqual" constant="300" identifier="ImageHeight" id="U3e-pt-u1Q"/>
                                         </constraints>
                                     </imageView>
                                     <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ocP-bE-f5c" userLabel="URL Label Stack View">
-                                        <rect key="frame" x="0.0" y="67" width="370" height="40"/>
+                                        <rect key="frame" x="0.0" y="61.5" width="370" height="40"/>
                                         <subviews>
                                             <imageView contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="safari" translatesAutoresizingMaskIntoConstraints="NO" id="BcG-xd-lsl" userLabel="Safari Icon">
                                                 <rect key="frame" x="0.0" y="0.0" width="40" height="40"/>
@@ -66,13 +66,22 @@ If anyone knows a company, using Racket, or a place on the web where I can find 
                                                     <constraint firstAttribute="width" constant="40" id="Xv1-6x-ig6"/>
                                                 </constraints>
                                             </imageView>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="251" text="paulgraham.com/what-i-didn-t-say/" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="C6o-bM-Ofh" userLabel="URL">
-                                                <rect key="frame" x="40" y="0.0" width="330" height="40"/>
-                                                <color key="backgroundColor" red="0.94123846292495728" green="0.95682555437088013" blue="0.96862214803695679" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                                            <button opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" lineBreakMode="tailTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Q2m-bj-ghQ" userLabel="URL Label">
+                                                <rect key="frame" x="40" y="0.0" width="310" height="40"/>
+                                                <color key="backgroundColor" red="0.94117647058823528" green="0.95686274509803915" blue="0.96862745098039216" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="width" relation="lessThanOrEqual" constant="310" id="4QG-uW-Qhy"/>
+                                                </constraints>
                                                 <fontDescription key="fontDescription" style="UICTFontTextStyleCaption1"/>
-                                                <nil key="textColor"/>
-                                                <nil key="highlightedColor"/>
-                                            </label>
+                                                <inset key="contentEdgeInsets" minX="5" minY="0.0" maxX="5" maxY="0.0"/>
+                                                <state key="normal" title="news.ycombinator.com">
+                                                    <color key="titleColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                </state>
+                                            </button>
+                                            <imageView userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="chevron-right" translatesAutoresizingMaskIntoConstraints="NO" id="ptE-ib-eym" userLabel="Detail Image">
+                                                <rect key="frame" x="350" y="0.0" width="20" height="40"/>
+                                                <color key="backgroundColor" red="0.94117647058823528" green="0.95686274509803915" blue="0.96862745098039216" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                                            </imageView>
                                         </subviews>
                                     </stackView>
                                 </subviews>
@@ -80,7 +89,7 @@ If anyone knows a company, using Racket, or a place on the web where I can find 
                         </subviews>
                     </stackView>
                     <label opaque="NO" contentMode="left" horizontalHuggingPriority="999" verticalHuggingPriority="1000" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" text="pg" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="r9F-HE-yss" userLabel="Username">
-                        <rect key="frame" x="15" y="250.5" width="75" height="16"/>
+                        <rect key="frame" x="15" y="247.5" width="75" height="16"/>
                         <fontDescription key="fontDescription" style="UICTFontTextStyleFootnote"/>
                         <nil key="textColor"/>
                         <nil key="highlightedColor"/>
@@ -108,26 +117,26 @@ If anyone knows a company, using Racket, or a place on the web where I can find 
                             </label>
                         </subviews>
                     </stackView>
-                    <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="249" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Og9-zO-Tej" userLabel="More">
+                    <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="249" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Og9-zO-Tej" userLabel="Upvote">
                         <rect key="frame" x="365" y="269" width="25" height="25"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="25" id="XDg-2w-0yS"/>
                             <constraint firstAttribute="height" constant="25" id="gjb-Cm-7QF"/>
                         </constraints>
-                        <state key="normal" image="more"/>
+                        <state key="normal" image="arrow-up"/>
                         <connections>
-                            <action selector="moreTapped:" destination="KGk-i7-Jjw" eventType="touchUpInside" id="VYk-kD-lHs"/>
+                            <action selector="upvoteTapped:" destination="KGk-i7-Jjw" eventType="touchUpInside" id="n2A-ew-keH"/>
                         </connections>
                     </button>
-                    <button opaque="NO" contentMode="scaleToFill" horizontalCompressionResistancePriority="749" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="X9Y-yi-HhB" userLabel="Upvote">
+                    <button opaque="NO" contentMode="scaleToFill" horizontalCompressionResistancePriority="749" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="X9Y-yi-HhB" userLabel="More">
                         <rect key="frame" x="332" y="269" width="25" height="25"/>
                         <constraints>
                             <constraint firstAttribute="height" constant="25" id="FB5-az-S1C"/>
                             <constraint firstAttribute="width" constant="25" id="Fxz-CK-PAG"/>
                         </constraints>
-                        <state key="normal" image="arrow-up"/>
+                        <state key="normal" image="more"/>
                         <connections>
-                            <action selector="upvoteTapped:" destination="KGk-i7-Jjw" eventType="touchUpInside" id="azK-NC-tKY"/>
+                            <action selector="moreTapped:" destination="KGk-i7-Jjw" eventType="touchUpInside" id="DYr-pO-N04"/>
                         </connections>
                     </button>
                 </subviews>
@@ -147,27 +156,28 @@ If anyone knows a company, using Racket, or a place on the web where I can find 
                     <constraint firstItem="hFs-3w-JXp" firstAttribute="trailing" relation="lessThanOrEqual" secondItem="H2p-sc-9uM" secondAttribute="trailing" multiplier="0.5" id="ny5-Pj-Sq7"/>
                     <constraint firstItem="hFs-3w-JXp" firstAttribute="bottom" secondItem="H2p-sc-9uM" secondAttribute="bottom" constant="-5" id="pS9-mT-tkO"/>
                     <constraint firstAttribute="trailingMargin" secondItem="Og9-zO-Tej" secondAttribute="trailing" constant="-10" id="ruV-fy-wpl"/>
-                    <constraint firstItem="r9F-HE-yss" firstAttribute="top" secondItem="ocN-5C-kJM" secondAttribute="bottom" constant="2" id="s5W-SC-atC"/>
+                    <constraint firstItem="r9F-HE-yss" firstAttribute="top" secondItem="ocN-5C-kJM" secondAttribute="bottom" constant="10" id="s5W-SC-atC"/>
                     <constraint firstAttribute="bottomMargin" secondItem="Og9-zO-Tej" secondAttribute="bottom" constant="-5" id="wQR-ve-1b7"/>
-                    <constraint firstItem="r9F-HE-yss" firstAttribute="bottom" secondItem="hFs-3w-JXp" secondAttribute="top" constant="-2" id="yoo-Pm-yAu"/>
+                    <constraint firstItem="r9F-HE-yss" firstAttribute="bottom" secondItem="hFs-3w-JXp" secondAttribute="top" constant="-5" id="yoo-Pm-yAu"/>
                 </constraints>
             </tableViewCellContentView>
             <viewLayoutGuide key="safeArea" id="2ZZ-65-NhY"/>
             <connections>
                 <outlet property="commentsLabel" destination="6u2-sd-duV" id="Vj2-sb-nO0"/>
+                <outlet property="detailImageView" destination="ptE-ib-eym" id="ygy-xU-7xO"/>
                 <outlet property="linkStackView" destination="hlO-QY-V7B" id="8l5-WH-ud5"/>
                 <outlet property="metadataStackView" destination="hFs-3w-JXp" id="hs5-xz-Cws"/>
-                <outlet property="moreButton" destination="Og9-zO-Tej" id="Rke-R6-2PE"/>
+                <outlet property="moreButton" destination="X9Y-yi-HhB" id="1wS-Wi-sk5"/>
                 <outlet property="pointsLabel" destination="p2V-Ul-AdU" id="EBI-cX-t7p"/>
                 <outlet property="postContentStackView" destination="ocN-5C-kJM" id="FJX-3m-iua"/>
                 <outlet property="postTextView" destination="SAu-yC-4Ew" id="56T-JJ-85Q"/>
                 <outlet property="previewImageView" destination="NZ3-nV-5xi" id="gDe-EA-1Ii"/>
                 <outlet property="timeLabel" destination="XXU-rp-8Gf" id="hBH-Nj-08X"/>
                 <outlet property="titleLabel" destination="rVl-jy-VVL" id="f8n-eE-aAt"/>
-                <outlet property="upvoteButton" destination="X9Y-yi-HhB" id="5uK-uQ-lwZ"/>
+                <outlet property="upvoteButton" destination="Og9-zO-Tej" id="OAu-58-NQO"/>
                 <outlet property="urlDescStackView" destination="ocP-bE-f5c" id="dUl-sk-mu8"/>
                 <outlet property="urlIcon" destination="BcG-xd-lsl" id="8cF-Q7-pF2"/>
-                <outlet property="urlLabel" destination="C6o-bM-Ofh" id="ISY-Sy-gJX"/>
+                <outlet property="urlLabel" destination="Q2m-bj-ghQ" id="WUL-io-mX0"/>
                 <outlet property="usernameLabel" destination="r9F-HE-yss" id="0QF-mb-36G"/>
             </connections>
             <point key="canvasLocation" x="46.399999999999999" y="167.31634182908547"/>
@@ -175,6 +185,7 @@ If anyone knows a company, using Racket, or a place on the web where I can find 
     </objects>
     <resources>
         <image name="arrow-up" width="75" height="75"/>
+        <image name="chevron-right" width="20" height="20"/>
         <image name="more" width="45" height="45"/>
         <image name="safari" width="500" height="500"/>
     </resources>
